@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  stock_count: 1
+  godown_number: MyString
+  alert_limit: 1
+  product_type: one
+
+two:
+  name: MyString
+  stock_count: 1
+  godown_number: MyString
+  alert_limit: 1
+  product_type: two

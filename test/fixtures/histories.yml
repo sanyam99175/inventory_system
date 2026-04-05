@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  product: one
+  quantity_change: 1
+  godown_number: MyString
+  requested_at: 2026-04-05 18:00:48
+
+two:
+  user: two
+  product: two
+  quantity_change: 1
+  godown_number: MyString
+  requested_at: 2026-04-05 18:00:48
