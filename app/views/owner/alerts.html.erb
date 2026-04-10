@@ -1,0 +1,99 @@
+<div style="max-width: 900px; margin: auto;">
+
+  <!-- HEADER -->
+  <div style="margin-bottom: 20px;">
+    <h1>🚨 Stock Alerts</h1>
+    <p style="color: gray;">Items that need immediate attention</p>
+  </div>
+
+  <%= link_to "⬅ Back to Dashboard", owner_dashboard_path %>
+
+  <br><br>
+
+  <% if @products.any? %>
+
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+
+      <% @products.each do |product| %>
+
+        <div style="
+          background: #fff5f5;
+          border-left: 6px solid #e74c3c;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        ">
+
+          <!-- TOP -->
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+
+            <h3 style="margin: 0;">
+              🚨 <%= product.name %>
+            </h3>
+
+            <span style="
+              background: #e74c3c;
+              color: white;
+              padding: 5px 10px;
+              border-radius: 6px;
+              font-size: 12px;
+            ">
+              LOW STOCK
+            </span>
+
+          </div>
+
+          <!-- DETAILS -->
+          <div style="margin-top: 10px; color: #555;">
+
+            <p>
+              Current Stock:
+              <strong style="color: red;"><%= product.stock_count %></strong>
+            </p>
+
+            <p>
+              Alert Limit:
+              <strong><%= product.alert_limit %></strong>
+            </p>
+
+            <p>
+              📦 Type: <%= product.product_type.name %> |
+              🏬 Godown: <%= product.godown_number %>
+            </p>
+
+          </div>
+
+          <!-- ACTION -->
+          <div style="margin-top: 10px;">
+            <%= link_to "View Product →", product_path(product),
+                style: "
+                  text-decoration: none;
+                  color: #2980b9;
+                  font-weight: bold;
+                " %>
+          </div>
+
+        </div>
+
+      <% end %>
+
+    </div>
+
+  <% else %>
+
+    <!-- NO ALERTS -->
+    <div style="
+      background: #eafaf1;
+      padding: 25px;
+      border-radius: 10px;
+      text-align: center;
+    ">
+
+      <h3 style="color: #27ae60;">✅ All Good!</h3>
+      <p>No low stock items right now</p>
+
+    </div>
+
+  <% end %>
+
+</div>

@@ -9,8 +9,38 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
+  <body style="font-family: Arial; background: #f5f7fa; margin: 0;">
 
-  <body>
-    <%= yield %>
+    <!-- NAVBAR -->
+    <% if user_signed_in? %>
+      <div style="background: #2c3e50; padding: 15px; color: white;">
+        <strong>Inventory System</strong>
+
+        <span style="float: right;">
+          <%= button_to "Logout", destroy_user_session_path, method: :delete, style: "background: red; color: white;" %>
+        </span>
+      </div>
+    <% end %>
+
+    <!-- FLASH -->
+    <div style="padding: 15px;">
+      <% if notice %>
+        <div style="background: #d4edda; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+          <%= notice %>
+        </div>
+      <% end %>
+
+      <% if alert %>
+        <div style="background: #f8d7da; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+          <%= alert %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div style="padding: 20px;">
+      <%= yield %>
+    </div>
+
   </body>
 </html>

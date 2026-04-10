@@ -1,0 +1,96 @@
+<h1 style="margin-bottom: 20px;">📜 Stock History</h1>
+
+<%= link_to "⬅ Back to Dashboard", owner_dashboard_path %>
+
+<br><br>
+
+<!-- FILTER CARD -->
+<div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; width: 400px;">
+
+  <h3>Filter by Date</h3>
+
+  <%= form_with url: owner_history_path, method: :get, local: true do %>
+
+    <div style="margin-bottom: 10px;">
+      <label>Start Date</label><br>
+      <%= date_field_tag :start_date, params[:start_date], style: "padding: 5px;" %>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label>End Date</label><br>
+      <%= date_field_tag :end_date, params[:end_date], style: "padding: 5px;" %>
+    </div>
+
+    <%= submit_tag "Filter", style: "background: #3498db; color: white; padding: 8px;" %>
+
+  <% end %>
+</div>
+
+<!-- HISTORY TABLE -->
+<div style="background: white; padding: 20px; border-radius: 10px;">
+
+  <table style="width: 100%; border-collapse: collapse;">
+    
+    <thead style="background: #2c3e50; color: white;">
+      <tr>
+        <th style="padding: 10px;">User</th>
+        <th>Action</th>
+        <th>Product</th>
+        <th>Godown</th>
+        <th>Change</th>
+        <th>Status</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @requests.each do |req| %>
+        <tr style="border-bottom: 1px solid #ddd;">
+
+          <td style="padding: 10px;">
+            <%= req.user.email %>
+          </td>
+
+          <td>
+            <% if req.user.role == "owner" %>
+              <span style="color: blue;">Direct Update</span>
+            <% else %>
+              <span style="color: orange;">Worker Request</span>
+            <% end %>
+          </td>
+
+          <td><%= req.product.name %></td>
+
+          <td><%= req.product.godown_number %></td>
+
+          <td style="color: <%= req.quantity_change < 0 ? 'red' : 'green' %>;">
+            <%= req.quantity_change %>
+          </td>
+
+          <td>
+            <span style="
+              padding: 5px 10px;
+              border-radius: 5px;
+              color: white;
+              background: 
+                <%= case req.status
+                    when 'approved' then '#28a745'
+                    when 'rejected' then '#dc3545'
+                    else '#ffc107'
+                   end %>;
+            ">
+              <%= req.status&.capitalize || "Pending" %>
+            </span>
+          </td>
+
+          <td>
+            <%= req.created_at.strftime("%d %b %Y %I:%M %p") %>
+          </td>
+
+        </tr>
+      <% end %>
+    </tbody>
+
+  </table>
+
+</div>

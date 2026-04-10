@@ -1,0 +1,85 @@
+<div style="max-width: 900px; margin: auto;">
+
+  <!-- PRODUCT CARD -->
+  <div style="background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+    <h2 style="margin-bottom: 10px;"><%= @product.name %></h2>
+
+    <p>
+      <strong>Type:</strong> <%= @product.product_type.name %>
+    </p>
+
+    <p>
+      <strong>Godown:</strong> <%= @product.godown_number %>
+    </p>
+
+    <p>
+      <strong>Stock:</strong>
+      <span style="
+        font-weight: bold;
+        color: <%= @product.stock_count <= @product.alert_limit ? 'red' : 'green' %>;
+      ">
+        <%= @product.stock_count %>
+      </span>
+    </p>
+
+    <p>
+      <strong>Alert Limit:</strong> <%= @product.alert_limit %>
+    </p>
+
+  </div>
+
+  <!-- OWNER ACTION CARD -->
+  <% if current_user.owner? %>
+    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+      <h3>⚡ Direct Stock Update</h3>
+
+      <%= form_with url: update_stock_product_path(@product), method: :patch, local: true do %>
+
+        <div style="margin-bottom: 10px;">
+          <label>Quantity Change (+ / -)</label><br>
+          <%= number_field_tag :quantity_change, nil, style: "padding: 8px; width: 100%;" %>
+        </div>
+
+        <%= submit_tag "Apply Change",
+            style: "background: #2980b9; color: white; padding: 10px; border-radius: 6px; border: none;" %>
+
+      <% end %>
+
+    </div>
+  <% end %>
+
+  <!-- WORKER REQUEST CARD -->
+  <% if current_user.worker? %>
+    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+      <h3>📨 Request Stock Change</h3>
+
+      <%= form_with url: requests_path, local: true do %>
+
+        <%= hidden_field_tag "request[product_id]", @product.id %>
+
+        <div style="margin-bottom: 10px;">
+          <label>Quantity Change (+ / -)</label><br>
+          <%= number_field_tag "request[quantity_change]", nil, style: "padding: 8px; width: 100%;" %>
+        </div>
+
+        <%= submit_tag "Send Request",
+            style: "background: orange; color: white; padding: 10px; border-radius: 6px; border: none;" %>
+
+      <% end %>
+
+    </div>
+  <% end %>
+
+  <!-- NAVIGATION -->
+  <div style="text-align: center; margin-top: 20px;">
+    <% if current_user.owner? %>
+      <%= link_to "⬅ Back to Products", products_path %>
+    <% else %>
+      <%= link_to "⬅ Back to Dashboard", worker_dashboard_path %>
+    <% end %>
+  </div>
+
+</div>

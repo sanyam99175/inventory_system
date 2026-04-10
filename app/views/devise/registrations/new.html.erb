@@ -1,29 +1,67 @@
-<h2>Sign up</h2>
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 95vh;
+  background: #f5f7fa;
+">
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+  <div style="
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 350px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  ">
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+    <h2 style="text-align: center; margin-bottom: 20px;">📝 Sign Up</h2>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+
+      <div style="margin-bottom: 15px;">
+        <%= f.label :email %><br>
+        <%= f.email_field :email,
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <%= f.label :password %><br>
+        <%= f.password_field :password,
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <%= f.label :password_confirmation %><br>
+        <%= f.password_field :password_confirmation,
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+      </div>
+
+      <!-- ROLE SELECT -->
+      <div style="margin-bottom: 15px;">
+        <%= f.label :role %><br>
+        <%= f.select :role, [["Owner", "owner"], ["Worker", "worker"]],
+              {}, style: "width: 100%; padding: 10px; border-radius: 6px;" %>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <%= f.submit "Sign Up",
+            style: "
+              width: 100%;
+              padding: 10px;
+              background: #27ae60;
+              color: white;
+              border: none;
+              border-radius: 6px;
+              font-weight: bold;
+            " %>
+      </div>
+
     <% end %>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
+
+    <div style="text-align: center;">
+      <%= link_to "Already have an account? Login", new_session_path(resource_name) %>
+    </div>
+
   </div>
 
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

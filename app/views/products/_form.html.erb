@@ -1,0 +1,80 @@
+<div style="
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+">
+
+  <div style="
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  ">
+
+    <h2 style="text-align: center; margin-bottom: 20px;">
+      <%= @product.new_record? ? "➕ Add Product" : "✏️ Edit Product" %>
+    </h2>
+
+    <%= form_with(model: @product, local: true) do |f| %>
+
+      <!-- NAME -->
+      <div style="margin-bottom: 15px;">
+        <%= f.label :name %><br>
+        <%= f.text_field :name,
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+      </div>
+
+      <!-- STOCK -->
+      <div style="margin-bottom: 15px;">
+        <%= f.label :stock_count %><br>
+        <%= f.number_field :stock_count,
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+      </div>
+
+      <!-- PRODUCT TYPE -->
+      <div style="margin-bottom: 15px;">
+        <%= f.label :product_type_id, "Product Type" %><br>
+        <%= f.collection_select :product_type_id, ProductType.all, :id, :name,
+              { prompt: "Select Type" },
+              style: "width: 100%; padding: 10px; border-radius: 6px;" %>
+      </div>
+
+      <!-- GODOWN -->
+      <div style="margin-bottom: 15px;">
+        <%= f.label :godown_number %><br>
+        <%= f.text_field :godown_number,
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+      </div>
+
+      <!-- ALERT LIMIT -->
+      <div style="margin-bottom: 15px;">
+        <%= f.label :alert_limit %><br>
+        <%= f.number_field :alert_limit,
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+      </div>
+
+      <!-- SUBMIT -->
+      <div>
+        <%= f.submit (@product.new_record? ? "Create Product" : "Update Product"),
+            style: "
+              width: 100%;
+              padding: 10px;
+              background: #27ae60;
+              color: white;
+              border: none;
+              border-radius: 6px;
+              font-weight: bold;
+            " %>
+      </div>
+
+    <% end %>
+
+    <!-- BACK -->
+    <div style="text-align: center; margin-top: 15px;">
+      <%= link_to "⬅ Back to Products", products_path %>
+    </div>
+
+  </div>
+
+</div>
