@@ -25,6 +25,10 @@ Rails.application.routes.draw do
   post "owner/history/send_email",
       to: "owner#send_history_pdf_email",
       as: :owner_history_send_email
+
+  post "owner/requests/approve_all",
+     to: "owner#approve_all_requests",
+     as: :approve_all_requests
   resources :requests do
     member do
       patch :approve

@@ -97,4 +97,21 @@ end
                         .group("DATE(created_at)")
                         .sum("ABS(quantity_change)")
   end
+
+  def approve_all_requests
+    requests = Request.pending
+
+    Request.transaction do
+      requests.each do |req|
+        req.update!(status: "approved")
+
+        # update stock logic (important if you already have it)
+        product = req.product
+        product.update!(stock_count: product.stock_count + req.quantity_change)
+      end
+    end
+
+    redirect_to owner_pending_requests_path,
+                notice: "All pending requests approved successfully."
+  end
 end

@@ -9,6 +9,28 @@
   </div>
 
   <% if @requests.any? %>
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+
+        <%= button_to approve_all_requests_path,
+            method: :post,
+            data: {
+            turbo_confirm: "⚠️ Are you sure you want to approve ALL pending requests? This action cannot be undone."
+            },
+            style: "
+            background: #16a34a;
+            color: white;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            " do %>
+
+        ✅ Approve All
+
+        <% end %>
+
+    </div>
     <!-- TABLE -->
     <div class="bg-white rounded-2xl shadow p-6">
 
