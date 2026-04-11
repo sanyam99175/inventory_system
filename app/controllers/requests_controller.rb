@@ -2,21 +2,26 @@ class RequestsController < ApplicationController
   before_action :authenticate_user!
 
   def create
+    product = Product.find(request_params[:product_id])
+    quantity_change = request_params[:quantity_change].to_i
+
+    new_stock = product.stock_count + quantity_change
+
+    if new_stock < 0
+      redirect_to product_path(product),
+                  alert: "❌ Cannot create request: stock will go below zero"
+      return
+    end
+
     @request = current_user.requests.new(request_params)
-    @request.pending!
+    @request.status = :pending
 
     if @request.save
-        redirect_to worker_dashboard_path, notice: "Request sent for approval"
+      redirect_to worker_dashboard_path, notice: "Request sent for approval"
     else
-        redirect_to product_path(@request.product), alert: @request.errors.full_messages.join(", ")
+      redirect_to product_path(product),
+                  alert: @request.errors.full_messages.join(", ")
     end
-  end
-
-  def invalid_stock?(request)
-    product = request.product
-    new_stock = product.stock_count + request.quantity_change.to_i
-
-    new_stock < 0
   end
 
   def approve
