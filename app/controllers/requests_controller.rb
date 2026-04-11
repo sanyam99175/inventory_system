@@ -32,7 +32,7 @@ class RequestsController < ApplicationController
     request.approved!
     
     redirect_to owner_dashboard_path, notice: "Request approved"
-    end
+  end
 
   def reject
     request = Request.find(params[:id])
@@ -40,6 +40,16 @@ class RequestsController < ApplicationController
     request.rejected!
 
     redirect_to owner_dashboard_path, notice: "Request rejected"
+  end
+
+  def cancel
+    request = Request.find(params[:id])
+
+    if request.pending?
+      request.update(status: :cancelled)
+    end
+
+    redirect_back fallback_location: root_path
   end
 
   def update

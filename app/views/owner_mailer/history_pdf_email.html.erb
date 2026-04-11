@@ -1,0 +1,25 @@
+<h2>📦 Stock History Report</h2>
+
+<p>Hello <%= @user.email %>,</p>
+
+<p>Your requested stock history report is attached as a PDF.</p>
+
+<hr>
+
+<p><b>Filters Applied:</b></p>
+
+<ul>
+  <% if @filters[:start_date].present? && @filters[:end_date].present? %>
+    <li>Date: <%= @filters[:start_date] %> to <%= @filters[:end_date] %></li>
+  <% end %>
+
+  <% if @filters[:status].present? %>
+    <li>Status: <%= @filters[:status] %></li>
+  <% end %>
+
+  <% if @filters[:user_id].present? %>
+    <li>User Filter Applied</li>
+  <% end %>
+</ul>
+
+<p>Thanks,<br><b>StockFlow System</b></p>

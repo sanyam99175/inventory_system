@@ -1,2 +1,109 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<!-- HERO SECTION -->
+<section class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-20">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <h1 class="text-4xl md:text-5xl font-bold mb-6">
+      Simplest Way to Control Your Stock
+    </h1>
+    <p class="text-lg mb-8">
+      Replace paper slips with a simple approval system your workers can actually use.
+    </p>
+
+    <%= link_to "Start Free Trial", new_user_registration_path,
+        class: "bg-white text-indigo-700 px-6 py-3 rounded-2xl font-semibold shadow hover:bg-gray-100" %>
+  </div>
+</section>
+
+<!-- PROBLEM SECTION -->
+<section class="py-16">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-6">Still Managing Stock with Paper?</h2>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-2xl shadow">
+        ❌ Lost slips & errors
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow">
+        ❌ No accountability
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow">
+        ❌ End of day confusion
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="bg-white py-16">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-10">How It Works</h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div>
+        <div class="text-4xl mb-3">📦</div>
+        <h3 class="font-semibold">Worker Requests</h3>
+        <p>Enter quantity and send request</p>
+      </div>
+
+      <div>
+        <div class="text-4xl mb-3">✅</div>
+        <h3 class="font-semibold">Owner Approves</h3>
+        <p>Approve or reject instantly</p>
+      </div>
+
+      <div>
+        <div class="text-4xl mb-3">📊</div>
+        <h3 class="font-semibold">Stock Updates</h3>
+        <p>Real-time tracking with history</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="py-16 bg-gray-100">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-10">Features</h2>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-white p-6 rounded-2xl shadow">✔ Simple worker UI</div>
+      <div class="bg-white p-6 rounded-2xl shadow">✔ Approval workflow</div>
+      <div class="bg-white p-6 rounded-2xl shadow">✔ Stock alerts</div>
+      <div class="bg-white p-6 rounded-2xl shadow">✔ Full history tracking</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="py-16">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-10">Simple Pricing</h2>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-2xl shadow">
+        <h3 class="text-xl font-bold">Free</h3>
+        <p class="text-2xl my-4">₹0</p>
+        <p>Basic features</p>
+      </div>
+
+      <div class="bg-indigo-600 text-white p-6 rounded-2xl shadow">
+        <h3 class="text-xl font-bold">Starter</h3>
+        <p class="text-2xl my-4">₹299/mo</p>
+        <p>Best for small businesses</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow">
+        <h3 class="text-xl font-bold">Growth</h3>
+        <p class="text-2xl my-4">₹699/mo</p>
+        <p>Advanced features</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="bg-indigo-700 text-white py-16 text-center">
+  <h2 class="text-3xl font-bold mb-4">Ready to Simplify Your Stock?</h2>
+
+  <%= link_to "Get Started", new_user_registration_path,
+      class: "bg-white text-indigo-700 px-6 py-3 rounded-2xl font-semibold hover:bg-gray-100" %>
+</section>

@@ -1,46 +1,100 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>InventoryApp</title>
+    <title>StockFlow</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body style="font-family: Arial; background: #f5f7fa; margin: 0;">
 
-    <!-- NAVBAR -->
-    <% if user_signed_in? %>
-      <div style="background: #2c3e50; padding: 15px; color: white;">
-        <strong>Inventory System</strong>
+  <body class="bg-gray-50 text-gray-800">
 
-        <span style="float: right;">
-          <%= button_to "Logout", destroy_user_session_path, method: :delete, style: "background: red; color: white;" %>
-        </span>
+    <!-- HEADER -->
+    <header class="bg-white shadow-md px-6 py-4 flex items-center justify-between">
+
+      <!-- LEFT SIDE: BRAND + NAV LINKS -->
+      <div class="flex items-center space-x-6">
+
+        <h1 class="text-xl font-bold text-indigo-700">StockFlow</h1>
+
+        <% if user_signed_in? %>
+
+          <% if current_user.owner? %>
+            <%= link_to "Dashboard", owner_dashboard_path, class: "text-gray-700 hover:text-indigo-600" %>
+            <%= link_to "Products", products_path, class: "text-gray-700 hover:text-indigo-600" %>
+            <%= link_to owner_pending_requests_path, class: "relative text-gray-700 hover:text-indigo-600" do %>
+              Requests
+
+              <% if @pending_requests_count.to_i > 0 %>
+                <span class="absolute -top-2 -right-3 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  <%= @pending_requests_count %>
+                </span>
+              <% end %>
+            <% end %>
+            <%= link_to "History", owner_history_path, class: "text-gray-700 hover:text-indigo-600" %>
+            <%= link_to owner_alerts_path, class: "relative text-gray-700 hover:text-indigo-600" do %>
+              Alerts
+
+              <% if @low_stock_count.to_i > 0 %>
+                <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  <%= @low_stock_count %>
+                </span>
+              <% end %>
+            <% end %>
+            <%= link_to "Trends", owner_trends_path, class: "text-gray-700 hover:text-indigo-600" %>
+
+          <% else %>
+            <%= link_to "Dashboard", worker_dashboard_path, class: "text-gray-700 hover:text-indigo-600" %>
+            <%= link_to "Products", products_path, class: "text-gray-700 hover:text-indigo-600" %>
+          <% end %>
+
+        <% end %>
+
       </div>
-    <% end %>
 
-    <!-- FLASH -->
-    <div style="padding: 15px;">
+      <!-- RIGHT SIDE: USER INFO + LOGOUT -->
+      <div class="flex items-center space-x-4">
+
+        <% if user_signed_in? %>
+          <span class="text-sm text-gray-600">
+            👤 <%= current_user.email %>
+          </span>
+
+          <%= button_to "Logout", destroy_user_session_path,
+              method: :delete,
+              class: "bg-red-500 text-white px-4 py-2 rounded-lg" %>
+        <% end %>
+
+      </div>
+
+    </header>
+
+    <!-- FLASH MESSAGES -->
+    <div class="max-w-4xl mx-auto mt-4 px-4">
       <% if notice %>
-        <div style="background: #d4edda; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+        <div class="bg-green-100 text-green-700 p-3 rounded mb-2">
           <%= notice %>
         </div>
       <% end %>
 
       <% if alert %>
-        <div style="background: #f8d7da; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+        <div class="bg-red-100 text-red-700 p-3 rounded mb-2">
           <%= alert %>
         </div>
       <% end %>
     </div>
 
     <!-- MAIN CONTENT -->
-    <div style="padding: 20px;">
+    <main class="mt-6">
       <%= yield %>
-    </div>
+    </main>
 
   </body>
 </html>

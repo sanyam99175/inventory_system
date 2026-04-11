@@ -54,7 +54,12 @@ class ProductsController < ApplicationController
     end
 
     @product.update(stock_count: new_stock)
-
+    Request.create!(
+      user: current_user,
+      product: @product,
+      quantity_change: quantity,
+      status: :approved
+    )
     redirect_to @product, notice: "Stock updated successfully"
   end
 

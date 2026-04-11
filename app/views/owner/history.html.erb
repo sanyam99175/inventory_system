@@ -1,96 +1,220 @@
-<h1 style="margin-bottom: 20px;">📜 Stock History</h1>
+<div style="max-width: 1100px; margin: auto; padding: 20px;">
 
-<%= link_to "⬅ Back to Dashboard", owner_dashboard_path %>
+  <!-- HEADER -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    
+    <h1 style="color: #1e3a8a;">📜 Stock History</h1>
 
-<br><br>
+    <%= link_to "⬅ Dashboard", owner_dashboard_path,
+        style: "
+          background: #2563eb;
+          color: white;
+          padding: 8px 14px;
+          border-radius: 6px;
+          text-decoration: none;
+        " %>
 
-<!-- FILTER CARD -->
-<div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; width: 400px;">
+  </div>
 
-  <h3>Filter by Date</h3>
+<div style="
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #bfdbfe;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+">
 
   <%= form_with url: owner_history_path, method: :get, local: true do %>
 
-    <div style="margin-bottom: 10px;">
-      <label>Start Date</label><br>
-      <%= date_field_tag :start_date, params[:start_date], style: "padding: 5px;" %>
+    <!-- DATE FROM -->
+    <div style="display: inline-block; margin-right: 10px;">
+      <label style="font-size: 12px; color: #475569;">From</label><br>
+      <%= date_field_tag :start_date, params[:start_date],
+          style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px;" %>
     </div>
 
-    <div style="margin-bottom: 10px;">
-      <label>End Date</label><br>
-      <%= date_field_tag :end_date, params[:end_date], style: "padding: 5px;" %>
+    <!-- DATE TO -->
+    <div style="display: inline-block; margin-right: 10px;">
+      <label style="font-size: 12px; color: #475569;">To</label><br>
+      <%= date_field_tag :end_date, params[:end_date],
+          style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px;" %>
     </div>
 
-    <%= submit_tag "Filter", style: "background: #3498db; color: white; padding: 8px;" %>
+    <!-- USER DROPDOWN -->
+    <div style="display: inline-block; margin-right: 10px;">
+      <label style="font-size: 12px; color: #475569;">User</label><br>
+
+      <%= select_tag :user_id,
+          options_from_collection_for_select(@users, :id, :email, params[:user_id]),
+          include_blank: "All Users",
+          style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px; width: 200px;" %>
+    </div>
+
+    <!-- STATUS -->
+    <div style="display: inline-block; margin-right: 10px;">
+      <label style="font-size: 12px; color: #475569;">Status</label><br>
+
+      <%= select_tag :status,
+          options_for_select([
+            ["All", ""],
+            ["Pending", "pending"],
+            ["Approved", "approved"],
+            ["Rejected", "rejected"],
+            ["Cancelled", "cancelled"]
+          ], params[:status]),
+          style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px;" %>
+    </div>
+
+    <!-- APPLY -->
+    <div style="display: inline-block;">
+      <%= submit_tag "Apply",
+          style: "
+            background: #2563eb;
+            color: white;
+            padding: 9px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+          " %>
+    </div>
+
+    <!-- CLEAR -->
+    <div style="display: inline-block; margin-left: 10px;">
+      <%= link_to "Clear", owner_history_path,
+          style: "color: #2563eb; text-decoration: underline;" %>
+    </div>
 
   <% end %>
+
 </div>
+<div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
 
-<!-- HISTORY TABLE -->
-<div style="background: white; padding: 20px; border-radius: 10px;">
+  <%= button_to owner_history_send_email_path(
+        start_date: params[:start_date],
+        end_date: params[:end_date],
+        status: params[:status],
+        user_id: params[:user_id]
+      ),
+      method: :post,
+      style: "
+        background: #2563eb;
+        color: white;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+      " do %>
 
-  <table style="width: 100%; border-collapse: collapse;">
-    
-    <thead style="background: #2c3e50; color: white;">
-      <tr>
-        <th style="padding: 10px;">User</th>
-        <th>Action</th>
-        <th>Product</th>
-        <th>Godown</th>
-        <th>Change</th>
-        <th>Status</th>
-        <th>Time</th>
-      </tr>
-    </thead>
+    📩 Send PDF to Email
 
-    <tbody>
-      <% @requests.each do |req| %>
-        <tr style="border-bottom: 1px solid #ddd;">
+  <% end %>
 
-          <td style="padding: 10px;">
-            <%= req.user.email %>
-          </td>
+</div>
+  <%= link_to "⬇ Download PDF",
+    owner_history_pdf_path(start_date: params[:start_date], end_date: params[:end_date], status: params[:status],
+    user_id: params[:user_id],
+    format: :pdf),
+    class: "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700",
+    style: "margin-left: 10px;" %>
+  <!-- TABLE CARD -->
+  <div style="
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  ">
 
-          <td>
-            <% if req.user.role == "owner" %>
-              <span style="color: blue;">Direct Update</span>
-            <% else %>
-              <span style="color: orange;">Worker Request</span>
-            <% end %>
-          </td>
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
 
-          <td><%= req.product.name %></td>
-
-          <td><%= req.product.godown_number %></td>
-
-          <td style="color: <%= req.quantity_change < 0 ? 'red' : 'green' %>;">
-            <%= req.quantity_change %>
-          </td>
-
-          <td>
-            <span style="
-              padding: 5px 10px;
-              border-radius: 5px;
-              color: white;
-              background: 
-                <%= case req.status
-                    when 'approved' then '#28a745'
-                    when 'rejected' then '#dc3545'
-                    else '#ffc107'
-                   end %>;
-            ">
-              <%= req.status&.capitalize || "Pending" %>
-            </span>
-          </td>
-
-          <td>
-            <%= req.created_at.strftime("%d %b %Y %I:%M %p") %>
-          </td>
-
+      <!-- HEADER -->
+      <thead style="background: #eff6ff; color: #1e3a8a;">
+        <tr>
+          <th style="padding: 12px; text-align: left;">👤 User</th>
+          <th style="padding: 12px; text-align: left;">⚙ Type</th>
+          <th style="padding: 12px; text-align: left;">📦 Product</th>
+          <th style="padding: 12px; text-align: left;">🏬 Godown</th>
+          <th style="padding: 12px; text-align: left;">🔢 Change</th>
+          <th style="padding: 12px; text-align: left;">📌 Status</th>
+          <th style="padding: 12px; text-align: left;">⏰ Time</th>
         </tr>
-      <% end %>
-    </tbody>
+      </thead>
 
-  </table>
+      <!-- BODY -->
+      <tbody>
+        <% @requests.each do |req| %>
+
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+
+            <!-- USER -->
+            <td style="padding: 12px; color: #334155;">
+              <%= req.user.email %>
+            </td>
+
+            <!-- TYPE -->
+            <td style="padding: 12px;">
+              <% if req.user.role == "owner" %>
+                <span style="color: #2563eb;">Direct</span>
+              <% else %>
+                <span style="color: #f59e0b;">Worker</span>
+              <% end %>
+            </td>
+
+            <!-- PRODUCT -->
+            <td style="padding: 12px;">
+              <%= req.product.name %>
+            </td>
+
+            <!-- GODOWN -->
+            <td style="padding: 12px;">
+              <%= req.product.godown_number %>
+            </td>
+
+            <!-- CHANGE -->
+            <td style="
+              padding: 12px;
+              font-weight: bold;
+              color: <%= req.quantity_change < 0 ? '#dc2626' : '#16a34a' %>;
+            ">
+              <%= req.quantity_change %>
+            </td>
+
+            <!-- STATUS -->
+            <td style="padding: 12px;">
+              <span style="
+                padding: 5px 10px;
+                border-radius: 6px;
+                font-size: 12px;
+                color: white;
+                background:
+                  <%= case req.status
+                      when 'approved' then '#16a34a'
+                      when 'rejected' then '#dc2626'
+                      when 'cancelled' then '#808080'
+                      else '#f59e0b'
+                    end %>;
+              ">
+                <%= req.status&.capitalize || "Pending" %>
+              </span>
+            </td>
+
+            <!-- TIME -->
+            <td style="padding: 12px; color: #64748b;">
+              <%= req.created_at.strftime("%d %b %Y, %I:%M %p") %>
+            </td>
+
+          </tr>
+
+        <% end %>
+      </tbody>
+
+    </table>
+
+  </div>
 
 </div>

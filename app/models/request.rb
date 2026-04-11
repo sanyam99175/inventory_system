@@ -5,7 +5,8 @@ class Request < ApplicationRecord
   enum status: {
     pending: 0,
     approved: 1,
-    rejected: 2
+    rejected: 2,
+    cancelled: 3
   }
 
   has_one :notification, dependent: :destroy

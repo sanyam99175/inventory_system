@@ -3,50 +3,64 @@
   justify-content: center;
   align-items: center;
   height: 90vh;
-  background: #f5f7fa;
+  background: #eff6ff;
 ">
 
   <div style="
     background: white;
     padding: 30px;
     border-radius: 12px;
-    width: 350px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 360px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 1px solid #bfdbfe;
   ">
 
-    <h2 style="text-align: center; margin-bottom: 20px;">🔐 Login</h2>
+    <h2 style="
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1e3a8a;
+    ">
+      🔐 Login
+    </h2>
 
     <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
 
+      <!-- EMAIL -->
       <div style="margin-bottom: 15px;">
-        <%= f.label :email %><br>
-        <%= f.email_field :email, autofocus: true,
-              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+        <%= f.label :email, style: "color: #475569; font-weight: 500;" %><br>
+        <%= f.email_field :email,
+              autofocus: true,
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #93c5fd;" %>
       </div>
 
+      <!-- PASSWORD -->
       <div style="margin-bottom: 15px;">
-        <%= f.label :password %><br>
+        <%= f.label :password, style: "color: #475569; font-weight: 500;" %><br>
         <%= f.password_field :password,
-              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #93c5fd;" %>
       </div>
 
+      <!-- SUBMIT -->
       <div style="margin-bottom: 15px;">
         <%= f.submit "Login",
             style: "
               width: 100%;
-              padding: 10px;
-              background: #3498db;
+              padding: 11px;
+              background: #2563eb;
               color: white;
               border: none;
-              border-radius: 6px;
+              border-radius: 8px;
               font-weight: bold;
+              cursor: pointer;
             " %>
       </div>
 
     <% end %>
 
+    <!-- SIGNUP LINK -->
     <div style="text-align: center;">
-      <%= link_to "Don't have an account? Sign up", new_registration_path(resource_name) %>
+      <%= link_to "Don't have an account? Sign up", new_registration_path(resource_name),
+          style: "color: #1e3a8a; text-decoration: none;" %>
     </div>
 
   </div>

@@ -30,48 +30,142 @@
   </div>
 
   <!-- OWNER ACTION CARD -->
-  <% if current_user.owner? %>
-    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+<% if current_user.owner? %>
+  <div style="
+    background: #eff6ff;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #bfdbfe;
+  ">
 
-      <h3>⚡ Direct Stock Update</h3>
+    <h3 style="color: #1e3a8a; margin-bottom: 10px;">
+      ⚡ Direct Stock Update
+    </h3>
 
-      <%= form_with url: update_stock_product_path(@product), method: :patch, local: true do %>
+    <%= form_with url: update_stock_product_path(@product), method: :patch, local: true do %>
 
-        <div style="margin-bottom: 10px;">
-          <label>Quantity Change (+ / -)</label><br>
-          <%= number_field_tag :quantity_change, nil, style: "padding: 8px; width: 100%;" %>
-        </div>
+      <div style="margin-bottom: 12px;">
+        <label style="color: #475569; font-weight: 500;">
+          Quantity Change (+ / -)
+        </label><br>
 
-        <%= submit_tag "Apply Change",
-            style: "background: #2980b9; color: white; padding: 10px; border-radius: 6px; border: none;" %>
+        <%= number_field_tag :quantity_change, nil,
+            placeholder: "Enter quantity",
+            style: "
+              padding: 10px;
+              width: 100%;
+              border-radius: 6px;
+              border: 1px solid #93c5fd;
+              outline: none;
+            " %>
+      </div>
 
-      <% end %>
+      <%= submit_tag "Apply Change",
+          style: "
+            background: #2563eb;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 600;
+          " %>
 
-    </div>
-  <% end %>
+    <% end %>
+
+  </div>
+<% end %>
 
   <!-- WORKER REQUEST CARD -->
-  <% if current_user.worker? %>
-    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+<% existing_request = Request.find_by(
+  user: current_user,
+  product: @product,
+  status: :pending
+) %>
 
-      <h3>📨 Request Stock Change</h3>
+<% if current_user.worker? %>
+  <div style="
+    background: #eff6ff;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #bfdbfe;
+  ">
 
+    <h3 style="color: #1e3a8a; margin-bottom: 10px;">
+      📨 Request Stock Change
+    </h3>
+
+    <% if existing_request %>
+
+      <!-- PENDING STATE -->
+      <div style="background: #fff7ed; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+        <p style="margin: 0;">
+          Pending Request: <b><%= existing_request.quantity_change %></b>
+        </p>
+
+        <p style="font-size: 12px; color: gray;">
+          You cannot create another request until this is resolved
+        </p>
+      </div>
+
+      <%= button_to "Cancel Request",
+          cancel_request_path(existing_request),
+          method: :patch,
+          style: "
+            background: #ef4444;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+          " %>
+
+    <% else %>
+
+      <!-- NEW REQUEST FORM -->
       <%= form_with url: requests_path, local: true do %>
 
         <%= hidden_field_tag "request[product_id]", @product.id %>
 
-        <div style="margin-bottom: 10px;">
-          <label>Quantity Change (+ / -)</label><br>
-          <%= number_field_tag "request[quantity_change]", nil, style: "padding: 8px; width: 100%;" %>
+        <div style="margin-bottom: 12px;">
+          <label style="color: #475569; font-weight: 500;">
+            Quantity Change (+ / -)
+          </label><br>
+
+          <%= number_field_tag "request[quantity_change]", nil,
+              placeholder: "Enter quantity",
+              style: "
+                padding: 10px;
+                width: 100%;
+                border-radius: 6px;
+                border: 1px solid #93c5fd;
+                outline: none;
+              " %>
         </div>
 
         <%= submit_tag "Send Request",
-            style: "background: orange; color: white; padding: 10px; border-radius: 6px; border: none;" %>
+            style: "
+              background: #2563eb;
+              color: white;
+              padding: 10px;
+              border-radius: 6px;
+              border: none;
+              width: 100%;
+              cursor: pointer;
+            " %>
 
       <% end %>
 
-    </div>
-  <% end %>
+    <% end %>
+
+  </div>
+<% end %>
 
   <!-- NAVIGATION -->
   <div style="text-align: center; margin-top: 20px;">

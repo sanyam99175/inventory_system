@@ -1,86 +1,123 @@
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+<div style="max-width: 1100px; margin: 30px auto;">
 
-  <!-- LEFT: DASHBOARD BUTTON -->
-  <div>
+  <!-- TOP BAR -->
+  <div style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  ">
+
+    <!-- LEFT -->
+    <div>
+      <% if current_user.owner? %>
+        <%= link_to "🏠 Owner Dashboard", owner_dashboard_path,
+            style: "background: #1e3a8a; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none;" %>
+      <% else %>
+        <%= link_to "🏠 Worker Dashboard", worker_dashboard_path,
+            style: "background: #1e40af; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none;" %>
+      <% end %>
+    </div>
+
+    <!-- RIGHT -->
     <% if current_user.owner? %>
-      <%= link_to "🏠 Owner Dashboard", owner_dashboard_path,
-          style: "background: #2c3e50; color: white; padding: 10px 15px; border-radius: 6px; text-decoration: none;" %>
-    <% else %>
-      <%= link_to "🏠 Worker Dashboard", worker_dashboard_path,
-          style: "background: #16a085; color: white; padding: 10px 15px; border-radius: 6px; text-decoration: none;" %>
+      <%= link_to "➕ Add Product", new_product_path,
+          style: "background: #2563eb; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none;" %>
     <% end %>
+
   </div>
 
-  <!-- RIGHT: ADD PRODUCT (only owner) -->
-  <% if current_user.owner? %>
-    <%= link_to "➕ Add Product", new_product_path,
-        style: "background: #27ae60; color: white; padding: 10px 15px; border-radius: 6px; text-decoration: none;" %>
-  <% end %>
+  <!-- SEARCH BAR -->
+  <div style="
+    background: #eff6ff;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    border: 1px solid #bfdbfe;
+  ">
 
-</div>
+    <%= form_with url: products_path, method: :get, local: true do %>
 
-<div style="margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
 
-  <%= form_with url: products_path, method: :get, local: true do %>
+        <input type="text" name="search"
+          placeholder="🔍 Search products..."
+          value="<%= params[:search] %>"
+          style="
+            padding: 10px;
+            width: 260px;
+            border-radius: 6px;
+            border: 1px solid #93c5fd;
+          ">
 
-    <input type="text" name="search"
-      placeholder="🔍 Search products..."
-      value="<%= params[:search] %>"
-      style="padding: 10px; width: 250px; border-radius: 6px; border: 1px solid #ccc;">
+        <%= submit_tag "Search",
+            style: "padding: 10px 16px; background: #2563eb; color: white; border: none; border-radius: 6px;" %>
 
-    <%= submit_tag "Search",
-        style: "padding: 10px; background: #3498db; color: white; border: none; border-radius: 6px;" %>
+        <% if params[:search].present? %>
+          <%= link_to "Clear", products_path,
+              style: "margin-left: 5px; color: #1e3a8a;" %>
+        <% end %>
 
-    <% if params[:search].present? %>
-      <%= link_to "Clear", products_path,
-          style: "margin-left: 10px;" %>
+      </div>
+
     <% end %>
 
-  <% end %>
+  </div>
+
+  <!-- TABLE -->
+  <div style="
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  ">
+
+    <table style="width: 100%; border-collapse: collapse;">
+
+      <thead style="background: #1e3a8a; color: white;">
+        <tr>
+          <th style="padding: 14px; text-align: left;">Product</th>
+          <th style="padding: 14px; text-align: left;">Stock</th>
+          <th style="padding: 14px; text-align: left;">Type</th>
+          <th style="padding: 14px; text-align: left; width: 220px;">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @products.each do |product| %>
+          <tr style="border-bottom: 1px solid #eee;">
+
+            <td style="padding: 14px;">
+              <%= product.name %>
+            </td>
+
+            <td style="padding: 14px; font-weight: bold;
+              color: <%= product.stock_count <= product.alert_limit ? '#dc2626' : '#2563eb' %>;">
+              <%= product.stock_count %>
+            </td>
+
+            <td style="padding: 14px;">
+              <%= product.product_type.name %>
+            </td>
+
+            <td style="padding: 14px;">
+              <%= link_to "View", product_path(product), style: "color: #2563eb; margin-right: 6px;" %>
+
+              <% if current_user.owner? %>
+                <%= link_to "Edit", edit_product_path(product), style: "color: #1e40af; margin-right: 6px;" %>
+
+                <%= link_to "Delete", product_path(product),
+                      data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
+                      style: "color: #dc2626;" %>
+              <% end %>
+            </td>
+
+          </tr>
+        <% end %>
+      </tbody>
+
+    </table>
+
+  </div>
 
 </div>
-
-<table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden;">
-
-  <thead style="background: #34495e; color: white;">
-    <tr>
-      <th style="padding: 12px; text-align: left;">Product</th>
-      <th style="padding: 12px; text-align: left;">Stock</th>
-      <th style="padding: 12px; text-align: left;">Type</th>
-      <th style="padding: 12px; text-align: left; width: 200px;">Actions</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @products.each do |product| %>
-      <tr style="border-bottom: 1px solid #ddd;">
-
-        <td style="padding: 12px;">
-          <%= product.name %>
-        </td>
-
-        <td style="padding: 12px; font-weight: bold;
-          color: <%= product.stock_count <= product.alert_limit ? 'red' : 'green' %>;">
-          <%= product.stock_count %>
-        </td>
-
-        <td style="padding: 12px;">
-          <%= product.product_type.name %>
-        </td>
-
-        <td style="padding: 12px;">
-          <%= link_to "View", product_path(product) %>
-
-          <% if current_user.owner? %>
-            | <%= link_to "Edit", edit_product_path(product) %>
-            | <%= link_to "Delete", product_path(product),
-                  data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
-                  style: "color: red;" %>
-          <% end %>
-        </td>
-
-      </tr>
-    <% end %>
-  </tbody>
-
-</table>

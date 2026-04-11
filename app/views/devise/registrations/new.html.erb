@@ -3,63 +3,77 @@
   justify-content: center;
   align-items: center;
   height: 95vh;
-  background: #f5f7fa;
+  background: #eff6ff;
 ">
 
   <div style="
     background: white;
     padding: 30px;
     border-radius: 12px;
-    width: 350px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 360px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 1px solid #bfdbfe;
   ">
 
-    <h2 style="text-align: center; margin-bottom: 20px;">📝 Sign Up</h2>
+    <h2 style="
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1e3a8a;
+    ">
+      📝 Sign Up
+    </h2>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
+      <!-- EMAIL -->
       <div style="margin-bottom: 15px;">
-        <%= f.label :email %><br>
+        <%= f.label :email, style: "color: #475569; font-weight: 500;" %><br>
         <%= f.email_field :email,
-              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #93c5fd;" %>
       </div>
 
+      <!-- PASSWORD -->
       <div style="margin-bottom: 15px;">
-        <%= f.label :password %><br>
+        <%= f.label :password, style: "color: #475569; font-weight: 500;" %><br>
         <%= f.password_field :password,
-              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #93c5fd;" %>
       </div>
 
+      <!-- CONFIRM PASSWORD -->
       <div style="margin-bottom: 15px;">
-        <%= f.label :password_confirmation %><br>
+        <%= f.label :password_confirmation, style: "color: #475569; font-weight: 500;" %><br>
         <%= f.password_field :password_confirmation,
-              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;" %>
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #93c5fd;" %>
       </div>
 
-      <!-- ROLE SELECT -->
+      <!-- ROLE -->
       <div style="margin-bottom: 15px;">
-        <%= f.label :role %><br>
+        <%= f.label :role, style: "color: #475569; font-weight: 500;" %><br>
         <%= f.select :role, [["Owner", "owner"], ["Worker", "worker"]],
-              {}, style: "width: 100%; padding: 10px; border-radius: 6px;" %>
+              {}, style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #93c5fd;" %>
       </div>
 
+      <!-- SUBMIT -->
       <div style="margin-bottom: 15px;">
         <%= f.submit "Sign Up",
             style: "
               width: 100%;
-              padding: 10px;
-              background: #27ae60;
+              padding: 11px;
+              background: #2563eb;
               color: white;
               border: none;
-              border-radius: 6px;
+              border-radius: 8px;
               font-weight: bold;
+              cursor: pointer;
             " %>
       </div>
 
     <% end %>
 
+    <!-- LOGIN LINK -->
     <div style="text-align: center;">
-      <%= link_to "Already have an account? Login", new_session_path(resource_name) %>
+      <%= link_to "Already have an account? Login", new_session_path(resource_name),
+          style: "color: #1e3a8a; text-decoration: none;" %>
     </div>
 
   </div>

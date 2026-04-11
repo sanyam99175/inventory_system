@@ -1,86 +1,87 @@
-<div style="max-width: 1100px; margin: auto;">
+<div class="min-h-screen bg-blue-50 p-6">
 
   <!-- HEADER -->
-  <div style="margin-bottom: 20px;">
-    <h1>👑 Owner Dashboard</h1>
-    <p style="color: gray;">Manage inventory, approvals, and alerts</p>
+  <div class="bg-blue-700 text-white p-6 rounded-2xl shadow-md mb-6">
+    <h1 class="text-2xl font-bold">Owner Dashboard</h1>
+    <p class="text-blue-100">Manage stock & approvals</p>
   </div>
 
-  <!-- STATS CARDS -->
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px;">
+  <!-- STATS -->
+  <div class="grid md:grid-cols-3 gap-6 mb-6">
 
-    <div style="background: #3498db; color: white; padding: 20px; border-radius: 12px;">
-      <h3>Total Products</h3>
-      <h2><%= @products.count %></h2>
+    <div class="bg-white p-5 rounded-2xl shadow border-t-4 border-blue-600">
+      <p class="text-gray-500 text-sm">📦 Products</p>
+      <h2 class="text-2xl font-bold text-blue-800 mt-1">
+        <%= @products.count %>
+      </h2>
     </div>
 
-    <div style="background: #e67e22; color: white; padding: 20px; border-radius: 12px;">
-      <h3>Pending Requests</h3>
-      <h2><%= @requests.count %></h2>
+    <div class="bg-white p-5 rounded-2xl shadow border-t-4 border-blue-500">
+      <p class="text-gray-500 text-sm">📝 Requests</p>
+      <h2 class="text-2xl font-bold text-blue-700 mt-1">
+        <%= @requests.count %>
+      </h2>
     </div>
 
-    <div style="background: #e74c3c; color: white; padding: 20px; border-radius: 12px;">
-      <h3>Low Stock Items</h3>
-      <h2><%= @low_stock_products.count %></h2>
+    <div class="bg-white p-5 rounded-2xl shadow border-t-4 border-red-500">
+      <p class="text-gray-500 text-sm">⚠ Low Stock</p>
+      <h2 class="text-2xl font-bold text-red-500 mt-1">
+        <%= @low_stock_products.count %>
+      </h2>
     </div>
-
-  </div>
-
-  <!-- QUICK ACTIONS -->
-  <div style="margin-bottom: 20px;">
-
-    <%= link_to "➕ Add Product", new_product_path,
-        style: "background: #27ae60; color: white; padding: 10px 15px; border-radius: 6px; text-decoration: none; margin-right: 10px;" %>
-
-    <%= link_to "📦 View Products", products_path,
-        style: "background: #2980b9; color: white; padding: 10px 15px; border-radius: 6px; text-decoration: none; margin-right: 10px;" %>
-
-    <%= link_to "🚨 Alerts", owner_alerts_path,
-        style: "background: #c0392b; color: white; padding: 10px 15px; border-radius: 6px; text-decoration: none; margin-right: 10px;" %>
-
-    <%= link_to "📜 History", owner_history_path,
-        style: "background: #8e44ad; color: white; padding: 10px 15px; border-radius: 6px; text-decoration: none;" %>
 
   </div>
 
   <!-- PENDING REQUESTS -->
-  <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+  <div class="bg-white rounded-2xl shadow-md p-6 border border-blue-100">
 
-    <h3>⏳ Pending Requests</h3>
+    <h2 class="text-xl font-bold text-blue-800 mb-4 border-b pb-2">
+      Pending Requests
+    </h2>
 
     <% if @requests.any? %>
 
-      <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+      <table class="w-full text-sm">
 
-        <thead style="background: #2c3e50; color: white;">
+        <thead class="bg-blue-100 text-blue-800">
           <tr>
-            <th style="padding: 10px;">Worker</th>
-            <th>Product</th>
-            <th>Change</th>
-            <th>Action</th>
+            <th class="p-3 text-left">📦 Product</th>
+            <th class="p-3 text-left">🔢 Qty</th>
+            <th class="p-3 text-left">👷 Worker</th>
+            <th class="p-3 text-left">⚙ Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          <% @requests.pending.each do |req| %>
-            <tr style="border-bottom: 1px solid #ddd;">
+          <% @requests.where(status: :pending).each do |req| %>
+            <tr class="border-b last:border-none hover:bg-blue-50 transition">
 
-              <td style="padding: 10px;"><%= req.user.email %></td>
+              <td class="p-3 font-medium">
+                <%= req.product.name %>
+              </td>
 
-              <td><%= req.product.name %></td>
-
-              <td style="color: <%= req.quantity_change < 0 ? 'red' : 'green' %>;">
+              <td class="p-3 font-semibold text-blue-700">
                 <%= req.quantity_change %>
               </td>
 
-              <td>
-                <%= button_to "Approve", approve_request_path(req),
-                      method: :patch,
-                      style: "background: green; color: white; border: none; padding: 5px 10px; border-radius: 5px;" %>
+              <td class="p-3 text-gray-600">
+                <%= req.user.email %>
+              </td>
 
-                <%= button_to "Reject", reject_request_path(req),
-                      method: :patch,
-                      style: "background: red; color: white; border: none; padding: 5px 10px; border-radius: 5px;" %>
+              <td class="p-3 flex gap-2">
+
+                <%= button_to approve_request_path(req),
+                    method: :patch,
+                    class: "bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700" do %>
+                  ✔ Approve
+                <% end %>
+
+                <%= button_to reject_request_path(req),
+                    method: :patch,
+                    class: "bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-300" do %>
+                  ✖ Reject
+                <% end %>
+
               </td>
 
             </tr>
@@ -91,34 +92,13 @@
 
     <% else %>
 
-      <p style="color: gray;">No pending requests 🎉</p>
+      <p class="text-gray-500 text-center py-6">
+        ✅ No pending requests
+      </p>
 
     <% end %>
-
-  </div>
-
-  <!-- LOW STOCK PREVIEW -->
-  <div style="background: white; padding: 20px; border-radius: 12px;">
-
-    <h3>🚨 Low Stock Preview</h3>
-
-    <% if @low_stock_products.any? %>
-
-      <ul>
-        <% @low_stock_products.each do |product| %>
-          <li>
-            <%= link_to product.name, product_path(product) %>
-            → <span style="color: red;"><%= product.stock_count %></span>
-          </li>
-        <% end %>
-      </ul>
-
-    <% else %>
-
-      <p style="color: gray;">All stock levels are good 👍</p>
-
-    <% end %>
-
+       <%= link_to "View More →", owner_pending_requests_path,
+      class: "text-sm text-blue-600 hover:underline" %>                 
   </div>
 
 </div>

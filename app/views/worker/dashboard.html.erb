@@ -1,27 +1,52 @@
-<div style="max-width: 1000px; margin: auto;">
+<div style="max-width: 1000px; margin: auto; padding: 20px;">
 
   <!-- HEADER -->
-  <div style="margin-bottom: 20px;">
-    <h1>👷 Worker Dashboard</h1>
-    <p style="color: gray;">Search products and request stock changes</p>
+  <div style="
+    background: #1e3a8a;
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  ">
+    <h2>👷 Worker Dashboard</h2>
+    <p style="color: #bfdbfe;">Search & request items</p>
   </div>
 
-  <!-- SEARCH BAR -->
-  <div style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+  <!-- SEARCH -->
+  <div style="
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #bfdbfe;
+  ">
 
     <%= form_with url: worker_dashboard_path, method: :get, local: true do %>
-      <input type="text" name="search" placeholder="🔍 Search product..."
+
+      <input type="text" name="search"
+        placeholder="🔍 Search product..."
         value="<%= params[:search] %>"
-        style="width: 80%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+        style="width: 75%; padding: 10px; border: 1px solid #93c5fd; border-radius: 6px;">
 
       <%= submit_tag "Search",
-          style: "padding: 10px; background: #3498db; color: white; border: none; border-radius: 6px;" %>
+          style: "
+            padding: 10px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+          " %>
+
     <% end %>
 
   </div>
 
-  <!-- PRODUCT CARDS GRID -->
-  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+  <!-- PRODUCT GRID -->
+  <div style="
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  ">
 
     <% @products.each do |product| %>
 
@@ -29,32 +54,35 @@
         background: white;
         padding: 15px;
         border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        border: 1px solid #bfdbfe;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
       ">
 
-        <h3><%= product.name %></h3>
+        <h3 style="margin-bottom: 10px;"><%= product.name %></h3>
 
         <p>
           Stock:
           <span style="
             font-weight: bold;
-            color: <%= product.stock_count <= product.alert_limit ? 'red' : 'green' %>;
+            color: <%= product.stock_count <= product.alert_limit ? '#dc2626' : '#16a34a' %>;
           ">
             <%= product.stock_count %>
           </span>
         </p>
 
-        <p>📦 Type: <%= product.product_type.name %></p>
-        <p>🏬 Godown: <%= product.godown_number %></p>
+        <p style="color: #64748b; font-size: 14px;">
+          <%= product.product_type.name %>
+        </p>
 
-        <%= link_to "View & Request",
+        <%= link_to "Open",
             product_path(product),
             style: "
-              display: inline-block;
+              display: block;
               margin-top: 10px;
-              background: orange;
+              text-align: center;
+              background: #2563eb;
               color: white;
-              padding: 8px 12px;
+              padding: 8px;
               border-radius: 6px;
               text-decoration: none;
             " %>
