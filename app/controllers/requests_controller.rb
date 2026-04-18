@@ -36,6 +36,13 @@ class RequestsController < ApplicationController
     ActiveRecord::Base.transaction do
       product.update!(stock_count: product.stock_count + request.quantity_change)
       request.update!(status: :approved)
+      AuditLog.create(
+        record_type: 'Request',
+        record_id: request.id,
+        action: 'approve_request',
+        details: product.name,
+        user_id: current_user.id
+      )
     end
 
     redirect_to owner_dashboard_path, notice: "Request approved"
@@ -43,17 +50,33 @@ class RequestsController < ApplicationController
 
   def reject
     request = Request.find(params[:id])
+    product = request.product
 
     request.update!(status: :rejected)
+    AuditLog.create(
+      record_type: 'Request',
+      record_id: request.id,
+      action: 'reject_request',
+      details: product.name,
+      user_id: current_user.id
+    )
 
     redirect_to owner_dashboard_path, notice: "Request rejected"
   end
 
   def cancel
     request = Request.find(params[:id])
+    product = request.product
 
     if request.pending?
       request.update(status: :cancelled)
+      AuditLog.create(
+        record_type: 'Request',
+        record_id: request.id,
+        action: 'cancel_request',
+        details: product.name,
+        user_id: current_user.id
+      )
     end
 
     redirect_back fallback_location: root_path

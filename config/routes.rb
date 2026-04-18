@@ -5,7 +5,12 @@ Rails.application.routes.draw do
   get 'products/edit'
   devise_for :users
 
-  resources :users, only: [:index, :destroy]
+  resources :users, only: [:index, :new, :create, :destroy] do
+    member do
+      get :permissions
+      patch :permissions, action: :update_permissions
+    end
+  end
 
   get 'home/index'
 
@@ -38,5 +43,12 @@ Rails.application.routes.draw do
       patch :cancel
     end
   end
+
+  get "recycle_bin", to: "recycle_bin#index", as: :recycle_bin
+  patch "recycle_bin/products/:id/restore", to: "recycle_bin#restore_product", as: :restore_product
+  patch "recycle_bin/users/:id/restore", to: "recycle_bin#restore_user", as: :restore_user
+
+  get "audits", to: "audits#index", as: :audits
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

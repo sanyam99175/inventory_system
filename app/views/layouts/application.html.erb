@@ -26,41 +26,99 @@
 
         <% if user_signed_in? %>
 
+          <div class="relative">
+            <details class="relative">
+              
+              <!-- DROPDOWN BUTTON -->
+              <summary class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer rounded-lg px-3 py-2 hover:bg-gray-100">
+                🌐 <span><%= I18n.locale == :hi ? "हिंदी" : "English" %></span>
+                <span class="text-gray-500">▾</span>
+              </summary>
+
+              <!-- DROPDOWN MENU -->
+              <div class="absolute left-0 mt-2 w-32 rounded-lg border border-gray-200 bg-white shadow-lg z-50">
+
+                <%= link_to url_for(locale: :en),
+                    class: "block px-4 py-2 text-sm hover:bg-gray-100 #{I18n.locale == :en ? 'bg-gray-100 font-semibold' : ''}" do %>
+                  🇬🇧 English
+                <% end %>
+
+                <%= link_to url_for(locale: :hi),
+                    class: "block px-4 py-2 text-sm hover:bg-gray-100 #{I18n.locale == :hi ? 'bg-gray-100 font-semibold' : ''}" do %>
+                  🇮🇳 हिंदी
+                <% end %>
+
+              </div>
+
+            </details>
+          </div>
           <% if current_user.owner? %>
-            <%= link_to "Dashboard", owner_dashboard_path, class: "text-gray-700 hover:text-indigo-600" %>
-            <%= link_to "Products", products_path, class: "text-gray-700 hover:text-indigo-600" %>
-            <%= link_to owner_pending_requests_path, class: "relative text-gray-700 hover:text-indigo-600" do %>
-              Requests
-
-              <% if @pending_requests_count.to_i > 0 %>
-                <span class="absolute -top-2 -right-3 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  <%= @pending_requests_count %>
-                </span>
-              <% end %>
-            <% end %>
-            <%= link_to "History", owner_history_path, class: "text-gray-700 hover:text-indigo-600" %>
-            <%= link_to owner_alerts_path, class: "relative text-gray-700 hover:text-indigo-600" do %>
-              Alerts
-
-              <% if @low_stock_count.to_i > 0 %>
-                <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  <%= @low_stock_count %>
-                </span>
-              <% end %>
-            <% end %>
-            <%= link_to "Trends", owner_trends_path, class: "text-gray-700 hover:text-indigo-600" %>
-
+            <%= link_to t("dashboard"), owner_dashboard_path, class: "text-gray-700 hover:text-indigo-600" %>
           <% else %>
-            <%= link_to "Dashboard", worker_dashboard_path, class: "text-gray-700 hover:text-indigo-600" %>
-            <%= link_to "Products", products_path, class: "text-gray-700 hover:text-indigo-600" %>
+            <%= link_to t("dashboard"), worker_dashboard_path, class: "text-gray-700 hover:text-indigo-600" %>
           <% end %>
+          <% if current_user.permission_enabled?("products") %>
+            <%= link_to t("products"), products_path, class: "text-gray-700 hover:text-indigo-600" %>
+          <% end %>
+          <% if current_user.permission_enabled?("requests") %>
+              <%= link_to owner_pending_requests_path, class: "relative text-gray-700 hover:text-indigo-600" do %>
+                Requests
 
+                <% if @pending_requests_count.to_i > 0 %>
+                  <span class="absolute -top-2 -right-3 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    <%= @pending_requests_count %>
+                  </span>
+                <% end %>
+              <% end %>
+            <% end %>
+            <% if current_user.permission_enabled?("history") %>
+              <%= link_to t("history"), owner_history_path, class: "text-gray-700 hover:text-indigo-600" %>
+            <% end %>
+            <% if current_user.permission_enabled?("alerts") %>
+              <%= link_to owner_alerts_path, class: "relative text-gray-700 hover:text-indigo-600" do %>
+                <%= t("alerts") %>
+
+                <% if @low_stock_count.to_i > 0 %>
+                  <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    <%= @low_stock_count %>
+                  </span>
+                <% end %>
+              <% end %>
+            <% end %>
+            <% if current_user.permission_enabled?("trends") %>
+              <%= link_to t("trends"), owner_trends_path, class: "text-gray-700 hover:text-indigo-600" %>
+            <% end %>
         <% end %>
 
       </div>
 
-      <!-- RIGHT SIDE: USER INFO + LOGOUT -->
+      <!-- RIGHT SIDE: ADMIN + USER INFO -->
       <div class="flex items-center space-x-4">
+
+        <% if user_signed_in?  %>
+          <div class="relative">
+            <details class="relative">
+              <summary class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer rounded-lg px-3 py-2 hover:bg-gray-100">
+                Administration <span class="text-base text-gray-500">▾</span>
+              </summary>
+
+              <div class="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
+                <% if current_user.permission_enabled?("users") %>
+                  <%= link_to "Users", users_path,
+                      class: "block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" %>
+                <% end %>
+                <% if current_user.permission_enabled?("recycle_bin") %>
+                  <%= link_to "Recycle Bin", recycle_bin_path,
+                      class: "block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" %>
+                <% end %>
+                <% if current_user.permission_enabled?("audits") %>
+                  <%= link_to "Audits", audits_path,
+                      class: "block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" %>
+                <% end %>
+              </div>
+            </details>
+          </div>
+        <% end %>
 
         <% if user_signed_in? %>
           <div class="relative">
@@ -73,17 +131,13 @@
               <div class="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
                 <%= link_to "Edit profile", edit_user_registration_path,
                     class: "block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" %>
-                <% if current_user.owner? %>
-                  <%= link_to "All Users", users_path,
-                      class: "block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" %>
-                <% end %>
+                <%= link_to "Logout", destroy_user_session_path,
+                    method: :delete,
+                    data: { turbo_method: :delete },
+                    class: "block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" %>
               </div>
             </details>
           </div>
-
-          <%= button_to "Logout", destroy_user_session_path,
-              method: :delete,
-              class: "bg-red-500 text-white px-4 py-2 rounded-lg" %>
         <% end %>
 
       </div>

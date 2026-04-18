@@ -169,12 +169,20 @@
 
             <!-- PRODUCT -->
             <td style="padding: 12px;">
-              <%= req.product.name %>
+              <% if req.product %>
+                <%= req.product.name %>
+              <% else %>
+                <span style="color: #999;"><%= req.product_name || 'Deleted Product' %></span>
+              <% end %>
             </td>
 
             <!-- GODOWN -->
             <td style="padding: 12px;">
-              <%= req.product.godown_number %>
+              <% if req.product %>
+                <%= req.product.godown_number %>
+              <% else %>
+                <span style="color: #999;"><%= req.godown_number || 'N/A' %></span>
+              <% end %>
             </td>
 
             <!-- CHANGE -->

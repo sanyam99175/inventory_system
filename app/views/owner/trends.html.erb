@@ -71,4 +71,45 @@ document.addEventListener("turbo:load", function () {
   });
 
 });
+</script><!-- MONTHLY CHART -->
+<script>
+let monthlyChartInstance = null;
+
+document.addEventListener("turbo:load", function () {
+
+  const monthlyLabels = <%= raw @monthly_trends.keys.map { |d|
+    (d.is_a?(String) ? Date.parse(d) : d).strftime("%b %Y")
+  }.to_json %>;
+
+  const monthlyData = <%= raw @monthly_trends.values.to_json %>;
+
+  const canvas = document.getElementById("monthlyChart");
+  if (!canvas) return;
+
+  if (monthlyChartInstance) {
+    monthlyChartInstance.destroy();
+  }
+
+  monthlyChartInstance = new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels: monthlyLabels,
+      datasets: [{
+        label: "Items Taken Out",
+        data: monthlyData,
+        backgroundColor: "rgba(59, 130, 246, 0.5)",
+        borderColor: "rgba(59, 130, 246, 1)",
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+});
 </script>

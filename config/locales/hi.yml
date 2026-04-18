@@ -1,0 +1,11 @@
+hi:
+  hello: "नमस्ते"
+  dashboard: "डैशबोर्ड"
+  products: "उत्पाद"
+  requests: "अनुरोध"
+  alerts: "अलर्ट"
+  logout: "लॉगआउट"
+  login: "लॉगिन"
+  sign_up: "साइन अप"
+  stock: "स्टॉक"
+  quantity: "मात्रा"

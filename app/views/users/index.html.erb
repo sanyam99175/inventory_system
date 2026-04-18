@@ -10,10 +10,19 @@
         <% end %>
       </p>
     </div>
+    <div class="flex items-center gap-3">
+  
+    <%= link_to new_user_path,
+        class: "rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700" do %>
+        ➕ Add User
+    <% end %>
+
     <%= link_to (current_user.owner? ? owner_dashboard_path : worker_dashboard_path),
         class: "rounded-lg border border-indigo-200 bg-white px-4 py-2 text-indigo-700 hover:bg-indigo-50" do %>
-      Back to Dashboard
+        Back to Dashboard
     <% end %>
+
+    </div>
   </div>
 
   <!-- SEARCH FORM -->
@@ -56,10 +65,14 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"><%= user.role.capitalize %></td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.created_at.strftime("%d %b %Y") %></td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
+                <div class="flex gap-2">
+                <%= link_to "Permissions", permissions_user_path(user),
+                    class: "bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700" %>
                 <%= button_to "Delete", user_path(user),
                     method: :delete,
                     data: { turbo_confirm: "Are you sure? This action cannot be undone." },
                     class: "bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700" %>
+              </div>
               </td>
             </tr>
           <% end %>

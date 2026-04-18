@@ -22,6 +22,7 @@ gem "importmap-rails"
 
 gem 'devise'
 gem 'pundit'
+gem 'acts_as_paranoid'
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"

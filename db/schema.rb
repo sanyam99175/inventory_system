@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_18_082151) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_18_122000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.string "record_type"
+    t.integer "record_id"
+    t.string "action"
+    t.text "details"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "histories", force: :cascade do |t|
     t.bigint "user_id"
@@ -50,6 +60,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_082151) do
     t.bigint "product_type_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_products_on_deleted_at"
     t.index ["product_type_id"], name: "index_products_on_product_type_id"
   end
 
@@ -61,6 +73,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_082151) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "user_name"
+    t.string "product_name"
+    t.string "godown_number"
     t.index ["product_id"], name: "index_requests_on_product_id"
     t.index ["user_id"], name: "index_requests_on_user_id"
   end
@@ -86,6 +100,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_082151) do
     t.integer "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.jsonb "permissions", default: {}, null: false
+    t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

@@ -1,0 +1,33 @@
+<div class="max-w-4xl mx-auto p-6">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-indigo-700">Manage Permissions</h1>
+      <p class="text-sm text-gray-600">Toggle access to application modules for <strong><%= @user.email %></strong>.</p>
+    </div>
+    <%= link_to users_path, class: "rounded-lg border border-indigo-200 bg-white px-4 py-2 text-indigo-700 hover:bg-indigo-50" do %>
+      Back to Users
+    <% end %>
+  </div>
+
+  <div class="bg-white shadow rounded-lg p-6 border border-gray-200">
+    <%= form_with model: @user, url: permissions_user_path(@user), method: :patch, local: true do |f| %>
+      <div class="grid gap-4 md:grid-cols-2">
+        <% @permission_modules.each do |key, label| %>
+          <div class="flex items-center gap-3 rounded-lg border border-gray-200 p-4">
+            <div>
+              <%= check_box_tag "permissions[#{key}]", true, @user.permission_enabled?(key), id: "permission_#{key}", class: "h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+            </div>
+            <div>
+              <%= label_tag "permission_#{key}", label, class: "font-medium text-gray-800" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <%= link_to "Cancel", users_path, class: "px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50" %>
+        <%= f.submit "Save Permissions", class: "px-5 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700" %>
+      </div>
+    <% end %>
+  </div>
+</div>
