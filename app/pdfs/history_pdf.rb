@@ -32,8 +32,11 @@ class HistoryPdf < Prawn::Document
   def summary
     total = @requests.count
     outgoing = @requests
-    .select { |r| r.status == "approved" && r.quantity_change.to_i < 0 }
-    .sum { |r| r.quantity_change.to_i.abs }
+      .select { |r| r.status == "approved" && r.quantity_change.to_i < 0 }
+      .sum { |r| r.quantity_change.to_i.abs }
+    incoming = @requests
+      .select { |r| r.status == "approved" && r.quantity_change.to_i > 0 }
+      .sum { |r| r.quantity_change.to_i }
     approved = @requests.count { |r| r.status == "approved" }
     rejected = @requests.count { |r| r.status == "rejected" }
 
@@ -41,6 +44,7 @@ class HistoryPdf < Prawn::Document
     move_down 5
 
     text "Total Transactions: #{total}"
+    text "Total Items In: #{incoming}"
     text "Total Items Out: #{outgoing}"
     text "Approved: #{approved} | Rejected: #{rejected}"
   end

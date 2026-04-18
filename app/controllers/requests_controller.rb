@@ -29,20 +29,22 @@ class RequestsController < ApplicationController
     product = request.product
 
     if product.stock_count + request.quantity_change < 0
-        redirect_to owner_dashboard_path, alert: "Stock cannot go below zero"
-        return
+      redirect_to owner_dashboard_path, alert: "Stock cannot go below zero"
+      return
     end
 
-    product.update(stock_count: product.stock_count + request.quantity_change)
-    request.approved!
-    
+    ActiveRecord::Base.transaction do
+      product.update!(stock_count: product.stock_count + request.quantity_change)
+      request.update!(status: :approved)
+    end
+
     redirect_to owner_dashboard_path, notice: "Request approved"
   end
 
   def reject
     request = Request.find(params[:id])
 
-    request.rejected!
+    request.update!(status: :rejected)
 
     redirect_to owner_dashboard_path, notice: "Request rejected"
   end

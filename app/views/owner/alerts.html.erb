@@ -2,11 +2,9 @@
 
   <!-- HEADER -->
   <div style="margin-bottom: 20px;">
-    <h1>🚨 Stock Alerts</h1>
+    <h1 class="text-2xl font-bold text-blue-800">🚨 Stock Alerts</h1>
     <p style="color: gray;">Items that need immediate attention</p>
   </div>
-
-  <%= link_to "⬅ Back to Dashboard", owner_dashboard_path %>
 
   <br><br>
 
@@ -57,8 +55,8 @@
             </p>
 
             <p>
-              📦 Type: <%= product.product_type.name %> |
-              🏬 Godown: <%= product.godown_number %>
+              Type: <%= product.product_type.name %> |
+              Godown: <%= product.godown_number %>
             </p>
 
           </div>

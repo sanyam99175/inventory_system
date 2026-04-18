@@ -6,7 +6,8 @@ class User < ApplicationRecord
 
   enum role: { worker: 0, owner: 1 }
 
-  has_many :requests
-  has_many :notifications
-  has_many :histories
+  has_many :requests, dependent: :nullify
+  has_many :notifications, dependent: :destroy
+  has_many :histories, dependent: :nullify
+  has_many :stock_requests, dependent: :nullify
 end

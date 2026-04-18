@@ -3,7 +3,7 @@
   <!-- HEADER -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     
-    <h1 style="color: #1e3a8a;">📜 Stock History</h1>
+    <h1 class="text-2xl font-bold text-blue-800">📜 Stock History</h1>
 
     <%= link_to "⬅ Dashboard", owner_dashboard_path,
         style: "
@@ -110,7 +110,7 @@
         font-weight: 500;
       " do %>
 
-    📩 Send PDF to Email
+    Send PDF to Email
 
   <% end %>
 
@@ -135,13 +135,13 @@
       <!-- HEADER -->
       <thead style="background: #eff6ff; color: #1e3a8a;">
         <tr>
-          <th style="padding: 12px; text-align: left;">👤 User</th>
-          <th style="padding: 12px; text-align: left;">⚙ Type</th>
-          <th style="padding: 12px; text-align: left;">📦 Product</th>
-          <th style="padding: 12px; text-align: left;">🏬 Godown</th>
-          <th style="padding: 12px; text-align: left;">🔢 Change</th>
-          <th style="padding: 12px; text-align: left;">📌 Status</th>
-          <th style="padding: 12px; text-align: left;">⏰ Time</th>
+          <th style="padding: 12px; text-align: left;">User</th>
+          <th style="padding: 12px; text-align: left;">Type</th>
+          <th style="padding: 12px; text-align: left;">Product</th>
+          <th style="padding: 12px; text-align: left;">Godown</th>
+          <th style="padding: 12px; text-align: left;">Change</th>
+          <th style="padding: 12px; text-align: left;">Status</th>
+          <th style="padding: 12px; text-align: left;">Time</th>
         </tr>
       </thead>
 
@@ -153,15 +153,17 @@
 
             <!-- USER -->
             <td style="padding: 12px; color: #334155;">
-              <%= req.user.email %>
+              <%= req.user_name || req.user&.name || "Unknown User" %>
             </td>
 
             <!-- TYPE -->
             <td style="padding: 12px;">
-              <% if req.user.role == "owner" %>
-                <span style="color: #2563eb;">Direct</span>
+              <% if req.user.nil? %>
+                <span>Unknown</span>
+              <% elsif req.user.role == "owner" %>
+                <span>Direct</span>
               <% else %>
-                <span style="color: #f59e0b;">Worker</span>
+                <span>Worker</span>
               <% end %>
             </td>
 

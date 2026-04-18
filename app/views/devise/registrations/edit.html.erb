@@ -28,6 +28,14 @@
 
       <%= render "devise/shared/error_messages", resource: resource %>
 
+      <!-- FULL NAME -->
+      <div style="margin-bottom: 15px;">
+        <%= f.label :name, "Full name", style: "color: #475569; font-weight: 500;" %><br>
+        <%= f.text_field :name,
+              autocomplete: "name",
+              style: "width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #93c5fd;" %>
+      </div>
+
       <!-- EMAIL -->
       <div style="margin-bottom: 15px;">
         <%= f.label :email, style: "color: #475569; font-weight: 500;" %><br>

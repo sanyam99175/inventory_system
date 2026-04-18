@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   get 'products/edit'
   devise_for :users
 
+  resources :users, only: [:index, :destroy]
+
   get 'home/index'
 
   root "home#index"

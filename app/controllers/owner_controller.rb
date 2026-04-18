@@ -4,6 +4,7 @@ class OwnerController < ApplicationController
 def dashboard
   @products = Product.all
   @requests = Request.pending.order(created_at: :desc).limit(3)
+  @pending_requests_count = Request.pending.count
   @low_stock_products = Product.where("stock_count <= alert_limit")
 end
 
@@ -39,11 +40,14 @@ end
   def filtered_requests
     requests = Request.includes(:user, :product).order(created_at: :desc)
 
-    if params[:start_date].present? && params[:end_date].present?
-      start_date = Date.parse(params[:start_date]).beginning_of_day
-      end_date   = Date.parse(params[:end_date]).end_of_day
+    if params[:start_date].present?
+      start_date = Time.zone.parse(params[:start_date]).beginning_of_day
+      requests = requests.where("created_at >= ?", start_date)
+    end
 
-      requests = requests.where(created_at: start_date..end_date)
+    if params[:end_date].present?
+      end_date = Time.zone.parse(params[:end_date]).end_of_day
+      requests = requests.where("created_at <= ?", end_date)
     end
 
     requests = requests.where(status: params[:status]) if params[:status].present?
@@ -57,11 +61,14 @@ end
 
     requests = Request.includes(:user, :product).order(created_at: :desc)
 
-    if filters["start_date"].present? && filters["end_date"].present?
-      start_date = Date.parse(filters["start_date"]).beginning_of_day
-      end_date   = Date.parse(filters["end_date"]).end_of_day
+    if filters["start_date"].present?
+      start_date = Time.zone.parse(filters["start_date"]).beginning_of_day
+      requests = requests.where("created_at >= ?", start_date)
+    end
 
-      requests = requests.where(created_at: start_date..end_date)
+    if filters["end_date"].present?
+      end_date = Time.zone.parse(filters["end_date"]).end_of_day
+      requests = requests.where("created_at <= ?", end_date)
     end
 
     requests = requests.where(status: filters["status"]) if filters["status"].present?

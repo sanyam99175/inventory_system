@@ -63,9 +63,23 @@
       <div class="flex items-center space-x-4">
 
         <% if user_signed_in? %>
-          <span class="text-sm text-gray-600">
-            👤 <%= current_user.email %>
-          </span>
+          <div class="relative">
+            <details class="relative">
+              <summary class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer rounded-lg px-3 py-2 hover:bg-gray-100">
+                👤 <span><%= current_user.name.presence || current_user.email %></span>
+                <span class="text-base text-gray-500">▾</span>
+              </summary>
+
+              <div class="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
+                <%= link_to "Edit profile", edit_user_registration_path,
+                    class: "block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" %>
+                <% if current_user.owner? %>
+                  <%= link_to "All Users", users_path,
+                      class: "block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" %>
+                <% end %>
+              </div>
+            </details>
+          </div>
 
           <%= button_to "Logout", destroy_user_session_path,
               method: :delete,

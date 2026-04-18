@@ -1,4 +1,6 @@
 class Request < ApplicationRecord
+  attr_accessor :allow_positive_quantity
+
   belongs_to :user
   belongs_to :product
 
@@ -10,11 +12,29 @@ class Request < ApplicationRecord
   }
 
   has_one :notification, dependent: :destroy
-  validates :quantity_change, presence: true
-  validate :stock_cannot_go_negative
+  before_validation :normalize_quantity_change, unless: :allow_positive_quantity
+  before_save :set_user_name
+  validates :quantity_change, presence: true,
+                              numericality: { only_integer: true }
+  validate :quantity_change_must_be_negative, unless: :allow_positive_quantity
+  validate :stock_cannot_go_negative, if: :pending?
 
-  before_save do
-    self.status = status.to_s.strip.downcase
+  def normalize_quantity_change
+    return if quantity_change.blank?
+
+    self.quantity_change = -quantity_change.to_i.abs
+  end
+
+  def set_user_name
+    return unless user
+    self.user_name = user.name.presence || user.email
+  end
+
+  def quantity_change_must_be_negative
+    return if quantity_change.blank?
+    return if quantity_change.to_i < 0
+
+    errors.add(:quantity_change, "must be a negative number for worker requests")
   end
 
   def stock_cannot_go_negative

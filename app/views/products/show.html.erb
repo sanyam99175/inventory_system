@@ -135,11 +135,12 @@
 
         <div style="margin-bottom: 12px;">
           <label style="color: #475569; font-weight: 500;">
-            Quantity Change (+ / -)
+            Quantity to remove
           </label><br>
 
           <%= number_field_tag "request[quantity_change]", nil,
-              placeholder: "Enter quantity",
+              placeholder: "Enter quantity to remove",
+              min: 1,
               style: "
                 padding: 10px;
                 width: 100%;

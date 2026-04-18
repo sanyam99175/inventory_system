@@ -58,7 +58,8 @@ class ProductsController < ApplicationController
       user: current_user,
       product: @product,
       quantity_change: quantity,
-      status: :approved
+      status: :approved,
+      allow_positive_quantity: true
     )
     redirect_to @product, notice: "Stock updated successfully"
   end
