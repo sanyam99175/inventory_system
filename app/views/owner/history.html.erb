@@ -3,9 +3,9 @@
   <!-- HEADER -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     
-    <h1 class="text-2xl font-bold text-blue-800">📜 Stock History</h1>
+    <h1 class="text-2xl font-bold text-blue-800">📜 <%= t('stock_history') %></h1>
 
-    <%= link_to "⬅ Dashboard", owner_dashboard_path,
+    <%= link_to "⬅ #{t('dashboard')}", owner_dashboard_path,
         style: "
           background: #2563eb;
           color: white;
@@ -32,21 +32,21 @@
 
     <!-- DATE FROM -->
     <div style="display: inline-block; margin-right: 10px;">
-      <label style="font-size: 12px; color: #475569;">From</label><br>
+      <label style="font-size: 12px; color: #475569;"><%= t('from') %></label><br>
       <%= date_field_tag :start_date, params[:start_date],
           style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px;" %>
     </div>
 
     <!-- DATE TO -->
     <div style="display: inline-block; margin-right: 10px;">
-      <label style="font-size: 12px; color: #475569;">To</label><br>
+      <label style="font-size: 12px; color: #475569;"><%= t('to') %></label><br>
       <%= date_field_tag :end_date, params[:end_date],
           style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px;" %>
     </div>
 
     <!-- USER DROPDOWN -->
     <div style="display: inline-block; margin-right: 10px;">
-      <label style="font-size: 12px; color: #475569;">User</label><br>
+      <label style="font-size: 12px; color: #475569;"><%= t('user') %></label><br>
 
       <%= select_tag :user_id,
           options_from_collection_for_select(@users, :id, :email, params[:user_id]),
@@ -56,22 +56,22 @@
 
     <!-- STATUS -->
     <div style="display: inline-block; margin-right: 10px;">
-      <label style="font-size: 12px; color: #475569;">Status</label><br>
+      <label style="font-size: 12px; color: #475569;"><%= t('status') %></label><br>
 
       <%= select_tag :status,
           options_for_select([
-            ["All", ""],
-            ["Pending", "pending"],
-            ["Approved", "approved"],
-            ["Rejected", "rejected"],
-            ["Cancelled", "cancelled"]
+            [t('all'), ""],
+            [t('pending'), "pending"],
+            [t('approved'), "approved"],
+            [t('rejected'), "rejected"],
+            [t('cancelled'), "cancelled"]
           ], params[:status]),
           style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px;" %>
     </div>
 
     <!-- APPLY -->
     <div style="display: inline-block;">
-      <%= submit_tag "Apply",
+      <%= submit_tag t('apply'),
           style: "
             background: #2563eb;
             color: white;
@@ -84,7 +84,7 @@
 
     <!-- CLEAR -->
     <div style="display: inline-block; margin-left: 10px;">
-      <%= link_to "Clear", owner_history_path,
+      <%= link_to t('clear'), owner_history_path,
           style: "color: #2563eb; text-decoration: underline;" %>
     </div>
 
@@ -110,12 +110,12 @@
         font-weight: 500;
       " do %>
 
-    Send PDF to Email
+    <%= t('send_pdf_to_email') %>
 
   <% end %>
 
 </div>
-  <%= link_to "⬇ Download PDF",
+  <%= link_to "⬇ #{t('download_pdf')}",
     owner_history_pdf_path(start_date: params[:start_date], end_date: params[:end_date], status: params[:status],
     user_id: params[:user_id],
     format: :pdf),
@@ -135,13 +135,13 @@
       <!-- HEADER -->
       <thead style="background: #eff6ff; color: #1e3a8a;">
         <tr>
-          <th style="padding: 12px; text-align: left;">User</th>
-          <th style="padding: 12px; text-align: left;">Type</th>
-          <th style="padding: 12px; text-align: left;">Product</th>
-          <th style="padding: 12px; text-align: left;">Godown</th>
-          <th style="padding: 12px; text-align: left;">Change</th>
-          <th style="padding: 12px; text-align: left;">Status</th>
-          <th style="padding: 12px; text-align: left;">Time</th>
+          <th style="padding: 12px; text-align: left;"><%= t('user') %></th>
+          <th style="padding: 12px; text-align: left;"><%= t('type') %></th>
+          <th style="padding: 12px; text-align: left;"><%= t('product') %></th>
+          <th style="padding: 12px; text-align: left;"><%= t('godown') %></th>
+          <th style="padding: 12px; text-align: left;"><%= t('change') %></th>
+          <th style="padding: 12px; text-align: left;"><%= t('status') %></th>
+          <th style="padding: 12px; text-align: left;"><%= t('time') %></th>
         </tr>
       </thead>
 
@@ -153,7 +153,7 @@
 
             <!-- USER -->
             <td style="padding: 12px; color: #334155;">
-              <%= req.user_name || req.user&.name || "Unknown User" %>
+              <%= req.user_name || req.user&.name || t('unknown_user') %>
             </td>
 
             <!-- TYPE -->
@@ -209,7 +209,7 @@
                       else '#f59e0b'
                     end %>;
               ">
-                <%= req.status&.capitalize || "Pending" %>
+                <%= req.status&.capitalize || t('pending') %>
               </span>
             </td>
 

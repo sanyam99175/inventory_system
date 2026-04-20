@@ -9,15 +9,15 @@ class User < ApplicationRecord
   enum role: { worker: 0, owner: 1 }
 
   PERMISSION_MODULES = {
-    "products" => "Products",
-    "requests" => "Requests",
-    "history" => "History",
-    "alerts" => "Alerts",
-    "trends" => "Trends",
-    "recycle_bin" => "Recycle Bin",
-    "audits" => "Audits",
-    "users" => "Users"
-  }.freeze
+    products: ["view", "create_update", "delete"],
+    requests: ["view", "update"],
+    alerts: ["view"],
+    history: ["view"],
+    trends: ["view"],
+    recycle_bin: ["view", "restore"],
+    audits: ["view"],
+    users: ["view", "create_update", "delete", "change_permissions"]
+  }
 
   has_many :requests, dependent: :nullify
   has_many :notifications, dependent: :destroy
@@ -25,27 +25,64 @@ class User < ApplicationRecord
   has_many :stock_requests, dependent: :nullify
   has_many :audit_logs, dependent: :nullify
 
+  before_create :set_default_permissions
+  before_save :normalize_permissions
   after_create :log_user_creation
   after_update :log_user_update
   before_destroy :log_user_deletion
 
-  def permission_enabled?(key)
-    permissions_hash[key.to_s]
+  def set_default_permissions
+    return if self.permissions.present? # don't override if already set
+
+    self.permissions = default_permissions
+  end
+
+  def normalize_permissions
+    return if permissions.blank?
+
+    permissions.each do |key, perms|
+      case perms
+      when true
+        permissions[key] = ["all"]
+      when false
+        permissions[key] = []
+      end
+    end
   end
 
   def permissions_hash
-    if self[:permissions].present?
-      self[:permissions].with_indifferent_access
+    raw = self[:permissions]
+
+    if raw.present?
+      raw.with_indifferent_access
     else
-      default_permissions
+      default_permissions.with_indifferent_access
     end
+  end
+  
+  def has_permission?(module_key, action)
+    perms = permissions_hash[module_key.to_s]
+
+    return false if perms.blank?
+
+    # fallback for old boolean data
+    return true if perms == true
+
+    perms.include?("all") || perms.include?(action.to_s)
+  end
+
+  def permission_enabled?(key)
+    perms = permissions_hash[key.to_s]
+    perms.present?
   end
 
   def default_permissions
     if owner?
-      PERMISSION_MODULES.keys.index_with { true }
+      User::PERMISSION_MODULES.transform_values(&:dup)
     else
-      PERMISSION_MODULES.keys.index_with { |key| %w[products].include?(key) }
+      User::PERMISSION_MODULES.keys.index_with do |key|
+        key.to_s == "products" ? ["view"] : []
+      end
     end
   end
 

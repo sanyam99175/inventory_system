@@ -78,7 +78,7 @@
       <!-- CURRENT PASSWORD -->
       <div style="margin-bottom: 20px;">
         <%= f.label :current_password, style: "color: #475569; font-weight: 500;" %>
-        <p style="font-size: 12px; color: #64748b;">(required to save changes)</p>
+        <p style="font-size: 12px; color: #64748b;"><%= t('required_to_save_changes') %></p>
 
         <%= f.password_field :current_password,
               autocomplete: "current-password",
@@ -87,7 +87,7 @@
 
       <!-- SUBMIT -->
       <div style="margin-bottom: 20px;">
-        <%= f.submit "Update",
+        <%= f.submit t('update'),
             style: "
               width: 100%;
               padding: 11px;
@@ -112,10 +112,10 @@
 
       <p style="color: #64748b; margin-bottom: 10px;">Unhappy?</p>
 
-      <%= button_to "❌ Cancel Account",
+      <%= button_to "❌ #{t('cancel_account')}",
           registration_path(resource_name),
           method: :delete,
-          data: { turbo_confirm: "Are you sure?" },
+          data: { turbo_confirm: t('are_you_sure') },
           style: "
             background: #dc2626;
             color: white;

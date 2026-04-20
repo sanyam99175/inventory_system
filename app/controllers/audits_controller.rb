@@ -24,7 +24,7 @@ class AuditsController < ApplicationController
 
   def require_owner
     unless current_user.permission_enabled?("audits")
-      redirect_to root_path, alert: "Access denied. Only owners can view audit logs."
+      redirect_to root_path, alert: t('access_denied_owners_only_audits')
     end
   end
 end

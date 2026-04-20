@@ -6,15 +6,15 @@
     <h2 style="margin-bottom: 10px;"><%= @product.name %></h2>
 
     <p>
-      <strong>Type:</strong> <%= @product.product_type.name %>
+      <strong><%= t('type') %>:</strong> <%= @product.product_type.name %>
     </p>
 
     <p>
-      <strong>Godown:</strong> <%= @product.godown_number %>
+      <strong><%= t('godown') %>:</strong> <%= @product.godown_number %>
     </p>
 
     <p>
-      <strong>Stock:</strong>
+      <strong><%= t('stock') %>:</strong>
       <span style="
         font-weight: bold;
         color: <%= @product.stock_count <= @product.alert_limit ? 'red' : 'green' %>;
@@ -24,13 +24,13 @@
     </p>
 
     <p>
-      <strong>Alert Limit:</strong> <%= @product.alert_limit %>
+      <strong><%= t('alert_limit') %>:</strong> <%= @product.alert_limit %>
     </p>
 
   </div>
 
   <!-- OWNER ACTION CARD -->
-<% if current_user.owner? %>
+<% if current_user.owner? && current_user.has_permission?("products", "create_update") %>
   <div style="
     background: #eff6ff;
     padding: 20px;
@@ -41,7 +41,7 @@
   ">
 
     <h3 style="color: #1e3a8a; margin-bottom: 10px;">
-      ⚡ Direct Stock Update
+      ⚡ <%= t('direct_stock_update') %>
     </h3>
 
     <%= form_with url: update_stock_product_path(@product), method: :patch, local: true do %>
@@ -62,7 +62,7 @@
             " %>
       </div>
 
-      <%= submit_tag "Apply Change",
+      <%= submit_tag t('apply_change'),
           style: "
             background: #2563eb;
             color: white;
@@ -86,7 +86,7 @@
   status: :pending
 ) %>
 
-<% if current_user.worker? %>
+<% if current_user.worker? && current_user.has_permission?("products", "view") && !current_user.has_permission?("products", "create_update") %>
   <div style="
     background: #eff6ff;
     padding: 20px;
@@ -113,7 +113,7 @@
         </p>
       </div>
 
-      <%= button_to "Cancel Request",
+      <%= button_to t('cancel_request'),
           cancel_request_path(existing_request),
           method: :patch,
           style: "
@@ -150,7 +150,7 @@
               " %>
         </div>
 
-        <%= submit_tag "Send Request",
+        <%= submit_tag t('send_request'),
             style: "
               background: #2563eb;
               color: white;
@@ -171,9 +171,9 @@
   <!-- NAVIGATION -->
   <div style="text-align: center; margin-top: 20px;">
     <% if current_user.owner? %>
-      <%= link_to "⬅ Back to Products", products_path %>
+      <%= link_to "⬅ #{t('back_to_products')}", products_path %>
     <% else %>
-      <%= link_to "⬅ Back to Dashboard", worker_dashboard_path %>
+      <%= link_to "⬅ #{t('back_to_dashboard')}", worker_dashboard_path %>
     <% end %>
   </div>
 

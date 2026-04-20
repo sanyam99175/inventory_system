@@ -2,8 +2,8 @@
 
   <!-- HEADER -->
   <div style="margin-bottom: 20px;">
-    <h1 class="text-2xl font-bold text-blue-800">🚨 Stock Alerts</h1>
-    <p style="color: gray;">Items that need immediate attention</p>
+    <h1 class="text-2xl font-bold text-blue-800">🚨 <%= t('stock_alerts') %></h1>
+    <p style="color: gray;"><%= t('items_need_attention') %></p>
   </div>
 
   <br><br>
@@ -36,7 +36,7 @@
               border-radius: 6px;
               font-size: 12px;
             ">
-              LOW STOCK
+              <%= t('low_stock') %>
             </span>
 
           </div>
@@ -45,31 +45,33 @@
           <div style="margin-top: 10px; color: #555;">
 
             <p>
-              Current Stock:
+              <%= t('current_stock') %>:
               <strong style="color: red;"><%= product.stock_count %></strong>
             </p>
 
             <p>
-              Alert Limit:
+              <%= t('alert_limit') %>:
               <strong><%= product.alert_limit %></strong>
             </p>
 
             <p>
-              Type: <%= product.product_type.name %> |
-              Godown: <%= product.godown_number %>
+              <%= t('type') %>: <%= product.product_type.name %> |
+              <%= t('godown') %>: <%= product.godown_number %>
             </p>
 
           </div>
 
           <!-- ACTION -->
-          <div style="margin-top: 10px;">
-            <%= link_to "View Product →", product_path(product),
-                style: "
-                  text-decoration: none;
-                  color: #2980b9;
-                  font-weight: bold;
-                " %>
-          </div>
+          <% if current_user.has_permission?("products", "view") %>
+            <div style="margin-top: 10px;">
+              <%= link_to t('view_product') + " →", product_path(product),
+                  style: "
+                    text-decoration: none;
+                    color: #2980b9;
+                    font-weight: bold;
+                  " %>
+            </div>
+          <% end %>
 
         </div>
 
@@ -87,8 +89,8 @@
       text-align: center;
     ">
 
-      <h3 style="color: #27ae60;">✅ All Good!</h3>
-      <p>No low stock items right now</p>
+      <h3 style="color: #27ae60;"><%= t('all_good') %></h3>
+      <p><%= t('no_low_stock_items') %></p>
 
     </div>
 

@@ -2,13 +2,13 @@
 <section class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-20">
   <div class="max-w-6xl mx-auto px-6 text-center">
     <h1 class="text-4xl md:text-5xl font-bold mb-6">
-      Simplest Way to Control Your Stock
+      <%= t('simplest_way_control_stock') %>
     </h1>
     <p class="text-lg mb-8">
-      Replace paper slips with a simple approval system your workers can actually use.
+      <%= t('replace_paper_slips') %>
     </p>
 
-    <%= link_to "Start Free Trial", new_user_registration_path,
+    <%= link_to t('start_free_trial'), new_user_registration_path,
         class: "bg-white text-indigo-700 px-6 py-3 rounded-2xl font-semibold shadow hover:bg-gray-100" %>
   </div>
 </section>
@@ -16,17 +16,17 @@
 <!-- PROBLEM SECTION -->
 <section class="py-16">
   <div class="max-w-5xl mx-auto px-6 text-center">
-    <h2 class="text-3xl font-bold mb-6">Still Managing Stock with Paper?</h2>
+    <h2 class="text-3xl font-bold mb-6"><%= t('still_managing_stock_paper') %></h2>
 
     <div class="grid md:grid-cols-3 gap-6">
       <div class="bg-white p-6 rounded-2xl shadow">
-        ❌ Lost slips & errors
+        ❌ <%= t('lost_slips_errors') %>
       </div>
       <div class="bg-white p-6 rounded-2xl shadow">
-        ❌ No accountability
+        ❌ <%= t('no_accountability') %>
       </div>
       <div class="bg-white p-6 rounded-2xl shadow">
-        ❌ End of day confusion
+        ❌ <%= t('end_day_confusion') %>
       </div>
     </div>
   </div>
@@ -35,25 +35,25 @@
 <!-- HOW IT WORKS -->
 <section class="bg-white py-16">
   <div class="max-w-6xl mx-auto px-6 text-center">
-    <h2 class="text-3xl font-bold mb-10">How It Works</h2>
+    <h2 class="text-3xl font-bold mb-10"><%= t('how_it_works') %></h2>
 
     <div class="grid md:grid-cols-3 gap-8">
       <div>
         <div class="text-4xl mb-3">📦</div>
-        <h3 class="font-semibold">Worker Requests</h3>
-        <p>Enter quantity and send request</p>
+        <h3 class="font-semibold"><%= t('worker_requests') %></h3>
+        <p><%= t('enter_quantity_send_request') %></p>
       </div>
 
       <div>
         <div class="text-4xl mb-3">✅</div>
-        <h3 class="font-semibold">Owner Approves</h3>
-        <p>Approve or reject instantly</p>
+        <h3 class="font-semibold"><%= t('owner_approves') %></h3>
+        <p><%= t('approve_reject_instantly') %></p>
       </div>
 
       <div>
         <div class="text-4xl mb-3">📊</div>
-        <h3 class="font-semibold">Stock Updates</h3>
-        <p>Real-time tracking with history</p>
+        <h3 class="font-semibold"><%= t('get_notifications') %></h3>
+        <p><%= t('instant_updates') %></p>
       </div>
     </div>
   </div>
@@ -62,13 +62,13 @@
 <!-- FEATURES -->
 <section class="py-16 bg-gray-100">
   <div class="max-w-6xl mx-auto px-6 text-center">
-    <h2 class="text-3xl font-bold mb-10">Features</h2>
+    <h2 class="text-3xl font-bold mb-10"><%= t('features') %></h2>
 
     <div class="grid md:grid-cols-2 gap-6">
-      <div class="bg-white p-6 rounded-2xl shadow">✔ Simple worker UI</div>
-      <div class="bg-white p-6 rounded-2xl shadow">✔ Approval workflow</div>
-      <div class="bg-white p-6 rounded-2xl shadow">✔ Stock alerts</div>
-      <div class="bg-white p-6 rounded-2xl shadow">✔ Full history tracking</div>
+      <div class="bg-white p-6 rounded-2xl shadow">✔ <%= t('simple_worker_ui') %></div>
+      <div class="bg-white p-6 rounded-2xl shadow">✔ <%= t('approval_workflow') %></div>
+      <div class="bg-white p-6 rounded-2xl shadow">✔ <%= t('stock_alerts') %></div>
+      <div class="bg-white p-6 rounded-2xl shadow">✔ <%= t('full_history_tracking') %></div>
     </div>
   </div>
 </section>
@@ -76,25 +76,25 @@
 <!-- PRICING -->
 <section class="py-16">
   <div class="max-w-6xl mx-auto px-6 text-center">
-    <h2 class="text-3xl font-bold mb-10">Simple Pricing</h2>
+    <h2 class="text-3xl font-bold mb-10"><%= t('simple_pricing') %></h2>
 
     <div class="grid md:grid-cols-3 gap-6">
       <div class="bg-white p-6 rounded-2xl shadow">
-        <h3 class="text-xl font-bold">Free</h3>
+        <h3 class="text-xl font-bold"><%= t('free') %></h3>
         <p class="text-2xl my-4">₹0</p>
-        <p>Basic features</p>
+        <p><%= t('basic_features') %></p>
       </div>
 
       <div class="bg-indigo-600 text-white p-6 rounded-2xl shadow">
-        <h3 class="text-xl font-bold">Starter</h3>
-        <p class="text-2xl my-4">₹299/mo</p>
-        <p>Best for small businesses</p>
+        <h3 class="text-xl font-bold"><%= t('starter') %></h3>
+        <p class="text-2xl my-4">₹299<%= t('per_month') %></p>
+        <p><%= t('best_for_small_businesses') %></p>
       </div>
 
       <div class="bg-white p-6 rounded-2xl shadow">
-        <h3 class="text-xl font-bold">Growth</h3>
-        <p class="text-2xl my-4">₹699/mo</p>
-        <p>Advanced features</p>
+        <h3 class="text-xl font-bold"><%= t('growth') %></h3>
+        <p class="text-2xl my-4">₹699<%= t('per_month') %></p>
+        <p><%= t('advanced_features') %></p>
       </div>
     </div>
   </div>
@@ -104,6 +104,6 @@
 <section class="bg-indigo-700 text-white py-16 text-center">
   <h2 class="text-3xl font-bold mb-4">Ready to Simplify Your Stock?</h2>
 
-  <%= link_to "Get Started", new_user_registration_path,
+  <%= link_to t('get_started'), new_user_registration_path,
       class: "bg-white text-indigo-700 px-6 py-3 rounded-2xl font-semibold hover:bg-gray-100" %>
 </section>

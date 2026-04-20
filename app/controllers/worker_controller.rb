@@ -13,6 +13,6 @@ class WorkerController < ApplicationController
   private
 
   def authorize_worker!
-    redirect_to root_path, alert: "Not authorized" unless current_user.worker?
+    redirect_to root_path, alert: t('not_authorized_worker') unless current_user.worker?
   end
 end

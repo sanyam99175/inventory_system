@@ -8,8 +8,8 @@
     border-radius: 12px;
     margin-bottom: 20px;
   ">
-    <h2>👷 Worker Dashboard</h2>
-    <p style="color: #bfdbfe;">Search & request items</p>
+    <h2>👷 <%= t('worker_dashboard') %></h2>
+    <p style="color: #bfdbfe;"><%= t('search_request_items') %></p>
   </div>
 
   <!-- SEARCH -->
@@ -23,12 +23,11 @@
 
     <%= form_with url: worker_dashboard_path, method: :get, local: true do %>
 
-      <input type="text" name="search"
-        placeholder="🔍 Search product..."
-        value="<%= params[:search] %>"
-        style="width: 75%; padding: 10px; border: 1px solid #93c5fd; border-radius: 6px;">
+      <%= text_field_tag :search, params[:search],
+    placeholder: "🔍 #{t('search_products')}...",
+    style: "width: 75%; padding: 10px; border: 1px solid #93c5fd; border-radius: 6px;" %>
 
-      <%= submit_tag "Search",
+      <%= submit_tag t('search'),
           style: "
             padding: 10px;
             background: #2563eb;
@@ -61,7 +60,7 @@
         <h3 style="margin-bottom: 10px;"><%= product.name %></h3>
 
         <p>
-          Stock:
+          <%= t('stock') %>:
           <span style="
             font-weight: bold;
             color: <%= product.stock_count <= product.alert_limit ? '#dc2626' : '#16a34a' %>;
@@ -74,7 +73,7 @@
           <%= product.product_type.name %>
         </p>
 
-        <%= link_to "Open",
+        <%= link_to t('open'),
             product_path(product),
             style: "
               display: block;

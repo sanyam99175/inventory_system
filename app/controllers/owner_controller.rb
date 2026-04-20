@@ -79,7 +79,7 @@ end
     OwnerMailer.history_pdf_email(current_user, pdf, filters).deliver_now
 
     redirect_to owner_history_path(filters),
-                notice: "PDF sent to your email successfully."
+                notice: t('pdf_sent_successfully')
   end
 
   def pending_requests
@@ -119,6 +119,6 @@ end
     end
 
     redirect_to owner_pending_requests_path,
-                notice: "All pending requests approved successfully."
+                notice: t('all_pending_requests_approved')
   end
 end

@@ -2,29 +2,29 @@
 
   <!-- HEADER -->
   <div class="bg-blue-700 text-white p-6 rounded-2xl shadow-md mb-6">
-    <h1 class="text-2xl font-bold">Owner Dashboard</h1>
-    <p class="text-blue-100">Manage stock & approvals</p>
+    <h1 class="text-2xl font-bold"><%= t('owner_dashboard') %></h1>
+    <p class="text-blue-100"><%= t('manage_stock_approvals') %></p>
   </div>
 
   <!-- STATS -->
   <div class="grid md:grid-cols-3 gap-6 mb-6">
 
     <div class="bg-white p-5 rounded-2xl shadow border-t-4 border-blue-600">
-      <p class="text-gray-500 text-sm">📦 Products</p>
+      <p class="text-gray-500 text-sm">📦 <%= t('products') %></p>
       <h2 class="text-2xl font-bold text-blue-800 mt-1">
         <%= @products.count %>
       </h2>
     </div>
 
     <div class="bg-white p-5 rounded-2xl shadow border-t-4 border-blue-500">
-      <p class="text-gray-500 text-sm">📝 Requests</p>
+      <p class="text-gray-500 text-sm">📝 <%= t('requests') %></p>
       <h2 class="text-2xl font-bold text-blue-700 mt-1">
         <%= @requests.count %>
       </h2>
     </div>
 
     <div class="bg-white p-5 rounded-2xl shadow border-t-4 border-red-500">
-      <p class="text-gray-500 text-sm">⚠ Low Stock</p>
+      <p class="text-gray-500 text-sm">⚠ <%= t('low_stock') %></p>
       <h2 class="text-2xl font-bold text-red-500 mt-1">
         <%= @low_stock_products.count %>
       </h2>
@@ -36,7 +36,7 @@
   <div class="bg-white rounded-2xl shadow-md p-6 border border-blue-100">
 
     <h2 class="text-xl font-bold text-blue-800 mb-4 border-b pb-2">
-      Pending Requests
+      <%= t('pending_requests') %>
     </h2>
 
     <% if @requests.any? %>
@@ -45,10 +45,10 @@
 
         <thead class="bg-blue-100 text-blue-800">
           <tr>
-            <th class="p-3 text-left">📦 Product</th>
-            <th class="p-3 text-left">🔢 Qty</th>
-            <th class="p-3 text-left">👷 Worker</th>
-            <th class="p-3 text-left">⚙ Actions</th>
+            <th class="p-3 text-left">📦 <%= t('product') %></th>
+            <th class="p-3 text-left">🔢 <%= t('qty') %></th>
+            <th class="p-3 text-left">👷 <%= t('worker') %></th>
+            <th class="p-3 text-left">⚙ <%= t('actions') %></th>
           </tr>
         </thead>
 
@@ -65,21 +65,25 @@
               </td>
 
               <td class="p-3 text-gray-600">
-                <%= req.user_name || req.user&.email || "Unknown User" %>
+                <%= req.user_name || req.user&.email || t('unknown_user') %>
               </td>
 
               <td class="p-3 flex gap-2">
 
-                <%= button_to approve_request_path(req),
-                    method: :patch,
-                    class: "bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700" do %>
-                  ✔ Approve
-                <% end %>
+                <% if current_user.has_permission?("requests", "update") %>
+                  <%= button_to approve_request_path(req),
+                      method: :patch,
+                      class: "bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700" do %>
+                    ✔ <%= t('approve') %>
+                  <% end %>
 
-                <%= button_to reject_request_path(req),
-                    method: :patch,
-                    class: "bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-300" do %>
-                  ✖ Reject
+                  <%= button_to reject_request_path(req),
+                      method: :patch,
+                      class: "bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-300" do %>
+                    ✖ <%= t('reject') %>
+                  <% end %>
+                <% else %>
+                  <span class="text-gray-500 text-sm"><%= t('no_action_permissions') %></span>
                 <% end %>
 
               </td>
@@ -93,7 +97,7 @@
     <% else %>
 
       <p class="text-gray-500 text-center py-6">
-        ✅ No pending requests
+        ✅ <%= t('no_pending_requests') %>
       </p>
 
     <% end %>

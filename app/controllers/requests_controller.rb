@@ -9,7 +9,7 @@ class RequestsController < ApplicationController
 
     if new_stock < 0
       redirect_to product_path(product),
-                  alert: "❌ Cannot create request: stock will go below zero"
+                  alert: t('cannot_create_request_stock_below_zero')
       return
     end
 
@@ -17,7 +17,7 @@ class RequestsController < ApplicationController
     @request.status = :pending
 
     if @request.save
-      redirect_to worker_dashboard_path, notice: "Request sent for approval"
+      redirect_to worker_dashboard_path, notice: t('request_sent_for_approval')
     else
       redirect_to product_path(product),
                   alert: @request.errors.full_messages.join(", ")
@@ -29,7 +29,7 @@ class RequestsController < ApplicationController
     product = request.product
 
     if product.stock_count + request.quantity_change < 0
-      redirect_to owner_dashboard_path, alert: "Stock cannot go below zero"
+      redirect_to owner_dashboard_path, alert: t('stock_cannot_go_below_zero')
       return
     end
 
@@ -45,7 +45,7 @@ class RequestsController < ApplicationController
       )
     end
 
-    redirect_to owner_dashboard_path, notice: "Request approved"
+    redirect_to owner_dashboard_path, notice: t('request_approved')
   end
 
   def reject
@@ -61,7 +61,7 @@ class RequestsController < ApplicationController
       user_id: current_user.id
     )
 
-    redirect_to owner_dashboard_path, notice: "Request rejected"
+    redirect_to owner_dashboard_path, notice: t('request_rejected')
   end
 
   def cancel

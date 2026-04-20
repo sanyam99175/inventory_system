@@ -4,21 +4,23 @@ class AuditLog < ApplicationRecord
   def description
     case action
     when 'delete'
-      "#{record_type} \"#{details}\" was deleted"
+      I18n.t('audit.record_deleted', record_type: record_type, details: details)
     when 'restore'
-      "#{record_type} \"#{details}\" was restored"
+      I18n.t('audit.record_restored', record_type: record_type, details: details)
     when 'create'
-      "#{record_type} \"#{details}\" was created"
+      I18n.t('audit.record_created', record_type: record_type, details: details)
     when 'update'
-      "#{record_type} \"#{details}\" was updated"
+      I18n.t('audit.record_updated', record_type: record_type, details: details)
+    when 'permission_update'
+      details
     when 'approve_request'
-      "Request for product \"#{details}\" was approved"
+      I18n.t('audit.request_approved', product: details)
     when 'reject_request'
-      "Request for product \"#{details}\" was rejected"
+      I18n.t('audit.request_rejected', product: details)
     when 'cancel_request'
-      "Request for product \"#{details}\" was cancelled"
+      I18n.t('audit.request_cancelled', product: details)
     else
-      "#{action} on #{record_type} \"#{details}\""
+      I18n.t('audit.generic_action', action: action, record_type: record_type, details: details)
     end
   end
 
