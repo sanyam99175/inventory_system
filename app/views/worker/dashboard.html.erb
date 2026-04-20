@@ -22,6 +22,7 @@
   ">
 
     <%= form_with url: worker_dashboard_path, method: :get, local: true do %>
+      <%= hidden_field_tag :locale, I18n.locale %>
 
       <%= text_field_tag :search, params[:search],
     placeholder: "🔍 #{t('search_products')}...",

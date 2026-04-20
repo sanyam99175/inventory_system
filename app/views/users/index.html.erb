@@ -36,6 +36,7 @@
     <!-- SEARCH -->
     <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
       <%= form_with url: users_path, method: :get, local: true, class: "flex gap-4" do %>
+        <%= hidden_field_tag :locale, I18n.locale %>
         <div class="flex-1">
           <%= text_field_tag :search, params[:search],
               placeholder: t('search_users'),

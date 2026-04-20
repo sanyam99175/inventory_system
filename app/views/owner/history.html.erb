@@ -29,6 +29,7 @@
 ">
 
   <%= form_with url: owner_history_path, method: :get, local: true do %>
+    <%= hidden_field_tag :locale, I18n.locale %>
 
     <!-- DATE FROM -->
     <div style="display: inline-block; margin-right: 10px;">
