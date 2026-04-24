@@ -4,7 +4,7 @@
 
   <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
 
-    <%= form_with model: @user, local: true do |f| %>
+    <%= form_with model: @user, url: staffs_path, local: true do |f| %>
 
       <!-- NAME -->
       <div class="mb-4">
@@ -45,7 +45,7 @@
 
       <!-- ACTIONS -->
       <div class="flex justify-between">
-        <%= link_to t('cancel'), users_path,
+        <%= link_to t('cancel'), staffs_path,
             class: "px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600" %>
 
         <%= f.submit t('create_user'),

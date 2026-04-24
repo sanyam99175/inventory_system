@@ -103,6 +103,7 @@ GEM
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
     cgi (0.5.1)
+    coderay (1.1.3)
     concurrent-ruby (1.3.6)
     connection_pool (3.0.2)
     crass (1.0.6)
@@ -136,6 +137,7 @@ GEM
     jbuilder (2.14.1)
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
+    json (2.19.4)
     logger (1.7.0)
     loofah (2.25.1)
       crass (~> 1.0.2)
@@ -148,6 +150,7 @@ GEM
       net-smtp
     marcel (1.1.0)
     matrix (0.4.3)
+    method_source (1.1.0)
     mini_mime (1.1.5)
     minitest (6.0.3)
       drb (~> 2.0)
@@ -171,6 +174,10 @@ GEM
     nokogiri (1.19.2-x86_64-linux-gnu)
       racc (~> 1.4)
     orm_adapter (0.5.0)
+    pagy (43.4.4)
+      json
+      uri
+      yaml
     pdf-core (0.9.0)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x64-mingw-ucrt)
@@ -184,6 +191,10 @@ GEM
       prawn (>= 1.3.0, < 3.0.0)
     prettyprint (0.2.0)
     prism (1.9.0)
+    pry (0.16.0)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+      reline (>= 0.6.0)
     psych (5.3.1)
       date
       stringio
@@ -263,6 +274,9 @@ GEM
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.2.0)
+    stripe (19.0.0)
+      bigdecimal
+      logger
     thor (1.5.0)
     timeout (0.6.1)
     tsort (0.2.0)
@@ -274,6 +288,7 @@ GEM
       concurrent-ruby (~> 1.0)
     tzinfo-data (1.2026.1)
       tzinfo (>= 1.0.0)
+    uri (1.1.1)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.1)
@@ -288,6 +303,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    yaml (0.4.0)
     zeitwerk (2.7.5)
 
 PLATFORMS
@@ -303,15 +319,18 @@ DEPENDENCIES
   devise
   importmap-rails
   jbuilder
+  pagy
   pg (~> 1.1)
   prawn
   prawn-table
+  pry
   puma (>= 5.0)
   pundit
   rails (~> 7.1.6)
   selenium-webdriver
   sprockets-rails
   stimulus-rails
+  stripe
   turbo-rails
   tzinfo-data
   web-console

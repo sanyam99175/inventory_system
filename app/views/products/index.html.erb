@@ -59,62 +59,72 @@
 
   </div>
 
-  <!-- TABLE -->
-  <div style="
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  ">
+  <% if @products.any? %>
 
-    <table style="width: 100%; border-collapse: collapse;">
+      <!-- TABLE -->
+      <div style="
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      ">
 
-      <thead style="background: #eff6ff; color: #1e3a8a;">
-        <tr>
-          <th style="padding: 14px; text-align: left;"><%= t('product') %></th>
-          <th style="padding: 14px; text-align: left;"><%= t('stock') %></th>
-          <th style="padding: 14px; text-align: left;"><%= t('type') %></th>
-          <th style="padding: 14px; text-align: left; width: 220px;"><%= t('actions') %></th>
-        </tr>
-      </thead>
+        <table style="width: 100%; border-collapse: collapse;">
 
-      <tbody>
-        <% @products.each do |product| %>
-          <tr style="border-bottom: 1px solid #eee;">
+          <thead style="background: #eff6ff; color: #1e3a8a;">
+            <tr>
+              <th style="padding: 14px; text-align: left;"><%= t('product') %></th>
+              <th style="padding: 14px; text-align: left;"><%= t('stock') %></th>
+              <th style="padding: 14px; text-align: left;"><%= t('type') %></th>
+              <th style="padding: 14px; text-align: left; width: 220px;"><%= t('actions') %></th>
+            </tr>
+          </thead>
 
-            <td style="padding: 14px;">
-              <%= product.name %>
-            </td>
+          <tbody>
+            <% @products.each do |product| %>
+              <tr style="border-bottom: 1px solid #eee;">
 
-            <td style="padding: 14px; font-weight: bold;
-              color: <%= product.stock_count <= product.alert_limit ? '#dc2626' : '#2563eb' %>;">
-              <%= product.stock_count %>
-            </td>
+                <td style="padding: 14px;">
+                  <%= product.name %>
+                </td>
 
-            <td style="padding: 14px;">
-              <%= product.product_type.name %>
-            </td>
+                <td style="padding: 14px; font-weight: bold;
+                  color: <%= product.stock_count <= product.alert_limit ? '#dc2626' : '#2563eb' %>;">
+                  <%= product.stock_count %>
+                </td>
 
-            <td style="padding: 14px;">
-              <%= link_to t('view'), product_path(product), style: "color: #2563eb; margin-right: 6px;" %>
+                <td style="padding: 14px;">
+                  <%= product.product_type.name %>
+                </td>
 
-              <% if current_user.has_permission?("products", "create_update") %>
-                <%= link_to t('edit'), edit_product_path(product), style: "color: #1e40af; margin-right: 6px;" %>
-              <% end %>
+                <td style="padding: 14px;">
+                  <%= link_to t('view'), product_path(product), style: "color: #2563eb; margin-right: 6px;" %>
 
-              <% if current_user.has_permission?("products", "delete") %>
-                <%= link_to t('delete'), product_path(product),
-                      data: { turbo_method: :delete, turbo_confirm: t('are_you_sure') },
-                      style: "color: #dc2626;" %>
-              <% end %>
-            </td>
+                  <% if current_user.has_permission?("products", "create_update") %>
+                    <%= link_to t('edit'), edit_product_path(product), style: "color: #1e40af; margin-right: 6px;" %>
+                  <% end %>
 
-          </tr>
-        <% end %>
-      </tbody>
+                  <% if current_user.has_permission?("products", "delete") %>
+                    <%= link_to t('delete'), product_path(product),
+                          data: { turbo_method: :delete, turbo_confirm: t('are_you_sure') },
+                          style: "color: #dc2626;" %>
+                  <% end %>
+                </td>
 
-    </table>
+              </tr>
+            <% end %>
+          </tbody>
 
-  </div>
+        </table>
+
+      </div>
+  <% else %>
+
+    <tr>
+      <td colspan="4" style="text-align: center; padding: 30px; color: #6b7280;">
+        📦 <%= t('no_products_available', default: "No products available") %>
+      </td>
+    </tr>
+  <% end %>
 
 </div>

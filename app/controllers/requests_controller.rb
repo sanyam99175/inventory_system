@@ -2,7 +2,7 @@ class RequestsController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    product = Product.find(request_params[:product_id])
+    product = current_organization.products.find(request_params[:product_id])
     quantity_change = request_params[:quantity_change].to_i
 
     new_stock = product.stock_count + quantity_change
@@ -15,6 +15,7 @@ class RequestsController < ApplicationController
 
     @request = current_user.requests.new(request_params)
     @request.status = :pending
+    @request.organization_id = current_organization.id
 
     if @request.save
       redirect_to worker_dashboard_path, notice: t('request_sent_for_approval')
@@ -25,7 +26,7 @@ class RequestsController < ApplicationController
   end
 
   def approve
-    request = Request.find(params[:id])
+    request = current_organization.requests.find(params[:id])
     product = request.product
 
     if product.stock_count + request.quantity_change < 0
@@ -41,7 +42,8 @@ class RequestsController < ApplicationController
         record_id: request.id,
         action: 'approve_request',
         details: product.name,
-        user_id: current_user.id
+        user_id: current_user.id,
+        organization_id: current_organization.id
       )
     end
 
@@ -49,7 +51,7 @@ class RequestsController < ApplicationController
   end
 
   def reject
-    request = Request.find(params[:id])
+    request = current_organization.requests.find(params[:id])
     product = request.product
 
     request.update!(status: :rejected)
@@ -58,14 +60,15 @@ class RequestsController < ApplicationController
       record_id: request.id,
       action: 'reject_request',
       details: product.name,
-      user_id: current_user.id
+      user_id: current_user.id,
+      organization_id: current_organization.id
     )
 
     redirect_to owner_dashboard_path, notice: t('request_rejected')
   end
 
   def cancel
-    request = Request.find(params[:id])
+    request = current_organization.requests.find(params[:id])
     product = request.product
 
     if request.pending?
@@ -75,7 +78,8 @@ class RequestsController < ApplicationController
         record_id: request.id,
         action: 'cancel_request',
         details: product.name,
-        user_id: current_user.id
+        user_id: current_user.id,
+        organization_id: current_organization.id
       )
     end
 
@@ -83,7 +87,7 @@ class RequestsController < ApplicationController
   end
 
   def update
-    @request = Request.find(params[:id])
+    @request = current_organization.requests.find(params[:id])
 
     if current_user.owner?
       if params[:approve]

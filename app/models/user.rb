@@ -6,6 +6,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  belongs_to :organization
+
   enum role: { worker: 0, owner: 1 }
 
   PERMISSION_MODULES = {
@@ -98,7 +100,8 @@ class User < ApplicationRecord
       record_id: id,
       action: 'create',
       details: email,
-      user_id: get_current_user_id
+      user_id: get_current_user_id,
+      organization_id: organization_id
     )
   end
 
@@ -115,7 +118,8 @@ class User < ApplicationRecord
       record_id: id,
       action: 'update',
       details: "#{email} (Role: #{role.titleize})",
-      user_id: get_current_user_id
+      user_id: get_current_user_id,
+      organization_id: organization_id
     )
   end
 
@@ -125,7 +129,8 @@ class User < ApplicationRecord
       record_id: id,
       action: 'delete',
       details: email,
-      user_id: get_current_user_id
+      user_id: get_current_user_id,
+      organization_id: organization_id
     )
   end
 end

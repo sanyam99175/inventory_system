@@ -4,19 +4,20 @@ class RecycleBinController < ApplicationController
   before_action :authorize_restore, only: [:restore_product, :restore_user]
 
   def index
-    @deleted_products = Product.only_deleted.order(deleted_at: :desc)
-    @deleted_users = User.only_deleted.order(deleted_at: :desc)
+    @deleted_products = current_organization.products.only_deleted.order(deleted_at: :desc)
+    @deleted_users = current_organization.users.only_deleted.order(deleted_at: :desc)
   end
 
   def restore_product
-    @product = Product.only_deleted.find(params[:id])
+    @product = current_organization.products.only_deleted.find(params[:id])
     if @product.recover
       AuditLog.create(
         record_type: 'Product',
         record_id: @product.id,
         action: 'restore',
         details: @product.name,
-        user_id: current_user.id
+        user_id: current_user.id,
+        organization_id: current_organization.id
       )
       redirect_to recycle_bin_path, notice: t('product_restored_successfully', name: @product.name)
     else
@@ -25,14 +26,15 @@ class RecycleBinController < ApplicationController
   end
 
   def restore_user
-    @user = User.only_deleted.find(params[:id])
+    @user = current_organization.users.only_deleted.find(params[:id])
     if @user.recover
       AuditLog.create(
         record_type: 'User',
         record_id: @user.id,
         action: 'restore',
         details: @user.email,
-        user_id: current_user.id
+        user_id: current_user.id,
+        organization_id: current_organization.id
       )
       redirect_to recycle_bin_path, notice: t('user_restored_successfully', email: @user.email)
     else

@@ -20,6 +20,10 @@ gem "prawn-table"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 
+gem 'pry'
+gem 'pagy'
+gem 'stripe'
+
 gem 'devise'
 gem 'pundit'
 gem 'acts_as_paranoid'

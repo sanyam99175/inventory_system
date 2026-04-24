@@ -75,7 +75,7 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.deleted_at.strftime("%B %d, %Y at %I:%M %p") %></td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <% if current_user.has_permission?("recycle_bin", "restore") %>
-                      <%= button_to t('restore'), restore_user_path(user), method: :patch, class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
+                      <%= button_to t('restore'), restore_staff_path(user), method: :patch, class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
                     <% else %>
                       <span class="text-gray-500 text-sm"><%= t('no_restore_permission') %></span>
                     <% end %>

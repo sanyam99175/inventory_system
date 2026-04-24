@@ -5,13 +5,27 @@ class AuditsController < ApplicationController
   def index
     @start_date = parse_date(params[:start_date]) || 30.days.ago.to_date
     @end_date = parse_date(params[:end_date]) || Date.today
-    
+
     if @start_date > @end_date
-      @start_date, @end_date = @end_date, @start_date
+        @start_date, @end_date = @end_date, @start_date
     end
 
-    @audit_logs = AuditLog.where(created_at: @start_date.beginning_of_day..@end_date.end_of_day)
-                           .order(created_at: :desc)
+    page = params[:page].to_i
+    page = 1 if page <= 0
+    per_page = 5
+
+    scope = current_organization.audit_logs
+                .where(created_at: @start_date.beginning_of_day..@end_date.end_of_day)
+                .order(created_at: :desc)
+
+    @total_count = scope.count
+    @total_pages = (@total_count / per_page.to_f).ceil
+
+    @audit_logs = scope
+                    .offset((page - 1) * per_page)
+                    .limit(per_page)
+
+    @current_page = page
   end
 
   def parse_date(date_string)

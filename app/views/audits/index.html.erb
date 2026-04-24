@@ -90,3 +90,24 @@
     </div>
   </div>
 </div>
+<div class="mt-6 flex justify-center items-center gap-2">
+
+  <% if @current_page > 1 %>
+    <%= link_to "← Prev",
+        audits_path(page: @current_page - 1, start_date: params[:start_date], end_date: params[:end_date]),
+        class: "px-3 py-1 border rounded" %>
+  <% end %>
+
+  <% (1..@total_pages).each do |page| %>
+    <%= link_to page,
+        audits_path(page: page, start_date: params[:start_date], end_date: params[:end_date]),
+        class: "px-3 py-1 border rounded #{'bg-blue-500 text-white' if page == @current_page}" %>
+  <% end %>
+
+  <% if @current_page < @total_pages %>
+    <%= link_to "Next →",
+        audits_path(page: @current_page + 1, start_date: params[:start_date], end_date: params[:end_date]),
+        class: "px-3 py-1 border rounded" %>
+  <% end %>
+
+</div>

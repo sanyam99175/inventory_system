@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_18_122000) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_23_151804) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,6 +22,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_122000) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.index ["organization_id"], name: "index_audit_logs_on_organization_id"
   end
 
   create_table "histories", force: :cascade do |t|
@@ -32,6 +34,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_122000) do
     t.datetime "requested_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "organization_id", null: false
+    t.index ["organization_id"], name: "index_histories_on_organization_id"
     t.index ["product_id"], name: "index_histories_on_product_id"
     t.index ["user_id"], name: "index_histories_on_user_id"
   end
@@ -42,14 +46,30 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_122000) do
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "organization_id", null: false
+    t.index ["organization_id"], name: "index_notifications_on_organization_id"
     t.index ["request_id"], name: "index_notifications_on_request_id"
     t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "subdomain", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "plan", default: "free"
+    t.string "stripe_customer_id"
+    t.string "stripe_subscription_id"
+    t.string "subscription_status"
+    t.index ["subdomain"], name: "index_organizations_on_subdomain", unique: true
   end
 
   create_table "product_types", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "organization_id", null: false
+    t.index ["organization_id"], name: "index_product_types_on_organization_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -61,7 +81,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_122000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.bigint "organization_id", null: false
     t.index ["deleted_at"], name: "index_products_on_deleted_at"
+    t.index ["organization_id"], name: "index_products_on_organization_id"
     t.index ["product_type_id"], name: "index_products_on_product_type_id"
   end
 
@@ -75,6 +97,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_122000) do
     t.string "user_name"
     t.string "product_name"
     t.string "godown_number"
+    t.bigint "organization_id", null: false
+    t.index ["organization_id"], name: "index_requests_on_organization_id"
     t.index ["product_id"], name: "index_requests_on_product_id"
     t.index ["user_id"], name: "index_requests_on_user_id"
   end
@@ -86,6 +110,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_122000) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "organization_id", null: false
+    t.index ["organization_id"], name: "index_stock_requests_on_organization_id"
     t.index ["product_id"], name: "index_stock_requests_on_product_id"
     t.index ["user_id"], name: "index_stock_requests_on_user_id"
   end
@@ -102,18 +128,28 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_122000) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.jsonb "permissions", default: {}, null: false
+    t.bigint "organization_id", null: false
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "audit_logs", "organizations"
+  add_foreign_key "histories", "organizations"
   add_foreign_key "histories", "products"
   add_foreign_key "histories", "users"
+  add_foreign_key "notifications", "organizations"
   add_foreign_key "notifications", "requests"
   add_foreign_key "notifications", "users"
+  add_foreign_key "product_types", "organizations"
+  add_foreign_key "products", "organizations"
   add_foreign_key "products", "product_types"
+  add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "products"
   add_foreign_key "requests", "users"
+  add_foreign_key "stock_requests", "organizations"
   add_foreign_key "stock_requests", "products"
   add_foreign_key "stock_requests", "users"
+  add_foreign_key "users", "organizations"
 end

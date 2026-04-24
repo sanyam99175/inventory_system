@@ -4,9 +4,9 @@ class WorkerController < ApplicationController
 
   def dashboard
     if params[:search].present?
-      @products = Product.where("name ILIKE ?", "%#{params[:search]}%")
+      @products = current_organization.products.where("name ILIKE ?", "%#{params[:search]}%")
     else
-      @products = Product.all
+      @products = current_organization.products
     end
   end
 

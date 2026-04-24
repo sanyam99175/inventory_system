@@ -1,15 +1,43 @@
 class OwnerController < ApplicationController
   before_action :authenticate_user!
+  before_action :check_trends_access, only: [:trends]
+  before_action :check_history_access, only: [:history]
+  before_action :check_requests_access, only: [:pending_requests]
+  before_action :check_alerts_access, only: [:alerts]
 
-def dashboard
-  @products = Product.all
-  @requests = Request.pending.order(created_at: :desc).limit(3)
-  @pending_requests_count = Request.pending.count
-  @low_stock_products = Product.where("stock_count <= alert_limit")
-end
+  def check_trends_access
+    unless PlanPermissions.allowed?(current_organization.plan, "trends")
+      redirect_to upgrade_path(feature: "trends")
+    end
+  end
+
+  def check_history_access
+    unless PlanPermissions.allowed?(current_organization.plan, "history")
+      redirect_to upgrade_path(feature: "history")
+    end
+  end
+
+  def check_requests_access
+    unless PlanPermissions.allowed?(current_organization.plan, "requests")
+      redirect_to upgrade_path(feature: "requests")
+    end
+  end
+
+  def check_alerts_access
+    unless PlanPermissions.allowed?(current_organization.plan, "alerts")
+      redirect_to upgrade_path(feature: "alerts")
+    end
+  end
+
+  def dashboard
+    @products = current_organization.products
+    @requests = current_organization.requests.pending.order(created_at: :desc).limit(3)
+    @pending_requests_count = current_organization.requests.pending.count
+    @low_stock_products = current_organization.products.where("stock_count <= alert_limit")
+  end
 
   def history
-    @users = User.select(:id, :email).order(:email)
+    @users = current_organization.users.select(:id, :email).order(:email)
     @requests = filtered_requests
 
     respond_to do |format|
@@ -38,7 +66,7 @@ end
   end
 
   def filtered_requests
-    requests = Request.includes(:user, :product).order(created_at: :desc)
+    requests = current_organization.requests.includes(:user, :product).order(created_at: :desc)
 
     if params[:start_date].present?
       start_date = Time.zone.parse(params[:start_date]).beginning_of_day
@@ -59,7 +87,7 @@ end
   def send_history_pdf_email
     filters = params.permit(:start_date, :end_date, :status, :user_id).to_h
 
-    requests = Request.includes(:user, :product).order(created_at: :desc)
+    requests = current_organization.requests.includes(:user, :product).order(created_at: :desc)
 
     if filters["start_date"].present?
       start_date = Time.zone.parse(filters["start_date"]).beginning_of_day
@@ -83,30 +111,30 @@ end
   end
 
   def pending_requests
-    @requests = Request.pending.order(created_at: :desc)
+    @requests = current_organization.requests.pending.order(created_at: :desc)
   end
 
   def alerts
-    @products = Product.where("stock_count <= alert_limit")
+    @products = current_organization.products.where("stock_count <= alert_limit")
   end
 
   def trends
     # DAILY (items taken out)
-    @daily_trends = Request
+    @daily_trends = current_organization.requests
       .where(status: :approved)
       .where("quantity_change < 0")
       .group("DATE(created_at)")
       .sum("ABS(quantity_change)")
 
     # MONTHLY (items taken out)
-    @monthly_trends = Request
+    @monthly_trends = current_organization.requests
                         .where("quantity_change < 0")
                         .group("DATE(created_at)")
                         .sum("ABS(quantity_change)")
   end
 
   def approve_all_requests
-    requests = Request.pending
+    requests = current_organization.requests.pending
 
     Request.transaction do
       requests.each do |req|

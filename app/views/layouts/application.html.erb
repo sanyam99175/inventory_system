@@ -19,127 +19,146 @@
     <!-- HEADER -->
     <header class="bg-white shadow-md px-6 py-4 flex items-center justify-between">
 
-      <!-- LEFT SIDE -->
+      <!-- LEFT -->
       <div class="flex items-center space-x-6">
 
-        <h1 class="text-xl font-bold text-indigo-700">StockFlow</h1>
+        <%= link_to root_url(subdomain: nil), data: { turbo: false }, class: "no-underline" do %>
+          <h1 class="text-xl font-bold text-indigo-700 hover:text-indigo-800 cursor-pointer">
+            StockFlow
+          </h1>
+        <% end %>
 
-        <% if user_signed_in? %>
+        <% if !request.subdomains.blank? && user_signed_in? %>
 
-          <!-- LANGUAGE DROPDOWN -->
+          <!-- LANGUAGE -->
           <div class="relative">
-            <details class="relative">
-              <summary class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer rounded-lg px-3 py-2 hover:bg-gray-100">
-                🌐 <span><%= I18n.locale == :hi ? t('hindi') : t('english') %></span>
-                <span class="text-gray-500">▾</span>
+            <details>
+              <summary class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer px-3 py-2 hover:bg-gray-100">
+                🌐 <%= I18n.locale == :hi ? t('hindi') : t('english') %> ▾
               </summary>
 
-              <div class="absolute left-0 mt-2 w-32 rounded-lg border border-gray-200 bg-white shadow-lg z-50">
-                <%= link_to url_for(locale: :en),
-                    class: "block px-4 py-2 text-sm hover:bg-gray-100 #{I18n.locale == :en ? 'bg-gray-100 font-semibold' : ''}" do %>
+              <div class="absolute mt-2 w-32 bg-white border rounded shadow">
+                <%= link_to url_for(locale: :en), class: "block px-4 py-2 text-sm hover:bg-gray-100" do %>
                   🇬🇧 <%= t('english') %>
                 <% end %>
 
-                <%= link_to url_for(locale: :hi),
-                    class: "block px-4 py-2 text-sm hover:bg-gray-100 #{I18n.locale == :hi ? 'bg-gray-100 font-semibold' : ''}" do %>
+                <%= link_to url_for(locale: :hi), class: "block px-4 py-2 text-sm hover:bg-gray-100" do %>
                   🇮🇳 <%= t('hindi') %>
                 <% end %>
               </div>
             </details>
           </div>
 
-          <!-- DASHBOARD -->
-          <% if current_user.owner? %>
-            <%= link_to t("dashboard"), owner_dashboard_path, class: "text-gray-700 hover:text-indigo-600" %>
-          <% else %>
-            <%= link_to t("dashboard"), worker_dashboard_path, class: "text-gray-700 hover:text-indigo-600" %>
-          <% end %>
+          <% plan = current_organization.plan %>
 
-          <!-- PRODUCTS -->
-          <% if current_user.has_permission?("products", "view") %>
-            <%= link_to t("products"), products_path, class: "text-gray-700 hover:text-indigo-600" %>
-          <% end %>
+          <% nav_items = [
+            { key: "dashboard", label: t("dashboard"), path: (current_user.owner? ? owner_dashboard_path : worker_dashboard_path) },
+            { key: "products", label: t("products"), path: products_path },
+            { key: "requests", label: t("requests"), path: owner_pending_requests_path },
+            { key: "history", label: t("history"), path: owner_history_path },
+            { key: "alerts", label: t("alerts"), path: owner_alerts_path },
+            { key: "trends", label: t("trends"), path: owner_trends_path }
+          ] %>
 
-          <!-- REQUESTS -->
-          <% if current_user.has_permission?("requests", "view") %>
-            <%= link_to owner_pending_requests_path, class: "relative text-gray-700 hover:text-indigo-600" do %>
-              <%= t('requests') %>
-              <% if @pending_requests_count.to_i > 0 %>
-                <span class="absolute -top-2 -right-3 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  <%= @pending_requests_count %>
-                </span>
+          <% nav_items.each do |item| %>
+            <% has_permission = current_user.has_permission?(item[:key], "view") %>
+            <% allowed_by_plan = PlanPermissions.allowed?(plan, item[:key]) %>
+            <% locked = has_permission && !allowed_by_plan %>
+
+            <% if has_permission %>
+              <% target_path = locked ? upgrade_path(feature: item[:key]) : item[:path] %>
+
+              <%= link_to target_path,
+                  class: "relative text-gray-700 hover:text-indigo-600 #{'opacity-50' if locked}" do %>
+
+                <span><%= item[:label] %></span>
+
+                <% if locked %>
+                  <span class="ml-1">🔒</span>
+                <% end %>
+
+                <% if item[:key] == "requests" && @pending_requests_count.to_i > 0 %>
+                  <span class="absolute -top-2 -right-3 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    <%= @pending_requests_count %>
+                  </span>
+                <% end %>
+
+                <% if item[:key] == "alerts" && @low_stock_count.to_i > 0 %>
+                  <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    <%= @low_stock_count %>
+                  </span>
+                <% end %>
+
               <% end %>
             <% end %>
           <% end %>
 
-          <!-- HISTORY -->
-          <% if current_user.has_permission?("history", "view") %>
-            <%= link_to t("history"), owner_history_path, class: "text-gray-700 hover:text-indigo-600" %>
-          <% end %>
-
-          <!-- ALERTS -->
-          <% if current_user.has_permission?("alerts", "view") %>
-            <%= link_to owner_alerts_path, class: "relative text-gray-700 hover:text-indigo-600" do %>
-              <%= t("alerts") %>
-              <% if @low_stock_count.to_i > 0 %>
-                <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  <%= @low_stock_count %>
-                </span>
-              <% end %>
-            <% end %>
-          <% end %>
-
-          <!-- TRENDS -->
-          <% if current_user.has_permission?("trends", "view") %>
-            <%= link_to t("trends"), owner_trends_path, class: "text-gray-700 hover:text-indigo-600" %>
-          <% end %>
         <% end %>
 
       </div>
 
-      <!-- RIGHT SIDE -->
+      <!-- RIGHT -->
       <div class="flex items-center space-x-4">
 
-        <% if user_signed_in? %>
+        <% if !request.subdomains.blank? && user_signed_in? %>
 
-          <!-- ADMIN DROPDOWN -->
+          <!-- ADMIN -->
           <div class="relative">
-            <details class="relative">
-              <summary class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer rounded-lg px-3 py-2 hover:bg-gray-100">
-                <%= t('administration') %> <span class="text-base text-gray-500">▾</span>
+            <details>
+              <summary class="text-sm text-gray-600 cursor-pointer px-3 py-2 hover:bg-gray-100">
+                <%= t('administration') %>
               </summary>
 
-              <div class="absolute right-0 z-50 mt-2 w-48 rounded-lg border bg-white shadow-lg">
-                <% if current_user.has_permission?("users", "view") %>
-                  <%= link_to t('users'), users_path, class: "block px-4 py-2 text-sm hover:bg-gray-100" %>
+              <div class="absolute right-0 mt-2 w-48 bg-white border rounded shadow">
+
+                <% admin_items = [
+                  { key: "users", label: t('users'), path: staffs_path },
+                  { key: "recycle_bin", label: t('recycle_bin'), path: recycle_bin_path },
+                  { key: "audits", label: t('audits'), path: audits_path }
+                ] %>
+
+                <% admin_items.each do |item| %>
+                  <% has_permission = current_user.has_permission?(item[:key], "view") %>
+                  <% allowed_by_plan = PlanPermissions.allowed?(plan, item[:key]) %>
+                  <% locked = has_permission && !allowed_by_plan %>
+
+                  <% if has_permission %>
+                    <% target_path = locked ? upgrade_path(feature: item[:key]) : item[:path] %>
+                    <%= link_to target_path,
+                        class: "block px-4 py-2 text-sm hover:bg-gray-100 #{'opacity-50' if locked}" do %>
+
+                      <span><%= item[:label] %></span>
+                      <% if locked %> 🔒 <% end %>
+
+                    <% end %>
+                  <% end %>
                 <% end %>
 
-                <% if current_user.has_permission?("recycle_bin", "view") %>
-                  <%= link_to t('recycle_bin'), recycle_bin_path, class: "block px-4 py-2 text-sm hover:bg-gray-100" %>
-                <% end %>
-
-                <% if current_user.has_permission?("audits", "view") %>
-                  <%= link_to t('audits'), audits_path, class: "block px-4 py-2 text-sm hover:bg-gray-100" %>
-                <% end %>
               </div>
             </details>
           </div>
 
-          <!-- USER DROPDOWN -->
+          <!-- USER -->
           <div class="relative">
-            <details class="relative">
-              <summary class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer rounded-lg px-3 py-2 hover:bg-gray-100">
-                👤 <span><%= current_user.name.presence || current_user.email %></span>
-                <span class="text-base text-gray-500">▾</span>
+            <details>
+              <summary class="text-sm text-gray-600 cursor-pointer px-3 py-2 hover:bg-gray-100">
+                👤 <%= current_user.name.presence || current_user.email %>
               </summary>
 
-              <div class="absolute right-0 z-50 mt-2 w-48 rounded-lg border bg-white shadow-lg">
+              <div class="absolute right-0 mt-2 w-48 bg-white border rounded shadow">
                 <%= link_to t('edit_profile'), edit_user_registration_path,
                     class: "block px-4 py-2 text-sm hover:bg-gray-100" %>
 
-                <%= link_to t('logout'), destroy_user_session_path,
-                    data: { turbo_method: :delete },
-                    class: "block px-4 py-2 text-sm hover:bg-gray-100" %>
+                <%= button_to destroy_user_session_path,
+                    method: :delete,
+                    form: { data: { turbo: false } },
+                    class: "w-full text-left" do %>
+
+                  <span class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                    Logout
+                  </span>
+
+                <% end %>
               </div>
             </details>
           </div>
@@ -168,3 +187,6 @@
 
   </body>
 </html>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

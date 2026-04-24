@@ -17,22 +17,27 @@
 
 </div>
 
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-  document.addEventListener("turbo:load", function () {
+let dailyChartInstance = null;
+let monthlyChartInstance = null;
 
-    const dailyLabels = <%= raw @daily_trends.keys.map { |d|
-      (d.is_a?(String) ? Date.parse(d) : d).strftime("%d %b")
-    }.to_json %>;
+document.addEventListener("turbo:load", function () {
 
-    const dailyData = <%= raw @daily_trends.values.to_json %>;
+  // ========================
+  // DAILY DATA
+  // ========================
+  const dailyLabels = <%= raw @daily_trends.keys.map { |d|
+    (d.is_a?(String) ? Date.parse(d) : d).strftime("%d %b")
+  }.to_json %>;
 
-    const canvas = document.getElementById('dailyChart');
-    if (!canvas) return;
+  const dailyData = <%= raw @daily_trends.values.to_json %>;
 
-    new Chart(canvas, {
+  const dailyCanvas = document.getElementById('dailyChart');
+
+  if (dailyCanvas) {
+    if (dailyChartInstance) dailyChartInstance.destroy();
+
+    dailyChartInstance = new Chart(dailyCanvas, {
       type: 'line',
       data: {
         labels: dailyLabels,
@@ -44,72 +49,41 @@
         }]
       }
     });
-
-  });
-  let dailyChartInstance = null;
-
-document.addEventListener("turbo:load", function () {
-
-  const canvas = document.getElementById('dailyChart');
-  if (!canvas) return;
-
-  if (dailyChartInstance) {
-    dailyChartInstance.destroy();
   }
 
-  dailyChartInstance = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels: dailyLabels,
-      datasets: [{
-        label: 'Items Taken Out',
-        data: dailyData,
-        borderWidth: 2,
-        tension: 0.3
-      }]
-    }
-  });
-
-});
-</script><!-- MONTHLY CHART -->
-<script>
-let monthlyChartInstance = null;
-
-document.addEventListener("turbo:load", function () {
-
+  // ========================
+  // MONTHLY DATA
+  // ========================
   const monthlyLabels = <%= raw @monthly_trends.keys.map { |d|
     (d.is_a?(String) ? Date.parse(d) : d).strftime("%b %Y")
   }.to_json %>;
 
   const monthlyData = <%= raw @monthly_trends.values.to_json %>;
 
-  const canvas = document.getElementById("monthlyChart");
-  if (!canvas) return;
+  const monthlyCanvas = document.getElementById("monthlyChart");
 
-  if (monthlyChartInstance) {
-    monthlyChartInstance.destroy();
-  }
+  if (monthlyCanvas) {
+    if (monthlyChartInstance) monthlyChartInstance.destroy();
 
-  monthlyChartInstance = new Chart(canvas, {
-    type: "bar",
-    data: {
-      labels: monthlyLabels,
-      datasets: [{
-        label: "Items Taken Out",
-        data: monthlyData,
-        backgroundColor: "rgba(59, 130, 246, 0.5)",
-        borderColor: "rgba(59, 130, 246, 1)",
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+    monthlyChartInstance = new Chart(monthlyCanvas, {
+      type: "bar",
+      data: {
+        labels: monthlyLabels,
+        datasets: [{
+          label: '<%= t('items_taken_out') %>',
+          data: monthlyData,
+          backgroundColor: "rgba(59, 130, 246, 0.5)",
+          borderColor: "rgba(59, 130, 246, 1)",
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true }
         }
       }
-    }
-  });
+    });
+  }
 
 });
 </script>

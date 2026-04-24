@@ -1,5 +1,6 @@
 class AuditLog < ApplicationRecord
   belongs_to :user, optional: true
+  belongs_to :organization, optional: true
 
   def description
     case action

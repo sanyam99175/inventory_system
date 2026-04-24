@@ -19,7 +19,7 @@
 
         <!-- CREATE / UPDATE -->
         <% if current_user.has_permission?("users", "create_update") %>
-          <%= link_to new_user_path,
+          <%= link_to new_staff_path,
               class: "rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700" do %>
             ➕ <%= t('add_user') %>
           <% end %>
@@ -35,7 +35,7 @@
 
     <!-- SEARCH -->
     <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
-      <%= form_with url: users_path, method: :get, local: true, class: "flex gap-4" do %>
+      <%= form_with url: staffs_path, method: :get, local: true, class: "flex gap-4" do %>
         <%= hidden_field_tag :locale, I18n.locale %>
         <div class="flex-1">
           <%= text_field_tag :search, params[:search],
@@ -49,7 +49,7 @@
 
           <% if params[:search].present? %>
             <%= link_to t('clear'),
-                users_path,
+                staffs_path,
                 class: "px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600" %>
           <% end %>
         </div>
@@ -95,13 +95,13 @@
 
                     <!-- CHANGE PERMISSIONS -->
                     <% if current_user.has_permission?("users", "change_permissions") %>
-                      <%= link_to t('permissions'), permissions_user_path(user),
+                      <%= link_to t('permissions'), permissions_staff_path(user),
                           class: "bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700" %>
                     <% end %>
 
                     <!-- DELETE -->
                     <% if current_user.has_permission?("users", "delete") && user != current_user %>
-                      <%= button_to t('delete'), user_path(user),
+                      <%= button_to t('delete'), staff_path(user),
                           method: :delete,
                           data: { turbo_confirm: t('are_you_sure_cannot_undo') },
                           class: "bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700" %>

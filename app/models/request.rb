@@ -1,6 +1,7 @@
 class Request < ApplicationRecord
   attr_accessor :allow_positive_quantity
 
+  belongs_to :organization
   belongs_to :user
   belongs_to :product
 
