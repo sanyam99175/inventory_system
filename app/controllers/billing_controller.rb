@@ -1,4 +1,5 @@
 class BillingController < ApplicationController
+  skip_before_action :check_subscription, only: [:checkout]
   before_action :authenticate_user!
 
   def checkout
@@ -12,7 +13,7 @@ class BillingController < ApplicationController
         price: price_id,
         quantity: 1
       }],
-      success_url: success_billing_url,
+      success_url: billing_success_url,
       cancel_url: root_url(subdomain: nil)
     )
 
@@ -20,7 +21,7 @@ class BillingController < ApplicationController
   end
 
   def success
-    redirect_to owner_dashboard_path, notice: "Subscription activated"
+    redirect_to dashboard_path, notice: "Subscription activated"
   end
 
   def upgrade

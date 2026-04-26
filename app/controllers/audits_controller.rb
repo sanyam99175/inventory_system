@@ -12,7 +12,7 @@ class AuditsController < ApplicationController
 
     page = params[:page].to_i
     page = 1 if page <= 0
-    per_page = 5
+    per_page = 10
 
     scope = current_organization.audit_logs
                 .where(created_at: @start_date.beginning_of_day..@end_date.end_of_day)

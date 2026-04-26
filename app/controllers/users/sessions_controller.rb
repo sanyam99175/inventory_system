@@ -1,23 +1,16 @@
 class Users::SessionsController < Devise::SessionsController
-  def create
-    super do |user|
-      subdomain = request.subdomains.first
-      org = Organization.find_by(subdomain: subdomain)
 
-      if subdomain.present? && (org.nil? || user.organization_id != org.id)
-        sign_out user
-        redirect_to new_user_session_url(subdomain: subdomain),
-                    alert: "Invalid organization login"
-        return
-      end
+  def after_sign_in_path_for(resource)
+    org = resource.organization
+
+    if org
+      dashboard_path(org_id: org.id)
+    else
+      root_path
     end
   end
 
-  def destroy
-    sign_out(current_user)
-
-    redirect_to new_user_session_url(subdomain: request.subdomains.first),
-                allow_other_host: true,
-                notice: "Signed out successfully"
+  def after_sign_out_path_for(resource_or_scope)
+    new_user_session_path
   end
 end

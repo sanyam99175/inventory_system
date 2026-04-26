@@ -3,13 +3,14 @@ class PlanPermissions
     "free" => {
       products: ["view", "create_update"],
       requests: ["view", "update"],
+      users: ["view", "create_update"]
     },
     "basic" => {
       products: ["view", "create_update"],
       requests: ["view", "update"],
       alerts: ["view"],
       history: ["view"],
-      trends: ["view"]
+      users: ["view", "create_update"]
     },
     "premium" => {
       products: ["view", "create_update", "delete"],
@@ -32,6 +33,17 @@ class PlanPermissions
     mod = mod.to_sym
 
     allowed_modules(plan).keys.include?(mod)
+  end
+
+  def self.allowed_action?(plan, mod, action)
+    plan = plan.to_s.downcase
+    mod = mod.to_sym
+    action = action.to_s
+
+    allowed = allowed_modules(plan)[mod]
+    return false unless allowed
+
+    allowed.include?(action)
   end
 
   def self.upgrade_options(plan)

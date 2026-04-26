@@ -1,0 +1,33 @@
+<tr id="product_<%= product.id %>" style="border-bottom: 1px solid #eee;">
+
+  <td style="padding: 14px;">
+    <%= product.name %>
+  </td>
+
+  <% stock = product.stock_count || 0 %>
+  <% alert = product.alert_limit || 0 %>
+
+  <td style="padding: 14px; font-weight: bold;
+    color: <%= stock <= alert ? '#dc2626' : '#2563eb' %>;">
+    <%= stock %>
+  </td>
+
+  <td style="padding: 14px;">
+    <%= product.product_type.name %>
+  </td>
+
+  <td style="padding: 14px;">
+    <%= link_to t('view'), product_path(product), style: "color: #2563eb; margin-right: 6px;" %>
+
+    <% if current_user.has_permission?("products", "create_update") %>
+      <%= link_to t('edit'), edit_product_path(product), style: "color: #1e40af; margin-right: 6px;" %>
+    <% end %>
+
+    <% if current_user.has_permission?("products", "delete") %>
+      <%= link_to t('delete'), product_path(product),
+            data: { turbo_method: :delete, turbo_confirm: t('are_you_sure') },
+            style: "color: #dc2626;" %>
+    <% end %>
+  </td>
+
+</tr>

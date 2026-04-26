@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_23_151804) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_25_202356) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,16 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_23_151804) do
     t.index ["user_id"], name: "index_histories_on_user_id"
   end
 
+  create_table "memberships", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.integer "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_memberships_on_organization_id"
+    t.index ["user_id"], name: "index_memberships_on_user_id"
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "request_id", null: false
@@ -54,14 +64,12 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_23_151804) do
 
   create_table "organizations", force: :cascade do |t|
     t.string "name", null: false
-    t.string "subdomain", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "plan", default: "free"
     t.string "stripe_customer_id"
     t.string "stripe_subscription_id"
     t.string "subscription_status"
-    t.index ["subdomain"], name: "index_organizations_on_subdomain", unique: true
   end
 
   create_table "product_types", force: :cascade do |t|
@@ -128,7 +136,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_23_151804) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.jsonb "permissions", default: {}, null: false
-    t.bigint "organization_id", null: false
+    t.bigint "organization_id"
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
@@ -139,6 +147,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_23_151804) do
   add_foreign_key "histories", "organizations"
   add_foreign_key "histories", "products"
   add_foreign_key "histories", "users"
+  add_foreign_key "memberships", "organizations"
+  add_foreign_key "memberships", "users"
   add_foreign_key "notifications", "organizations"
   add_foreign_key "notifications", "requests"
   add_foreign_key "notifications", "users"

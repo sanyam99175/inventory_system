@@ -1,6 +1,14 @@
 class RequestsController < ApplicationController
   before_action :authenticate_user!
 
+  def index
+    if current_user.owner?
+      @requests = current_organization.requests.order(created_at: :desc)
+    else
+      @requests = current_user.requests.order(created_at: :desc)
+    end
+  end
+
   def create
     product = current_organization.products.find(request_params[:product_id])
     quantity_change = request_params[:quantity_change].to_i
@@ -18,7 +26,7 @@ class RequestsController < ApplicationController
     @request.organization_id = current_organization.id
 
     if @request.save
-      redirect_to worker_dashboard_path, notice: t('request_sent_for_approval')
+      redirect_to dashboard_path, notice: t('request_sent_for_approval')
     else
       redirect_to product_path(product),
                   alert: @request.errors.full_messages.join(", ")
@@ -30,7 +38,7 @@ class RequestsController < ApplicationController
     product = request.product
 
     if product.stock_count + request.quantity_change < 0
-      redirect_to owner_dashboard_path, alert: t('stock_cannot_go_below_zero')
+      redirect_to dashboard_path, alert: t('stock_cannot_go_below_zero')
       return
     end
 
@@ -45,9 +53,17 @@ class RequestsController < ApplicationController
         user_id: current_user.id,
         organization_id: current_organization.id
       )
+      AuditLog.create(
+        record_type: 'Product',
+        record_id: product.id,
+        action: 'update_stock',
+        details: product.name,
+        user_id: current_user.id,
+        organization_id: current_organization.id
+      )
     end
 
-    redirect_to owner_dashboard_path, notice: t('request_approved')
+    redirect_to dashboard_path, notice: t('request_approved')
   end
 
   def reject
@@ -64,7 +80,7 @@ class RequestsController < ApplicationController
       organization_id: current_organization.id
     )
 
-    redirect_to owner_dashboard_path, notice: t('request_rejected')
+    redirect_to dashboard_path, notice: t('request_rejected')
   end
 
   def cancel
@@ -98,7 +114,7 @@ class RequestsController < ApplicationController
       end
     end
 
-    redirect_to owner_dashboard_path
+    redirect_to dashboard_path
   end
 
   private

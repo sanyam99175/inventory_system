@@ -1,221 +1,161 @@
-<div style="max-width: 1100px; margin: auto; padding: 20px;">
+<div class="max-w-6xl mx-auto p-6">
 
   <!-- HEADER -->
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    
-    <h1 class="text-2xl font-bold text-blue-800">📜 <%= t('stock_history') %></h1>
+  <div class="flex justify-between items-center mb-6">
 
-    <%= link_to "⬅ #{t('dashboard')}", owner_dashboard_path,
-        style: "
-          background: #2563eb;
-          color: white;
-          padding: 8px 14px;
-          border-radius: 6px;
-          text-decoration: none;
-        " %>
+    <h1 class="text-2xl font-bold text-indigo-700">
+      📜 <%= t('stock_history') %>
+    </h1>
+
+    <%= link_to "⬅ #{t('dashboard')}", dashboard_path,
+        class: "bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700" %>
 
   </div>
 
-<div style="
-  background: white;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  border: 1px solid #bfdbfe;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: end;
-">
+  <!-- FILTER CARD -->
+  <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow mb-6">
 
-  <%= form_with url: owner_history_path, method: :get, local: true do %>
-    <%= hidden_field_tag :locale, I18n.locale %>
+    <%= form_with url: history_path, method: :get, local: true do %>
 
-    <!-- DATE FROM -->
-    <div style="display: inline-block; margin-right: 10px;">
-      <label style="font-size: 12px; color: #475569;"><%= t('from') %></label><br>
-      <%= date_field_tag :start_date, params[:start_date],
-          style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px;" %>
-    </div>
+      <%= hidden_field_tag :locale, I18n.locale %>
 
-    <!-- DATE TO -->
-    <div style="display: inline-block; margin-right: 10px;">
-      <label style="font-size: 12px; color: #475569;"><%= t('to') %></label><br>
-      <%= date_field_tag :end_date, params[:end_date],
-          style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px;" %>
-    </div>
+      <div class="grid md:grid-cols-5 gap-4 items-end">
 
-    <!-- USER DROPDOWN -->
-    <div style="display: inline-block; margin-right: 10px;">
-      <label style="font-size: 12px; color: #475569;"><%= t('user') %></label><br>
+        <!-- FROM -->
+        <div>
+          <label class="text-xs text-gray-600"><%= t('from') %></label>
+          <%= date_field_tag :start_date, params[:start_date],
+              class: "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" %>
+        </div>
 
-      <%= select_tag :user_id,
-          options_from_collection_for_select(@users, :id, :email, params[:user_id]),
-          include_blank: "All Users",
-          style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px; width: 200px;" %>
-    </div>
+        <!-- TO -->
+        <div>
+          <label class="text-xs text-gray-600"><%= t('to') %></label>
+          <%= date_field_tag :end_date, params[:end_date],
+              class: "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" %>
+        </div>
 
-    <!-- STATUS -->
-    <div style="display: inline-block; margin-right: 10px;">
-      <label style="font-size: 12px; color: #475569;"><%= t('status') %></label><br>
+        <!-- USER -->
+        <div>
+          <label class="text-xs text-gray-600"><%= t('user') %></label>
+          <%= select_tag :user_id,
+              options_from_collection_for_select(@users, :id, :email, params[:user_id]),
+              include_blank: "All Users",
+              class: "w-full px-3 py-2 border rounded-lg" %>
+        </div>
 
-      <%= select_tag :status,
-          options_for_select([
-            [t('all'), ""],
-            [t('pending'), "pending"],
-            [t('approved'), "approved"],
-            [t('rejected'), "rejected"],
-            [t('cancelled'), "cancelled"]
-          ], params[:status]),
-          style: "padding: 8px; border: 1px solid #93c5fd; border-radius: 6px;" %>
-    </div>
+        <!-- STATUS -->
+        <div>
+          <label class="text-xs text-gray-600"><%= t('status') %></label>
+          <%= select_tag :status,
+              options_for_select([
+                [t('all'), ""],
+                [t('pending'), "pending"],
+                [t('approved'), "approved"],
+                [t('rejected'), "rejected"],
+                [t('cancelled'), "cancelled"]
+              ], params[:status]),
+              class: "w-full px-3 py-2 border rounded-lg" %>
+        </div>
 
-    <!-- APPLY -->
-    <div style="display: inline-block;">
-      <%= submit_tag t('apply'),
-          style: "
-            background: #2563eb;
-            color: white;
-            padding: 9px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-          " %>
-    </div>
+        <!-- ACTIONS -->
+        <div class="flex gap-2">
 
-    <!-- CLEAR -->
-    <div style="display: inline-block; margin-left: 10px;">
-      <%= link_to t('clear'), owner_history_path,
-          style: "color: #2563eb; text-decoration: underline;" %>
-    </div>
+          <%= submit_tag t('apply'),
+              class: "bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700" %>
 
-  <% end %>
+          <%= link_to t('clear'), history_path,
+              class: "text-indigo-600 hover:underline px-2 py-2" %>
 
-</div>
-<div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+        </div>
 
-  <%= button_to owner_history_send_email_path(
-        start_date: params[:start_date],
-        end_date: params[:end_date],
-        status: params[:status],
-        user_id: params[:user_id]
-      ),
-      method: :post,
-      style: "
-        background: #2563eb;
-        color: white;
-        padding: 10px 14px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-      " do %>
+      </div>
 
-    <%= t('send_pdf_to_email') %>
+    <% end %>
 
-  <% end %>
+  </div>
 
-</div>
-  <%= link_to "⬇ #{t('download_pdf')}",
-    owner_history_pdf_path(start_date: params[:start_date], end_date: params[:end_date], status: params[:status],
-    user_id: params[:user_id],
-    format: :pdf),
-    class: "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700",
-    style: "margin-left: 10px;" %>
-  <!-- TABLE CARD -->
-  <div style="
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #bfdbfe;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  ">
+  <!-- ACTION BUTTONS -->
+  <div class="flex justify-end gap-3 mb-4">
 
-    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+    <%= button_to history_send_email_path(
+          start_date: params[:start_date],
+          end_date: params[:end_date],
+          status: params[:status],
+          user_id: params[:user_id]
+        ),
+        method: :post,
+        class: "bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700" do %>
+      <%= t('send_pdf_to_email') %>
+    <% end %>
 
-      <!-- HEADER -->
-      <thead style="background: #eff6ff; color: #1e3a8a;">
+    <%= link_to "⬇ #{t('download_pdf')}",
+        owner_history_pdf_path(
+          start_date: params[:start_date],
+          end_date: params[:end_date],
+          status: params[:status],
+          user_id: params[:user_id],
+          format: :pdf
+        ),
+        class: "bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600" %>
+
+  </div>
+
+  <!-- TABLE -->
+  <div class="bg-white rounded-2xl shadow border border-indigo-100 overflow-hidden">
+
+    <table class="w-full text-sm">
+
+      <thead class="bg-indigo-100 text-indigo-800">
         <tr>
-          <th style="padding: 12px; text-align: left;"><%= t('user') %></th>
-          <th style="padding: 12px; text-align: left;"><%= t('type') %></th>
-          <th style="padding: 12px; text-align: left;"><%= t('product') %></th>
-          <th style="padding: 12px; text-align: left;"><%= t('godown') %></th>
-          <th style="padding: 12px; text-align: left;"><%= t('change') %></th>
-          <th style="padding: 12px; text-align: left;"><%= t('status') %></th>
-          <th style="padding: 12px; text-align: left;"><%= t('time') %></th>
+          <th class="p-3 text-left"><%= t('user') %></th>
+          <th class="p-3 text-left"><%= t('type') %></th>
+          <th class="p-3 text-left"><%= t('product') %></th>
+          <th class="p-3 text-left"><%= t('godown') %></th>
+          <th class="p-3 text-left"><%= t('change') %></th>
+          <th class="p-3 text-left"><%= t('status') %></th>
+          <th class="p-3 text-left"><%= t('time') %></th>
         </tr>
       </thead>
 
-      <!-- BODY -->
       <tbody>
         <% @requests.each do |req| %>
 
-          <tr style="border-bottom: 1px solid #e5e7eb;">
+          <tr class="border-b hover:bg-indigo-50 transition">
 
-            <!-- USER -->
-            <td style="padding: 12px; color: #334155;">
+            <td class="p-3 text-gray-700">
               <%= req.user_name || req.user&.name || t('unknown_user') %>
             </td>
 
-            <!-- TYPE -->
-            <td style="padding: 12px;">
-              <% if req.user.nil? %>
-                <span>Unknown</span>
-              <% elsif req.user.role == "owner" %>
-                <span>Direct</span>
-              <% else %>
-                <span>Worker</span>
-              <% end %>
+            <td class="p-3 text-gray-600">
+              <%= req.user.nil? ? "Unknown" : (req.user.role == "owner" ? "Direct" : "Worker") %>
             </td>
 
-            <!-- PRODUCT -->
-            <td style="padding: 12px;">
-              <% if req.product %>
-                <%= req.product.name %>
-              <% else %>
-                <span style="color: #999;"><%= req.product_name || 'Deleted Product' %></span>
-              <% end %>
+            <td class="p-3 text-gray-800">
+              <%= req.product ? req.product.name : (req.product_name || "Deleted Product") %>
             </td>
 
-            <!-- GODOWN -->
-            <td style="padding: 12px;">
-              <% if req.product %>
-                <%= req.product.godown_number %>
-              <% else %>
-                <span style="color: #999;"><%= req.godown_number || 'N/A' %></span>
-              <% end %>
+            <td class="p-3 text-gray-600">
+              <%= req.product&.godown_number || req.godown_number || "N/A" %>
             </td>
 
-            <!-- CHANGE -->
-            <td style="
-              padding: 12px;
-              font-weight: bold;
-              color: <%= req.quantity_change < 0 ? '#dc2626' : '#16a34a' %>;
-            ">
+            <td class="p-3 font-semibold <%= req.quantity_change < 0 ? 'text-red-600' : 'text-green-600' %>">
               <%= req.quantity_change %>
             </td>
 
-            <!-- STATUS -->
-            <td style="padding: 12px;">
-              <span style="
-                padding: 5px 10px;
-                border-radius: 6px;
-                font-size: 12px;
-                color: white;
-                background:
-                  <%= case req.status
-                      when 'approved' then '#16a34a'
-                      when 'rejected' then '#dc2626'
-                      when 'cancelled' then '#808080'
-                      else '#f59e0b'
-                    end %>;
-              ">
+            <td class="p-3">
+              <span class="px-2 py-1 text-xs rounded text-white
+                <%= case req.status
+                    when 'approved' then 'bg-green-600'
+                    when 'rejected' then 'bg-red-600'
+                    when 'cancelled' then 'bg-gray-500'
+                    else 'bg-yellow-500'
+                  end %>">
                 <%= req.status&.capitalize || t('pending') %>
               </span>
             </td>
 
-            <!-- TIME -->
-            <td style="padding: 12px; color: #64748b;">
+            <td class="p-3 text-gray-500">
               <%= req.created_at.strftime("%d %b %Y, %I:%M %p") %>
             </td>
 

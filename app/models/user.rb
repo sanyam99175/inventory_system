@@ -29,9 +29,6 @@ class User < ApplicationRecord
 
   before_create :set_default_permissions
   before_save :normalize_permissions
-  after_create :log_user_creation
-  after_update :log_user_update
-  before_destroy :log_user_deletion
 
   def set_default_permissions
     return if self.permissions.present? # don't override if already set
@@ -61,7 +58,7 @@ class User < ApplicationRecord
       default_permissions.with_indifferent_access
     end
   end
-  
+
   def has_permission?(module_key, action)
     perms = permissions_hash[module_key.to_s]
 
@@ -94,43 +91,4 @@ class User < ApplicationRecord
     Thread.current[:current_user]&.id
   end
 
-  def log_user_creation
-    AuditLog.create(
-      record_type: 'User',
-      record_id: id,
-      action: 'create',
-      details: email,
-      user_id: get_current_user_id,
-      organization_id: organization_id
-    )
-  end
-
-  def log_user_update
-    # Skip audit logging for login-related updates (Devise tracking fields)
-    login_only_fields = %w[current_sign_in_at last_sign_in_at sign_in_count current_sign_in_ip last_sign_in_ip]
-    changed_fields = saved_changes.keys
-    
-    # Only log if non-login fields were changed
-    return if (changed_fields - login_only_fields).empty?
-    
-    AuditLog.create(
-      record_type: 'User',
-      record_id: id,
-      action: 'update',
-      details: "#{email} (Role: #{role.titleize})",
-      user_id: get_current_user_id,
-      organization_id: organization_id
-    )
-  end
-
-  def log_user_deletion
-    AuditLog.create(
-      record_type: 'User',
-      record_id: id,
-      action: 'delete',
-      details: email,
-      user_id: get_current_user_id,
-      organization_id: organization_id
-    )
-  end
 end

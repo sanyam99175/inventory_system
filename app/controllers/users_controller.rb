@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  skip_before_action :check_subscription, only: [:new, :create]
   before_action :authenticate_user!
   before_action :authorize_view, only: [:index]
   before_action :authorize_create_update, only: [:new, :create]
@@ -30,7 +31,9 @@ class UsersController < ApplicationController
         @user = current_organization.users.build(user_params)
 
         if @user.save
-    redirect_to staffs_path, notice: t('user_created_successfully')
+            details = @user.name || @user.email
+            log_user_audit('create', details)
+            redirect_to staffs_path, notice: t('user_created_successfully')
         else
             flash.now[:alert] = @user.errors.full_messages.join(", ")
             render :new
@@ -64,16 +67,31 @@ class UsersController < ApplicationController
     end
 
     @user.update(permissions: new_permissions)
+    details = "Permission updated for #{@user.name || @user.email} (Role: #{@user.role.titleize})"
+    log_user_audit('permission_update', details)
 
     redirect_to staffs_path, notice: t('permissions_updated_successfully')
   end
 
   def destroy
+    details = @user.name || @user.email
     @user.destroy
+    log_user_audit('delete', details)
     redirect_to staffs_path, notice: t('user_deleted_successfully')
   end
 
   private
+
+  def log_user_audit(action, details)
+    AuditLog.create(
+      record_type: 'User',
+      record_id: current_user.id,
+      action: action,
+      details: details,
+      user_id: current_user.id,
+      organization_id: current_user.organization.id
+    )
+  end
 
   def authorize_view
     redirect_to root_path, alert: t('not_authorized_view_users') unless current_user.has_permission?("users", "view")

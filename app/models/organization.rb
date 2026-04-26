@@ -9,7 +9,6 @@ class Organization < ApplicationRecord
   has_many :audit_logs, dependent: :destroy
 
   validates :name, presence: true
-  validates :subdomain, presence: true, uniqueness: true
 
   def can_use?(feature)
     case plan
@@ -20,5 +19,9 @@ class Organization < ApplicationRecord
     when "premium"
       true
     end
+  end
+
+  def active?
+    plan.present? && plan != "free"
   end
 end

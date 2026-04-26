@@ -1,0 +1,55 @@
+<turbo-frame id="modal">
+  <div style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  ">
+
+    <div style="
+      background: white;
+      border-radius: 12px;
+      width: 450px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    ">
+
+      <!-- HEADER -->
+      <div style="
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      ">
+        <h2 style="margin: 0;"><%= title %></h2>
+
+        <!-- ✅ CLOSE BUTTON -->
+        <button 
+          onclick="this.closest('turbo-frame').innerHTML=''" 
+          style="
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+          ">
+          ✖
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div style="
+        padding: 20px;
+        overflow-y: auto;
+      ">
+        <%= yield %>
+      </div>
+
+    </div>
+  </div>
+</turbo-frame>

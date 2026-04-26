@@ -2,94 +2,97 @@
 
   <!-- HEADER -->
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-blue-800"><%= t('all_pending_requests') %></h1>
+    <h1 class="text-2xl font-bold text-indigo-800">
+      <%= t('all_pending_requests') %>
+    </h1>
   </div>
 
   <% if @requests.any? %>
-      <% if current_user.has_permission?("requests", "update") %>
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
 
-          <%= button_to approve_all_requests_path,
-              method: :post,
-              data: {
-              turbo_confirm: t('are_you_sure_approve_all')
-              },
-              style: "
-              background: #16a34a;
-              color: white;
-              padding: 10px 14px;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              font-weight: 600;
-              " do %>
+    <% if current_user.has_permission?("requests", "update") %>
+      <div class="flex justify-end mb-4">
+
+        <%= button_to approve_all_requests_path,
+            method: :post,
+            data: { turbo_confirm: t('are_you_sure_approve_all') },
+            class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold" do %>
 
           ✅ <%= t('approve_all') %>
 
-          <% end %>
+        <% end %>
 
       </div>
-      <% end %>
-    <!-- TABLE -->
-    <div class="bg-white rounded-2xl shadow p-6">
+    <% end %>
 
-        <table class="w-full">
+    <!-- TABLE CARD -->
+    <div class="bg-white rounded-2xl shadow-md border border-indigo-100 p-6">
 
-        <thead class="bg-blue-100 text-blue-900">
-            <tr>
+      <table class="w-full text-sm">
+
+        <!-- HEADER -->
+        <thead class="bg-indigo-100 text-indigo-800">
+          <tr>
             <th class="p-3 text-left"><%= t('product') %></th>
-            <th><%= t('quantity') %></th>
-            <th><%= t('worker') %></th>
-            <th><%= t('actions') %></th>
-            </tr>
+            <th class="p-3 text-left"><%= t('quantity') %></th>
+            <th class="p-3 text-left"><%= t('worker') %></th>
+            <th class="p-3 text-left"><%= t('actions') %></th>
+          </tr>
         </thead>
 
+        <!-- BODY -->
         <tbody>
-            <% @requests.each do |req| %>
-            <tr class="border-b hover:bg-blue-50">
+          <% @requests.each do |req| %>
+            <tr class="border-b last:border-none hover:bg-indigo-50 transition">
 
-                <td class="p-3"><%= req.product.name %></td>
+              <td class="p-3 text-gray-800 font-medium">
+                <%= req.product.name %>
+              </td>
 
-                <td class="font-semibold text-blue-700">
+              <td class="p-3 font-semibold text-indigo-700">
                 <%= req.quantity_change %>
-                </td>
+              </td>
 
-                <td><%= req.user_name || req.user&.email || t('unknown_user') %></td>
+              <td class="p-3 text-gray-600">
+                <%= req.user_name || req.user&.email || t('unknown_user') %>
+              </td>
 
-                <td class="flex gap-2">
+              <td class="p-3 flex gap-2">
+
                 <% if current_user.has_permission?("requests", "update") %>
-                  <%= button_to "Approve", approve_request_path(req),
-                      method: :patch,
-                      class: "bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700" %>
 
-                  <%= button_to "Reject", reject_request_path(req),
+                  <%= button_to t('approve'), approve_request_path(req),
                       method: :patch,
-                      class: "bg-gray-300 text-gray-800 px-3 py-1 rounded-lg hover:bg-gray-400" %>
+                      class: "bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 text-sm" %>
+
+                  <%= button_to t('reject'), reject_request_path(req),
+                      method: :patch,
+                      class: "bg-indigo-200 text-indigo-800 px-3 py-1 rounded-lg hover:bg-indigo-300 text-sm" %>
+
                 <% else %>
-                  <span class="text-gray-500 text-sm">No action permissions</span>
+
+                  <span class="text-gray-500 text-sm">
+                    <%= t('no_action_permissions') %>
+                  </span>
+
                 <% end %>
-                </td>
+
+              </td>
 
             </tr>
-            <% end %>
+          <% end %>
         </tbody>
 
-        </table>
+      </table>
 
     </div>
+
   <% else %>
+
     <!-- EMPTY STATE -->
-    <div style="
-      background: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      padding: 40px;
-      text-align: center;
-      border-radius: 12px;
-      color: #64748b;
-      font-size: 16px;
-    ">
+    <div class="bg-indigo-50 border border-indigo-200 p-10 text-center rounded-2xl text-indigo-700">
       🚀 <%= t('no_pending_requests') %>
-    </div>                   
+    </div>
+
   <% end %>
 
 </div>

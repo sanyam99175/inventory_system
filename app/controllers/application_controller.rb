@@ -1,87 +1,81 @@
 class ApplicationController < ActionController::Base
+  before_action :authenticate_user!
   before_action :set_current_organization
-  before_action :authenticate_user_if_subdomain, unless: :devise_controller?
+  before_action :ensure_user_belongs_to_org
+  before_action :check_subscription 
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_global_counts
-  before_action :set_current_user
-  after_action :clear_current_user
   before_action :set_locale
 
   helper_method :current_organization
 
-  protected
+  # -----------------------------------
+  # ORG CONTEXT
+  # -----------------------------------
 
-  def set_current_organization
-    return if main_domain?
+  def check_subscription
+    return unless current_organization
 
-    subdomain = request.subdomains.first
-    return if subdomain.blank?
+    # allow free plan
+    return if current_organization.plan == "free"
 
-    @current_organization = Organization.find_by(subdomain: subdomain)
+    # allow active paid plans
+    return if current_organization.active?
 
-    unless @current_organization
-      redirect_to root_url(subdomain: nil), allow_other_host: true
-      return
-    end
+    # block access
+    redirect_to select_plan_path, alert: "Please upgrade your plan"
   end
 
-  def authenticate_user_if_subdomain
-    return if main_domain?
-    return if request.subdomains.blank?
+  def set_current_organization
+    return unless user_signed_in?
 
-    unless user_signed_in?
-      redirect_to new_user_session_url(subdomain: request.subdomains.first)
-      return
+    if params[:org_id].present?
+        if current_user.organization_id == params[:org_id].to_i
+            session[:org_id] = params[:org_id]
+        else
+            reset_session
+            redirect_to root_path, alert: "Access denied"
+            return
+        end
     end
 
-    return unless current_user
+    @current_organization = current_user.organization
+  end
+
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name])
   end
 
   def current_organization
     @current_organization
   end
 
-  def set_current_user
-    Thread.current[:current_user] = current_user if user_signed_in?
+  def ensure_user_belongs_to_org
+    return unless current_organization
+
+    unless current_user.organization_id == current_organization.id
+        reset_session
+        redirect_to root_path, alert: "Access denied"
+    end
   end
 
-  def clear_current_user
-    Thread.current[:current_user] = nil
+  # -----------------------------------
+  # GLOBAL COUNTS
+  # -----------------------------------
+  def set_global_counts
+    return unless current_organization
+
+    @low_stock_count = current_organization.products.where("stock_count <= alert_limit").count
+    @pending_requests_count = current_organization.requests.pending.count
   end
 
   def set_locale
     I18n.locale = params[:locale] || I18n.default_locale
   end
 
-  def main_domain?
-    request.subdomains.blank?
-  end
-
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :role])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name])
-  end
-
-  def after_sign_in_path_for(resource)
-    if resource.organization.present?
-      root_url(subdomain: resource.organization.subdomain)
-    else
-      root_url(subdomain: nil)
-    end
-  end
-
-  def after_sign_out_path_for(_resource)
-    root_url(subdomain: nil)
-  end
-
   def default_url_options
     { locale: I18n.locale }
-  end
-
-  def set_global_counts
-    return unless user_signed_in? && current_user.owner? && current_organization
-
-    @low_stock_count = current_organization.products.where("stock_count <= alert_limit").count
-    @pending_requests_count = current_organization.requests.pending.count
   end
 end

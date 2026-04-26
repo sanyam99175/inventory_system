@@ -1,17 +1,49 @@
-<div class="max-w-xl mx-auto text-center py-16">
+<div class="max-w-3xl mx-auto py-16 px-4 text-center">
 
-  <h1 class="text-2xl font-bold mb-4">
-    🔒 <%= @feature.humanize %> is not available on your plan
+  <!-- TITLE -->
+  <h1 class="text-3xl font-bold mb-4">
+    🔒 <%= @feature.humanize %>
   </h1>
 
-  <p class="text-gray-600 mb-8">
-    Upgrade to unlock this feature and grow faster 🚀
+  <!-- DESCRIPTION -->
+  <p class="text-gray-600 mb-10">
+    <%= feature_description(@feature) %>
   </p>
 
-  <% @plans.each do |plan| %>
-    <%= link_to "Upgrade to #{plan.capitalize}",
-        billing_checkout_path(price_id: price_for(plan)),
-        class: "block bg-indigo-600 text-white py-3 rounded mb-4" %>
-  <% end %>
+  <!-- PREVIEW -->
+  <div class="bg-white rounded-xl shadow-md p-6 mb-10 relative overflow-hidden">
+
+    <div class="opacity-50 pointer-events-none">
+      <% partial_path = "upgrade_previews/#{@feature}" %>
+
+      <%= render(
+        lookup_context.exists?(partial_path, [], true) ? partial_path : "upgrade_previews/default"
+      ) %>
+    </div>
+
+    <!-- Overlay -->
+    <div class="absolute inset-0 flex items-center justify-center">
+      <span class="bg-white/80 px-4 py-2 rounded-lg font-semibold shadow">
+        Preview
+      </span>
+    </div>
+
+  </div>
+
+  <!-- BENEFITS -->
+  <div class="text-left max-w-md mx-auto mb-10 space-y-2 text-gray-700">
+    <% feature_benefits(@feature).each do |benefit| %>
+      <p>✔ <%= benefit %></p>
+    <% end %>
+  </div>
+
+  <!-- CTA -->
+  <div class="space-y-4">
+    <% available_upgrade_plans(current_organization.plan).each do |plan| %>
+      <%= link_to "Upgrade to #{plan.capitalize}",
+          billing_checkout_path(price_id: price_for(plan)),
+          class: "block w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold shadow" %>
+    <% end %>
+  </div>
 
 </div>

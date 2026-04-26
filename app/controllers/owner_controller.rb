@@ -1,5 +1,4 @@
 class OwnerController < ApplicationController
-  before_action :authenticate_user!
   before_action :check_trends_access, only: [:trends]
   before_action :check_history_access, only: [:history]
   before_action :check_requests_access, only: [:pending_requests]
@@ -106,7 +105,7 @@ class OwnerController < ApplicationController
 
     OwnerMailer.history_pdf_email(current_user, pdf, filters).deliver_now
 
-    redirect_to owner_history_path(filters),
+    redirect_to history_path(filters),
                 notice: t('pdf_sent_successfully')
   end
 
@@ -140,13 +139,21 @@ class OwnerController < ApplicationController
       requests.each do |req|
         req.update!(status: "approved")
 
-        # update stock logic (important if you already have it)
         product = req.product
         product.update!(stock_count: product.stock_count + req.quantity_change)
+
+        AuditLog.create(
+          record_type: "Request",
+          record_id: req.id,
+          action: "approve_request",
+          details: product.name,
+          user_id: current_user.id,
+          organization_id: current_organization.id
+        )
       end
     end
 
-    redirect_to owner_pending_requests_path,
+    redirect_to pending_requests_path,
                 notice: t('all_pending_requests_approved')
   end
 end

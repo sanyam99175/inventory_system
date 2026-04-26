@@ -1,179 +1,205 @@
 <div style="max-width: 900px; margin: auto;">
 
   <!-- PRODUCT CARD -->
-  <div style="background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+  <div style="
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid #e0e7ff;
+  ">
 
-    <h2 style="margin-bottom: 10px;"><%= @product.name %></h2>
+    <h2 style="margin-bottom: 10px; color: #1e3a8a;">
+      <%= @product.name %>
+    </h2>
 
-    <p>
-      <strong><%= t('type') %>:</strong> <%= @product.product_type.name %>
+    <p style="color: #334155;">
+      <strong><%= t('type') %>:</strong>
+      <span style="color: #4f46e5;"><%= @product.product_type.name %></span>
     </p>
 
-    <p>
-      <strong><%= t('godown') %>:</strong> <%= @product.godown_number %>
+    <p style="color: #334155;">
+      <strong><%= t('godown') %>:</strong>
+      <span style="color: #4f46e5;"><%= @product.godown_number %></span>
     </p>
 
-    <p>
+    <% stock_count = @product.stock_count || 0 %>
+    <% alert_limit = @product.alert_limit || 0 %>
+    <p style="color: #334155;">
       <strong><%= t('stock') %>:</strong>
       <span style="
         font-weight: bold;
-        color: <%= @product.stock_count <= @product.alert_limit ? 'red' : 'green' %>;
+        color: <%= stock_count <= alert_limit ? '#dc2626' : '#4f46e5' %>;
       ">
         <%= @product.stock_count %>
       </span>
     </p>
 
-    <p>
-      <strong><%= t('alert_limit') %>:</strong> <%= @product.alert_limit %>
+    <p style="color: #334155;">
+      <strong><%= t('alert_limit') %>:</strong>
+      <span style="color: #4f46e5;"><%= @product.alert_limit %></span>
     </p>
 
   </div>
 
   <!-- OWNER ACTION CARD -->
-<% if current_user.owner? && current_user.has_permission?("products", "create_update") %>
-  <div style="
-    background: #eff6ff;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    border: 1px solid #bfdbfe;
-  ">
+  <% if current_user.owner? && current_user.has_permission?("products", "create_update") %>
 
-    <h3 style="color: #1e3a8a; margin-bottom: 10px;">
-      ⚡ <%= t('direct_stock_update') %>
-    </h3>
+    <div style="
+      background: #eff6ff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #c7d2fe;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    ">
 
-    <%= form_with url: update_stock_product_path(@product), method: :patch, local: true do %>
+      <h3 style="color: #1e3a8a; margin-bottom: 10px;">
+        ⚡ <%= t('direct_stock_update') %>
+      </h3>
 
-      <div style="margin-bottom: 12px;">
-        <label style="color: #475569; font-weight: 500;">
-          Quantity Change (+ / -)
-        </label><br>
-
-        <%= number_field_tag :quantity_change, nil,
-            placeholder: "Enter quantity",
-            style: "
-              padding: 10px;
-              width: 100%;
-              border-radius: 6px;
-              border: 1px solid #93c5fd;
-              outline: none;
-            " %>
-      </div>
-
-      <%= submit_tag t('apply_change'),
-          style: "
-            background: #2563eb;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            width: 100%;
-            cursor: pointer;
-            font-weight: 600;
-          " %>
-
-    <% end %>
-
-  </div>
-<% end %>
-
-  <!-- WORKER REQUEST CARD -->
-<% existing_request = Request.find_by(
-  user: current_user,
-  product: @product,
-  status: :pending
-) %>
-
-<% if current_user.worker? && current_user.has_permission?("products", "view") && !current_user.has_permission?("products", "create_update") %>
-  <div style="
-    background: #eff6ff;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    border: 1px solid #bfdbfe;
-  ">
-
-    <h3 style="color: #1e3a8a; margin-bottom: 10px;">
-      📨 Request Stock Change
-    </h3>
-
-    <% if existing_request %>
-
-      <!-- PENDING STATE -->
-      <div style="background: #fff7ed; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
-        <p style="margin: 0;">
-          Pending Request: <b><%= existing_request.quantity_change %></b>
-        </p>
-
-        <p style="font-size: 12px; color: gray;">
-          You cannot create another request until this is resolved
-        </p>
-      </div>
-
-      <%= button_to t('cancel_request'),
-          cancel_request_path(existing_request),
-          method: :patch,
-          style: "
-            background: #ef4444;
-            color: white;
-            padding: 10px;
-            border-radius: 6px;
-            border: none;
-            width: 100%;
-            cursor: pointer;
-          " %>
-
-    <% else %>
-
-      <!-- NEW REQUEST FORM -->
-      <%= form_with url: requests_path, local: true do %>
-
-        <%= hidden_field_tag "request[product_id]", @product.id %>
+      <%= form_with url: update_stock_product_path(@product), method: :patch, local: true do %>
 
         <div style="margin-bottom: 12px;">
-          <label style="color: #475569; font-weight: 500;">
-            Quantity to remove
+          <label style="color: #3730a3; font-weight: 500;">
+            <%= t('quantity_change') %> (+ / -)
           </label><br>
 
-          <%= number_field_tag "request[quantity_change]", nil,
-              placeholder: "Enter quantity to remove",
-              min: 1,
+          <%= number_field_tag :quantity_change, nil,
+              placeholder: t('enter_quantity'),
               style: "
                 padding: 10px;
                 width: 100%;
-                border-radius: 6px;
-                border: 1px solid #93c5fd;
+                border-radius: 8px;
+                border: 1px solid #c7d2fe;
                 outline: none;
               " %>
         </div>
 
-        <%= submit_tag t('send_request'),
+        <%= submit_tag t('apply_change'),
             style: "
-              background: #2563eb;
+              background: #4f46e5;
               color: white;
               padding: 10px;
-              border-radius: 6px;
+              border-radius: 8px;
               border: none;
               width: 100%;
               cursor: pointer;
+              font-weight: 600;
             " %>
 
       <% end %>
 
-    <% end %>
+    </div>
 
-  </div>
-<% end %>
+  <% end %>
+
+  <!-- WORKER REQUEST CARD -->
+  <% existing_request = Request.find_by(
+    user: current_user,
+    product: @product,
+    status: :pending
+  ) %>
+
+  <% if current_user.worker? && current_user.has_permission?("products", "view") && !current_user.has_permission?("products", "create_update") %>
+
+    <div style="
+      background: #eff6ff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #c7d2fe;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    ">
+
+      <h3 style="color: #1e3a8a; margin-bottom: 10px;">
+        📨 <%= t('request_stock_change') %>
+      </h3>
+
+      <% if existing_request %>
+
+        <div style="
+          background: #eef2ff;
+          padding: 12px;
+          border-radius: 8px;
+          margin-bottom: 10px;
+          border: 1px solid #c7d2fe;
+        ">
+
+          <p style="margin: 0; color: #1e3a8a;">
+            Pending Request:
+            <b style="color: #4f46e5;"><%= existing_request.quantity_change %></b>
+          </p>
+
+          <p style="font-size: 12px; color: #64748b;">
+            You cannot create another request until this is resolved
+          </p>
+
+        </div>
+        <%= button_to t('cancel_request'),
+            cancel_request_path(existing_request),
+            method: :patch,
+            style: "
+              background: #dc2626;
+              color: white;
+              padding: 10px;
+              border-radius: 8px;
+              border: none;
+              width: 100%;
+              cursor: pointer;
+              font-weight: 600;
+            " %>
+
+      <% else %>
+
+        <%= form_with url: requests_path, local: true do %>
+
+          <%= hidden_field_tag "request[product_id]", @product.id %>
+
+          <div style="margin-bottom: 12px;">
+            <label style="color: #3730a3; font-weight: 500;">
+              Quantity to remove
+            </label><br>
+
+            <%= number_field_tag "request[quantity_change]", nil,
+                min: 1,
+                placeholder: t('enter_quantity'),
+                style: "
+                  padding: 10px;
+                  width: 100%;
+                  border-radius: 8px;
+                  border: 1px solid #c7d2fe;
+                " %>
+          </div>
+
+          <%= submit_tag t('send_request'),
+              style: "
+                background: #4f46e5;
+                color: white;
+                padding: 10px;
+                border-radius: 8px;
+                border: none;
+                width: 100%;
+                cursor: pointer;
+              " %>
+
+        <% end %>
+
+      <% end %>
+
+    </div>
+
+  <% end %>
 
   <!-- NAVIGATION -->
   <div style="text-align: center; margin-top: 20px;">
     <% if current_user.owner? %>
-      <%= link_to "⬅ #{t('back_to_products')}", products_path %>
+      <%= link_to "⬅ #{t('back_to_products')}", products_path,
+          style: "color: #4f46e5; text-decoration: none;" %>
     <% else %>
-      <%= link_to "⬅ #{t('back_to_dashboard')}", worker_dashboard_path %>
+      <%= link_to "⬅ #{t('back_to_dashboard')}", dashboard_path,
+          style: "color: #4f46e5; text-decoration: none;" %>
     <% end %>
   </div>
 

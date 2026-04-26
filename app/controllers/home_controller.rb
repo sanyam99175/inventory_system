@@ -1,16 +1,22 @@
 class HomeController < ApplicationController
-  def index
-    if main_domain?
-      render :index
-      return
-    end
-    
-    return unless user_signed_in?
+  skip_before_action :authenticate_user!, only: [:index]
+  skip_before_action :set_current_organization, only: [:index]
+  skip_before_action :check_subscription, only: [:index]
+  skip_before_action :set_global_counts, only: [:index]
 
-    if current_user.owner?
-      redirect_to owner_dashboard_path
+  def index
+    # If logged in → go to dashboard
+    if user_signed_in?
+      org = current_user.organization
+
+      if org
+        redirect_to dashboard_path(org_id: org.id)
+      else
+        render :index
+      end
     else
-      redirect_to worker_dashboard_path
+      # Public landing page
+      render :index
     end
   end
 end

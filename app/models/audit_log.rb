@@ -12,6 +12,8 @@ class AuditLog < ApplicationRecord
       I18n.t('audit.record_created', record_type: record_type, details: details)
     when 'update'
       I18n.t('audit.record_updated', record_type: record_type, details: details)
+    when 'update_stock'
+      I18n.t('audit.stock_updated', product: details)
     when 'permission_update'
       details
     when 'approve_request'

@@ -6,25 +6,34 @@ class ProductsController < ApplicationController
   before_action :authorize_delete, only: [:destroy]
 
   def index
-    scope = current_organization.products
+    scope = current_organization.products.includes(:product_type)
 
-    @products = if params[:search].present?
-                  scope.where("name ILIKE ?", "%#{params[:search]}%")
-                else
-                  scope
-                end
+    # 🔍 Search by name
+    if params[:search].present?
+      scope = scope.where("products.name ILIKE ?", "%#{params[:search]}%")
+    end
+
+    # 📂 Filter by category
+    if params[:product_type_id].present?
+      scope = scope.where(product_type_id: params[:product_type_id])
+    end
+
+    @products = scope.order(created_at: :desc)
   end
 
   def show; end
+
 
   def new
     @product = current_organization.products.new
   end
 
+
   def create
     @product = current_organization.products.build(product_params)
 
     if @product.save
+      log_user_audit('create', @product.name)
       redirect_to @product, notice: t('product_created_successfully')
     else
       render :new, status: :unprocessable_entity
@@ -35,6 +44,7 @@ class ProductsController < ApplicationController
 
   def update
     if @product.update(product_params)
+      log_user_audit('update', @product.name)
       redirect_to @product, notice: t('product_updated_successfully')
     else
       render :edit
@@ -53,6 +63,8 @@ class ProductsController < ApplicationController
 
     @product.update(stock_count: new_stock)
 
+    log_user_audit('update_stock', @product.name)
+
     Request.create!(
       user: current_user,
       product: @product,
@@ -66,11 +78,24 @@ class ProductsController < ApplicationController
   end
 
   def destroy
+    log_user_audit('delete', @product.name)
     @product.destroy
     redirect_to products_path, notice: t('product_deleted_successfully')
   end
 
+
   private
+
+  def log_user_audit(action, details)
+    AuditLog.create(
+      record_type: 'Product',
+      record_id: current_user.id,
+      action: action,
+      details: details,
+      user_id: current_user.id,
+      organization_id: current_user.organization.id
+    )
+  end
 
   def set_product
     @product = current_organization.products.find(params[:id])

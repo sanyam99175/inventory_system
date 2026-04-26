@@ -21,7 +21,7 @@
     border: 1px solid #bfdbfe;
   ">
 
-    <%= form_with url: worker_dashboard_path, method: :get, local: true do %>
+   <%= form_with url: dashboard_path, method: :get, local: true do %>
       <%= hidden_field_tag :locale, I18n.locale %>
 
       <%= text_field_tag :search, params[:search],
@@ -60,11 +60,13 @@
 
         <h3 style="margin-bottom: 10px;"><%= product.name %></h3>
 
+        <% stock_count = product.stock_count || 0 %>
+        <% alert_limit = product.alert_limit || 0 %>
         <p>
           <%= t('stock') %>:
           <span style="
             font-weight: bold;
-            color: <%= product.stock_count <= product.alert_limit ? '#dc2626' : '#16a34a' %>;
+            color: <%= stock_count <= alert_limit ? '#dc2626' : '#16a34a' %>;
           ">
             <%= product.stock_count %>
           </span>

@@ -22,15 +22,15 @@
       <!-- LEFT -->
       <div class="flex items-center space-x-6">
 
-        <%= link_to root_url(subdomain: nil), data: { turbo: false }, class: "no-underline" do %>
+        <!-- LOGO -->
+        <%= link_to root_path, class: "no-underline" do %>
           <h1 class="text-xl font-bold text-indigo-700 hover:text-indigo-800 cursor-pointer">
             StockFlow
           </h1>
         <% end %>
 
-        <% if !request.subdomains.blank? && user_signed_in? %>
+        <% if user_signed_in? && current_organization %>
 
-          <!-- LANGUAGE -->
           <div class="relative">
             <details>
               <summary class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer px-3 py-2 hover:bg-gray-100">
@@ -38,13 +38,17 @@
               </summary>
 
               <div class="absolute mt-2 w-32 bg-white border rounded shadow">
-                <%= link_to url_for(locale: :en), class: "block px-4 py-2 text-sm hover:bg-gray-100" do %>
+
+                <%= link_to url_for(request.query_parameters.merge(locale: :en)),
+                    class: "block px-4 py-2 text-sm hover:bg-gray-100" do %>
                   🇬🇧 <%= t('english') %>
                 <% end %>
 
-                <%= link_to url_for(locale: :hi), class: "block px-4 py-2 text-sm hover:bg-gray-100" do %>
+                <%= link_to url_for(request.query_parameters.merge(locale: :hi)),
+                    class: "block px-4 py-2 text-sm hover:bg-gray-100" do %>
                   🇮🇳 <%= t('hindi') %>
                 <% end %>
+
               </div>
             </details>
           </div>
@@ -52,12 +56,12 @@
           <% plan = current_organization.plan %>
 
           <% nav_items = [
-            { key: "dashboard", label: t("dashboard"), path: (current_user.owner? ? owner_dashboard_path : worker_dashboard_path) },
+            { key: "dashboard", label: t("dashboard"), path: dashboard_path },
             { key: "products", label: t("products"), path: products_path },
-            { key: "requests", label: t("requests"), path: owner_pending_requests_path },
-            { key: "history", label: t("history"), path: owner_history_path },
-            { key: "alerts", label: t("alerts"), path: owner_alerts_path },
-            { key: "trends", label: t("trends"), path: owner_trends_path }
+            { key: "requests", label: t("requests"), path: requests_path },
+            { key: "history", label: t("history"), path: history_path },
+            { key: "alerts", label: t("alerts"), path: alerts_path },
+            { key: "trends", label: t("trends"), path: trends_path }
           ] %>
 
           <% nav_items.each do |item| %>
@@ -100,7 +104,7 @@
       <!-- RIGHT -->
       <div class="flex items-center space-x-4">
 
-        <% if !request.subdomains.blank? && user_signed_in? %>
+        <% if user_signed_in? && current_organization %>
 
           <!-- ADMIN -->
           <div class="relative">
@@ -124,6 +128,7 @@
 
                   <% if has_permission %>
                     <% target_path = locked ? upgrade_path(feature: item[:key]) : item[:path] %>
+
                     <%= link_to target_path,
                         class: "block px-4 py-2 text-sm hover:bg-gray-100 #{'opacity-50' if locked}" do %>
 
