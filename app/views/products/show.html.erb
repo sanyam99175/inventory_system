@@ -26,6 +26,7 @@
 
     <% stock_count = @product.stock_count || 0 %>
     <% alert_limit = @product.alert_limit || 0 %>
+
     <p style="color: #334155;">
       <strong><%= t('stock') %>:</strong>
       <span style="
@@ -36,7 +37,21 @@
       </span>
     </p>
 
-    <p style="color: #334155;">
+    <!-- SIMPLE PROGRESS BAR -->
+    <% max_ref = [alert_limit * 2, 1].max %>
+    <% percent = [(stock_count.to_f / max_ref) * 100, 100].min %>
+
+    <div style="margin-top: 10px;">
+      <div style="height: 8px; background: #e5e7eb; border-radius: 999px; overflow: hidden;">
+        <div style="
+          width: <%= percent %>%;
+          height: 8px;
+          background: <%= stock_count <= alert_limit ? '#dc2626' : '#4f46e5' %>;
+        "></div>
+      </div>
+    </div>
+
+    <p style="color: #334155; margin-top: 10px;">
       <strong><%= t('alert_limit') %>:</strong>
       <span style="color: #4f46e5;"><%= @product.alert_limit %></span>
     </p>
@@ -46,83 +61,83 @@
   <!-- OWNER ACTION CARD -->
   <% if current_user.owner? && current_user.has_permission?("products", "create_update") %>
 
-<% users = current_organization.users %>
+    <% users = current_organization.users %>
 
-<div style="
-  background: #eff6ff;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  border: 1px solid #c7d2fe;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-">
+    <div style="
+      background: #eff6ff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #c7d2fe;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    ">
 
-  <h3 style="color: #1e3a8a; margin-bottom: 10px;">
-    ⚡ <%= t('direct_stock_update') %>
-  </h3>
+      <h3 style="color: #1e3a8a; margin-bottom: 10px;">
+        ⚡ <%= t('direct_stock_update') %>
+      </h3>
 
-  <%= form_with url: update_stock_product_path(@product),
-                method: :patch,
-                local: true do %>
-
-    <!-- PERFORMED BY -->
-    <div style="margin-bottom: 12px;">
-      <label style="color: #3730a3; font-weight: 500;">
-        Performed by
-      </label><br>
-
-      <%= select_tag :performed_by_user_id,
-          options_from_collection_for_select(
-            users,
-            :id,
-            :name,
-            current_user.id
-          ),
-          style: "
-            padding: 10px;
-            width: 100%;
-            border-radius: 8px;
-            border: 1px solid #c7d2fe;
-            background: white;
-          " %>
-
-      <p style="font-size: 12px; color: #64748b; margin-top: 4px;">
-        Stock update will be recorded under selected user
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">
+        ⚠ Use format like <b>+5</b> or <b>-3</b>. This ensures correct stock tracking.
       </p>
+
+      <%= form_with url: update_stock_product_path(@product),
+                    method: :patch,
+                    local: true do %>
+
+        <!-- PERFORMED BY -->
+        <div style="margin-bottom: 12px;">
+          <label style="color: #3730a3; font-weight: 500;">Performed by</label><br>
+
+          <%= select_tag :performed_by_user_id,
+              options_from_collection_for_select(
+                users,
+                :id,
+                :name,
+                current_user.id
+              ),
+              style: "
+                padding: 10px;
+                width: 100%;
+                border-radius: 8px;
+                border: 1px solid #c7d2fe;
+                background: white;
+              " %>
+        </div>
+
+        <!-- QUANTITY (+/- ENFORCED) -->
+        <div style="margin-bottom: 12px;">
+          <label style="color: #3730a3; font-weight: 500;">
+            <%= t('quantity_change') %> (+ / -)
+          </label><br>
+
+          <%= text_field_tag :quantity_change, nil,
+              placeholder: "+5 or -3",
+              pattern: "^[+-][0-9]+$",
+              title: "Enter value like +5 or -3",
+              style: "
+                padding: 10px;
+                width: 100%;
+                border-radius: 8px;
+                border: 1px solid #c7d2fe;
+                outline: none;
+              " %>
+        </div>
+
+        <%= submit_tag t('apply_change'),
+            style: "
+              background: #4f46e5;
+              color: white;
+              padding: 10px;
+              border-radius: 8px;
+              border: none;
+              width: 100%;
+              cursor: pointer;
+              font-weight: 600;
+            " %>
+
+      <% end %>
+
     </div>
-
-    <!-- QUANTITY -->
-    <div style="margin-bottom: 12px;">
-      <label style="color: #3730a3; font-weight: 500;">
-        <%= t('quantity_change') %> (+ / -)
-      </label><br>
-
-      <%= number_field_tag :quantity_change, nil,
-          placeholder: t('enter_quantity'),
-          style: "
-            padding: 10px;
-            width: 100%;
-            border-radius: 8px;
-            border: 1px solid #c7d2fe;
-            outline: none;
-          " %>
-    </div>
-
-    <%= submit_tag t('apply_change'),
-        style: "
-          background: #4f46e5;
-          color: white;
-          padding: 10px;
-          border-radius: 8px;
-          border: none;
-          width: 100%;
-          cursor: pointer;
-          font-weight: 600;
-        " %>
-
-  <% end %>
-
-</div>
 
   <% end %>
 
@@ -163,11 +178,8 @@
             <b style="color: #4f46e5;"><%= existing_request.quantity_change %></b>
           </p>
 
-          <p style="font-size: 12px; color: #64748b;">
-            You cannot create another request until this is resolved
-          </p>
-
         </div>
+
         <%= button_to t('cancel_request'),
             cancel_request_path(existing_request),
             method: :patch,
@@ -195,7 +207,7 @@
 
             <%= number_field_tag "request[quantity_change]", nil,
                 min: 1,
-                placeholder: t('enter_quantity'),
+                placeholder: "Enter quantity",
                 style: "
                   padding: 10px;
                   width: 100%;

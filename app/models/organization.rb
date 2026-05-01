@@ -25,9 +25,9 @@ class Organization < ApplicationRecord
   def price_id_for(plan)
     case plan
     when "basic"
-      Rails.application.credentials.dig(:stripe, :basic_price_id)
+      ENV['BASIC_PRICE_ID']
     when "premium"
-      Rails.application.credentials.dig(:stripe, :premium_price_id)
+      ENV['PREMIUM_PRICE_ID']
     end
   end
 

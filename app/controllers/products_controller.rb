@@ -116,6 +116,13 @@ class ProductsController < ApplicationController
   def update_stock
     @product = current_organization.products.find(params[:id])
     quantity = params[:quantity_change].to_i
+    raw_quantity = params[:quantity_change]
+
+    unless raw_quantity.present? && raw_quantity.match?(/\A[+-]\d+\z/)
+      flash[:alert] = "Invalid format. Use +5 or -3"
+      redirect_back fallback_location: product_path(@product) and return
+    end
+
 
     old_stock = @product.stock_count
     new_stock = old_stock + quantity

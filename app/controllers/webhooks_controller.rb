@@ -9,7 +9,7 @@ class WebhooksController < ApplicationController
     event = Stripe::Webhook.construct_event(
       payload,
       sig_header,
-      Rails.application.credentials.dig(:stripe, :webhook_secret)
+      ENV['WEBHOOK_SECRET_KEY']
     )
     stripe_now = Time.at(event.created)
 
@@ -128,8 +128,8 @@ class WebhooksController < ApplicationController
   def map_plan(subscription)
     price_id = subscription.items.data.first.price.id
 
-    basic_id   = Rails.application.credentials.dig(:stripe, :basic_price_id)
-    premium_id = Rails.application.credentials.dig(:stripe, :premium_price_id)
+    basic_id   = ENV['BASIC_PRICE_ID']
+    premium_id = ENV['PREMIUM_PRICE_ID']
 
     return "basic" if price_id == basic_id
     return "premium" if price_id == premium_id

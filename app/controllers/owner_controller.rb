@@ -106,7 +106,11 @@ class OwnerController < ApplicationController
     requests = requests.where(status: filters["status"]) if filters["status"].present?
     requests = requests.where(user_id: filters["user_id"]) if filters["user_id"].present?
 
-    OwnerMailer.history_pdf_email(current_user, requests, filters).deliver_now
+    owners = current_organization.users.owner
+
+    owners.each do |owner|
+      OwnerMailer.history_pdf_email(owner.id, requests.pluck(:id), filters).deliver_later
+    end
 
     redirect_to history_path(filters),
                 notice: t("pdf_sent_successfully")

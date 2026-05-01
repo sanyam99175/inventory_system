@@ -9,6 +9,7 @@ class LowStockAlertJob < ApplicationJob
     return unless org
 
     # ✅ Only owners
+    binding.pry
     owners = org.users.owner
 
     # ✅ preload preferences
