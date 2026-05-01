@@ -407,6 +407,7 @@ DEPENDENCIES
   kaminari
   letter_opener_web
   mailcatcher
+  matrix
   pagy
   pg (~> 1.1)
   prawn

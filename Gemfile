@@ -18,6 +18,7 @@ gem "prawn"
 gem "prawn-table"
 gem 'groupdate'
 gem 'kaminari'
+gem "matrix"
 
 # Gemfile
 gem 'twilio-ruby'
