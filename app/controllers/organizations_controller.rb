@@ -5,8 +5,21 @@ class OrganizationsController < ApplicationController
   skip_before_action :set_global_counts
 
   def new
-    @organization = Organization.new
     @plan = params[:plan] || "free"
+    if current_user&.organization.present?
+        redirect_to after_org_path(current_user.organization)
+        return
+    end
+
+    @organization = Organization.new
+  end
+
+  def after_org_path(org)
+    if org.subscription_status == "incomplete"
+        billing_checkout_path(plan: org.plan)
+    else
+        dashboard_path(organization_id: org.id)
+    end
   end
 
   def create
@@ -23,24 +36,34 @@ class OrganizationsController < ApplicationController
 
       if user.save
         # Stripe customer
-        customer = Stripe::Customer.create(
-          email: user.email,
-          name: @organization.name
-        )
-
+        if Rails.env.development?
+            test_clock_id = "clock_1TRDiOSi8OBCPlBWSSAVBh4f"
+            customer = Stripe::Customer.create(
+            email: user.email,
+            name: @organization.name,
+            test_clock: test_clock_id
+            )
+        else
+            customer = Stripe::Customer.create(
+            email: user.email,
+            name: @organization.name
+            )
+        end
         @organization.update!(
           stripe_customer_id: customer.id,
-          plan: @plan
+          plan: @plan,
+          subscription_status: @plan == "free" ? "active" : "incomplete",
+          trial_ends_at: @plan == "free" ? nil : 7.days.from_now
         )
 
         sign_in(user)
 
         if @plan == "free"
-          redirect_to dashboard_path(org_id: @organization.id)
+          redirect_to dashboard_path(@organization), notice: "Organization created with free plan"
         else
           redirect_to billing_checkout_path(
             org_id: @organization.id,
-            price_id: price_id_for(@plan)
+            price_id: @organization.price_id_for(@plan)
           )
         end
 
@@ -54,15 +77,6 @@ class OrganizationsController < ApplicationController
   end
 
   private
-
-  def price_id_for(plan)
-    case plan
-    when "basic"
-      Rails.application.credentials.dig(:stripe, :basic_price_id)
-    when "premium"
-      Rails.application.credentials.dig(:stripe, :premium_price_id)
-    end
-  end
 
   def organization_params
     params.require(:organization).permit(:name)

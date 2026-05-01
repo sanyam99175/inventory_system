@@ -28,6 +28,11 @@ class AuditsController < ApplicationController
     @current_page = page
   end
 
+  def show
+    @audit_log = current_organization.audit_logs.find(params[:id])
+    @performed_user = User.find_by(id: @audit_log.details["performed_for_user_id"])
+  end
+
   def parse_date(date_string)
     Date.parse(date_string) if date_string.present?
   rescue ArgumentError

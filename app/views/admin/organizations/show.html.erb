@@ -1,0 +1,47 @@
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-2xl p-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">
+      <%= @org.name %>
+    </h1>
+
+    <span class="px-3 py-1 text-sm rounded-full
+      <%= @org.subscription_status == 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' %>">
+      <%= @org.subscription_status.capitalize %>
+    </span>
+  </div>
+
+  <!-- Details -->
+  <div class="space-y-3 text-gray-700">
+    <p>
+      <span class="font-semibold">Plan:</span>
+      <%= @org.plan.capitalize %>
+    </p>
+
+    <p>
+      <span class="font-semibold">Trial Ends:</span>
+      <%= @org.trial_ends_at.present? ? @org.trial_ends_at.strftime("%d %b %Y") : "N/A" %>
+    </p>
+  </div>
+
+  <hr class="my-6">
+
+  <!-- Actions -->
+  <div class="flex gap-3 flex-wrap">
+    <%= button_to "Activate",
+        activate_admin_organization_path(@org),
+        method: :patch,
+        class: "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" %>
+
+    <%= button_to "Suspend",
+        suspend_admin_organization_path(@org),
+        method: :patch,
+        class: "px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition" %>
+
+    <%= button_to "Delete",
+        admin_organization_path(@org),
+        method: :delete,
+        data: { confirm: "Are you sure?" },
+        class: "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition" %>
+  </div>
+</div>

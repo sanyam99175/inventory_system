@@ -1,0 +1,131 @@
+<div class="min-h-screen bg-gray-100 p-6">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-semibold text-gray-800">Admin Dashboard</h1>
+
+    <div class="flex items-center gap-4">
+      <span class="text-sm text-gray-600">
+        Logged in as <%= current_user.email %>
+      </span>
+
+      <%= link_to "Logout",
+          destroy_user_session_path,
+          data: { turbo_method: :delete },
+          class: "bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" %>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white p-4 rounded-xl shadow">
+      <p class="text-gray-500 text-sm">Total Orgs</p>
+      <p class="text-2xl font-bold"><%= @organizations.count %></p>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+      <p class="text-gray-500 text-sm">Active</p>
+      <p class="text-2xl font-bold text-green-600">
+        <%= @organizations.where(subscription_status: "active").count %>
+      </p>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+      <p class="text-gray-500 text-sm">Trialing</p>
+      <p class="text-2xl font-bold text-yellow-600">
+        <%= @organizations.where(subscription_status: "trialing").count %>
+      </p>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+      <p class="text-gray-500 text-sm">Past Due</p>
+      <p class="text-2xl font-bold text-red-600">
+        <%= @organizations.where(subscription_status: "past_due").count %>
+      </p>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-xl shadow overflow-hidden">
+    <table class="min-w-full text-sm text-left">
+
+      <!-- Head -->
+      <thead class="bg-gray-50 border-b">
+        <tr>
+          <th class="px-6 py-3 font-medium text-gray-600">Name</th>
+          <th class="px-6 py-3 font-medium text-gray-600">Plan</th>
+          <th class="px-6 py-3 font-medium text-gray-600">Status</th>
+          <th class="px-6 py-3 font-medium text-gray-600">Trial Ends</th>
+          <th class="px-6 py-3 font-medium text-gray-600">Actions</th>
+        </tr>
+      </thead>
+
+      <!-- Body -->
+      <tbody class="divide-y">
+
+        <% @organizations.each do |org| %>
+          <tr class="hover:bg-gray-50">
+
+            <!-- Name -->
+            <td class="px-6 py-4 font-medium text-gray-800">
+              <%= org.name %>
+            </td>
+
+            <!-- Plan -->
+            <td class="px-6 py-4 capitalize text-gray-600">
+              <%= org.plan %>
+            </td>
+
+            <!-- Status Badge -->
+            <td class="px-6 py-4">
+              <% status = org.subscription_status %>
+
+              <% badge_class =
+                case status
+                when "active"
+                  "bg-green-100 text-green-700"
+                when "trialing"
+                  "bg-yellow-100 text-yellow-700"
+                when "past_due"
+                  "bg-red-100 text-red-700"
+                when "incomplete"
+                  "bg-orange-100 text-orange-700"
+                when "canceled"
+                  "bg-gray-200 text-gray-700"
+                else
+                  "bg-gray-100 text-gray-600"
+                end
+              %>
+
+              <span class="px-3 py-1 rounded-full text-xs font-semibold <%= badge_class %>">
+                <%= status || "none" %>
+              </span>
+            </td>
+
+            <!-- Trial Ends -->
+            <td class="px-6 py-4 text-gray-600">
+              <%= org.trial_ends_at&.strftime("%d %b %Y") || "-" %>
+            </td>
+
+            <!-- Actions -->
+            <td class="px-6 py-4 flex gap-2">
+
+              <%= link_to "View",
+                  admin_organization_path(org),
+                  class: "text-blue-600 hover:underline" %>
+
+              <%= button_to "Delete",
+                  admin_organization_path(org),
+                  method: :delete,
+                  data: { confirm: "Are you sure?" },
+                  class: "text-red-600 hover:underline" %>
+
+            </td>
+
+          </tr>
+        <% end %>
+
+      </tbody>
+    </table>
+  </div>
+</div>

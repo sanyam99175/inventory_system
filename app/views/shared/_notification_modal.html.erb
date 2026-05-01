@@ -1,0 +1,75 @@
+<div data-notification-modal-target="container"
+     class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/50 backdrop-blur-sm">
+
+  <!-- MODAL BOX -->
+  <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
+
+    <!-- HEADER -->
+    <div class="mb-4">
+      <h2 class="text-xl font-semibold text-gray-800">
+        Notification Settings
+      </h2>
+      <p class="text-sm text-gray-500 mt-1">
+        Stay updated when your inventory needs attention.
+      </p>
+    </div>
+
+    <%= form_with model: @preference,
+                  url: notification_preference_path(current_organization),
+                  method: :patch,
+                  scope: :notification_preference,
+                  data: { turbo: false } do |f| %>
+
+      <!-- SINGLE TOGGLE -->
+      <div class="border rounded-xl p-4 mb-5 bg-gray-50">
+        <label class="flex items-start gap-3 cursor-pointer">
+
+          <%= f.check_box :low_stock_alert,
+                checked: @preference.low_stock_alert,
+                class: "mt-1" %>
+
+          <div>
+            <p class="font-medium text-gray-800">
+              Email me when stock is low
+            </p>
+            <p class="text-sm text-gray-500">
+              You’ll receive an email alert when any product goes below its alert limit.
+            </p>
+          </div>
+
+        </label>
+      </div>
+
+      <!-- WHATSAPP COMING SOON -->
+      <div class="mb-5 p-3 rounded-lg bg-blue-50 border border-blue-100">
+        <p class="text-sm text-blue-700 font-medium">
+          🚀 WhatsApp alerts coming soon
+        </p>
+        <p class="text-xs text-blue-600 mt-1">
+          We’re working on real-time alerts via WhatsApp for faster updates.
+        </p>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="flex justify-between items-center mt-6">
+
+        <p class="text-xs text-gray-400">
+          You can change this anytime.
+        </p>
+
+        <div class="flex gap-2">
+          <button type="button"
+                  class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
+                  data-action="click->notification-modal#close">
+            Cancel
+          </button>
+
+          <%= f.submit "Save",
+                class: "bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-sm" %>
+        </div>
+
+      </div>
+
+    <% end %>
+  </div>
+</div>

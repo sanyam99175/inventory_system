@@ -1,107 +1,257 @@
-<div class="max-w-6xl mx-auto p-6">
+<div class="max-w-7xl mx-auto px-4 py-6">
 
-  <!-- TOP BAR -->
-  <div class="flex justify-between items-center mb-6">
+  <!-- ================= HEADER ================= -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
-    <!-- LEFT -->
-    <div>
-      <%= link_to "🏠 #{t('dashboard')}", dashboard_path,
-          class: "bg-indigo-700 text-white px-4 py-2 rounded-lg hover:bg-indigo-800" %>
+    <div class="flex items-center gap-3">
+      <h1 class="text-2xl font-bold text-gray-800">
+        📦 <%= t('products', default: 'Products') %>
+      </h1>
     </div>
 
-    <!-- RIGHT -->
-    <div class="flex gap-3">
+    <div class="flex flex-wrap gap-2">
 
       <% if current_user.has_permission?("products", "create_update") %>
 
-        <%= link_to "➕ #{t('add_product_type', default: 'Add Product Category')}",
+        <%= link_to "➕ Category",
             new_product_type_path,
-            class: "bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700" %>
+            class: "bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition" %>
 
-        <%= link_to "➕ #{t('add_product', default: 'Add Product')}",
+        <%= link_to "➕ Product",
             new_product_path,
-            class: "bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700" %>
+            class: "bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition" %>
 
       <% end %>
 
     </div>
   </div>
 
-  <!-- SEARCH + FILTER -->
-  <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200 mb-6">
+  <!-- ================= FILTER ================= -->
+  <div class="bg-white border rounded-2xl p-5 mb-6">
 
     <%= form_with url: products_path, method: :get, local: true do %>
 
-      <%= hidden_field_tag :locale, I18n.locale %>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
 
-      <div class="flex items-center gap-3 flex-wrap">
+        <div class="md:col-span-6">
+          <%= text_field_tag :search, params[:search],
+              placeholder: "🔍 Search products...",
+              class: "w-full px-4 py-2 border rounded-lg" %>
+        </div>
 
-        <!-- SEARCH -->
-        <%= text_field_tag :search, params[:search],
-            placeholder: "🔍 #{t('search_products')}...",
-            class: "w-64 px-4 py-2 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500" %>
+        <div class="md:col-span-4">
+          <%= select_tag :product_type_id,
+              options_from_collection_for_select(
+                current_organization.product_types,
+                :id,
+                :name,
+                params[:product_type_id]
+              ),
+              include_blank: "All Categories",
+              class: "w-full px-4 py-2 border rounded-lg" %>
+        </div>
 
-        <!-- CATEGORY FILTER -->
-        <%= select_tag :product_type_id,
-            options_from_collection_for_select(
-              current_organization.product_types,
-              :id,
-              :name,
-              params[:product_type_id]
-            ),
-            include_blank: "#{t('all_categories', default: 'All Categories')}",
-            class: "px-4 py-2 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500" %>
-
-        <!-- SUBMIT -->
-        <%= submit_tag t('search'),
-            class: "px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" %>
-
-        <!-- CLEAR -->
-        <% if params[:search].present? || params[:product_type_id].present? %>
-          <%= link_to t('clear'), products_path,
-              class: "text-indigo-700 hover:underline" %>
-        <% end %>
+        <div class="md:col-span-2">
+          <%= submit_tag "Search",
+              class: "w-full bg-indigo-600 text-white px-4 py-2 rounded-lg" %>
+        </div>
 
       </div>
 
     <% end %>
 
   </div>
+<% if @show_early_stage_warning %>
 
-  <!-- TABLE -->
-  <div class="bg-white rounded-xl shadow border border-indigo-100 overflow-hidden">
+  <div
+    id="early-stage-banner"
+    class="max-w-7xl mx-auto px-4 mt-4 mb-4"
+  >
 
-    <table class="w-full">
+    <div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl flex items-start justify-between gap-3 shadow-sm">
 
-      <thead class="bg-indigo-100 text-indigo-900">
-        <tr>
-          <th class="p-4 text-left"><%= t('product') %></th>
-          <th class="p-4 text-left"><%= t('stock') %></th>
-          <th class="p-4 text-left"><%= t('type') %></th>
-          <th class="p-4 text-left w-56"><%= t('actions') %></th>
-        </tr>
-      </thead>
+      <!-- LEFT CONTENT -->
+      <div class="flex items-start gap-3">
 
-      <tbody id="products">
+        <div class="text-xl">⚠️</div>
 
-        <% if @products.present? %>
-          <%= render @products %>
-        <% else %>
+        <div class="text-sm leading-5">
+
+          <p class="font-semibold">
+            Early-stage data warning
+          </p>
+
+          <p class="text-amber-700 mt-1">
+            StockFlow insights are still learning from your usage patterns.
+            Predictions may not be fully accurate yet.
+          </p>
+
+          <p class="text-amber-600 mt-1 font-medium">
+            Data becomes more reliable after ~30 days of usage.
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- CLOSE BUTTON -->
+      <button
+        onclick="dismissEarlyBanner()"
+        class="text-amber-700 hover:text-amber-900 text-lg font-bold px-2"
+      >
+        ✖
+      </button>
+
+    </div>
+
+  </div>
+
+<% end %>
+  <!-- ================= TABLE ================= -->
+  <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+
+    <div class="overflow-x-auto">
+
+      <table class="min-w-full text-sm">
+
+        <thead class="bg-indigo-50 text-indigo-800 sticky top-0 z-10">
           <tr>
-            <td colspan="4" class="text-center py-10 text-indigo-400">
-              <% if params[:search].present? || params[:product_type_id].present? %>
-                🔍 <%= t('no_matching_products', default: "No matching products found") %>
-              <% else %>
-                📦 <%= t('no_products_available', default: "No products available") %>
-              <% end %>
-            </td>
+            <th class="p-4 text-left">Product</th>
+            <th class="p-4 text-left">Stock Intelligence</th>
+            <th class="p-4 text-left">Category</th>
+            <th class="p-4 text-left">Actions</th>
           </tr>
-        <% end %>
+        </thead>
 
-      </tbody>
+        <tbody class="divide-y divide-gray-100">
 
-    </table>
+          <% if @products.present? %>
+
+            <% @products.each do |product| %>
+
+              <tr class="hover:bg-gray-50 transition">
+
+                <!-- PRODUCT -->
+                <td class="p-4 font-medium text-gray-800">
+
+                  <div class="flex flex-col gap-1">
+
+                    <div class="flex items-center gap-2">
+                      <%= product.name %>
+
+                      <% if product.reorder_needed? %>
+                        <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+                          Reorder
+                        </span>
+                      <% end %>
+                    </div>
+
+                    <span class="text-xs text-gray-400">
+                      Usage: <%= product.daily_usage_rate.round(2) %>/day
+                    </span>
+
+                  </div>
+
+                </td>
+
+                <!-- STOCK INTELLIGENCE -->
+                <td class="p-4">
+
+                  <div class="flex flex-col">
+
+                    <span class="font-semibold">
+                      <%= product.stock_count %>
+                    </span>
+
+                    <span class="text-xs text-gray-500">
+                      ~ <%= product.days_remaining %> days remaining
+                    </span>
+
+                    <span class="text-xs text-indigo-500">
+                      Suggested: <%= product.recommended_stock %>
+                    </span>
+
+                    <% if product.reorder_needed? %>
+                      <span class="text-xs text-red-500 font-medium">
+                        ⚠ Low stock risk
+                      </span>
+                    <% else %>
+                      <span class="text-xs text-green-500">
+                        Healthy stock
+                      </span>
+                    <% end %>
+
+                  </div>
+
+                </td>
+
+                <!-- CATEGORY -->
+                <td class="p-4 text-gray-600">
+                  <%= product.product_type&.name %>
+                </td>
+
+                <!-- ACTIONS (FIXED) -->
+                <td class="p-4">
+
+                  <div class="flex gap-3 items-center">
+
+                    <%= link_to "View",
+                        product_path(product),
+                        class: "text-indigo-600 text-sm hover:underline" %>
+
+                    <% if current_user.has_permission?("products", "create_update") %>
+                      <%= link_to "Edit",
+                          edit_product_path(product),
+                          class: "text-gray-600 text-sm hover:underline" %>
+                    <% end %>
+
+                    <% if current_user.has_permission?("products", "delete") %>
+                      <%= link_to "Delete",
+                          product_path(product),
+                          method: :delete,
+                          data: { confirm: "Are you sure?" },
+                          class: "text-red-600 text-sm hover:underline" %>
+                    <% end %>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            <% end %>
+
+          <% else %>
+
+            <tr>
+              <td colspan="4" class="text-center py-14 text-gray-400">
+                📦 No products found
+              </td>
+            </tr>
+
+          <% end %>
+
+        </tbody>
+
+      </table>
+
+    </div>
 
   </div>
 
 </div>
+
+<script>
+  function dismissEarlyBanner() {
+    const banner = document.getElementById("early-stage-banner");
+    if (!banner) return;
+
+    banner.style.transition = "all 0.25s ease";
+    banner.style.opacity = "0";
+    banner.style.transform = "translateY(-10px)";
+
+    setTimeout(() => {
+      banner.style.display = "none";
+    }, 250);
+  }
+</script>

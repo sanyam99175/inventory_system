@@ -21,12 +21,16 @@ module InventoryApp
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    config.time_zone = "Asia/Kolkata"
-    config.active_record.default_timezone = :local
+    config.time_zone = 'Asia/Kolkata'
+    config.active_record.default_timezone = :utc
     config.i18n.available_locales = [:en, :hi]
     config.i18n.default_locale = :en
     # config/application.rb
 
     config.autoload_paths << Rails.root.join("app/middleware")
+    config.action_mailer.default_url_options = {
+      host: "localhost",
+      port: 3000
+    }
   end
 end

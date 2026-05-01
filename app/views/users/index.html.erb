@@ -1,15 +1,18 @@
-<% has_permission = current_user.has_permission?("users", "view") %>
+<% has_permission_view = current_user.has_permission?("users", "view") %>
+<% has_permission_update_create = current_user.has_permission?("users", "create_update") %>
+<% has_permission_change_permissions = current_user.has_permission?("users", "change_permissions") %>
+<% has_permission_delete = current_user.has_permission?("users", "delete") %>
 <% view_allowed_by_plan = PlanPermissions.allowed_action?(current_user.organization.plan, "users", "view") %>
 <% update_create_allowed_by_plan = PlanPermissions.allowed_action?(current_user.organization.plan, "users", "create_update") %>
 <% change_permissions_allowed_by_plan = PlanPermissions.allowed_action?(current_user.organization.plan, "users", "change_permissions") %>
 <% delete_allowed_by_plan = PlanPermissions.allowed_action?(current_user.organization.plan, "users", "delete") %>
-<% view_locked = has_permission && !view_allowed_by_plan %>
-<% update_create_locked = has_permission && !update_create_allowed_by_plan %>
-<% change_permissions_locked = has_permission && !change_permissions_allowed_by_plan %>
-<% delete_locked = has_permission && !delete_allowed_by_plan %>
+<% view_access = has_permission_view && view_allowed_by_plan %>
+<% update_create_access = has_permission_update_create && update_create_allowed_by_plan %>
+<% change_permissions_access = has_permission_change_permissions && change_permissions_allowed_by_plan %>
+<% delete_access = has_permission_delete && delete_allowed_by_plan %>
 <div class="max-w-6xl mx-auto p-6">
 
-<% if !view_locked %>
+<% if view_access %>
 
 
 <!-- HEADER -->
@@ -28,7 +31,7 @@
   <div class="flex items-center gap-3">
 
     <!-- CREATE / UPDATE -->
-    <% if !update_create_locked %>
+    <% if update_create_access %>
       <%= link_to new_staff_path,
           class: "rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700" do %>
         ➕ <%= t('add_user') %>
@@ -108,13 +111,13 @@
               <div class="flex gap-2">
 
                 <!-- CHANGE PERMISSIONS -->
-                <% if !change_permissions_locked %>
+                <% if change_permissions_access %>
                   <%= link_to t('permissions'), permissions_staff_path(user),
                       class: "bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700" %>
                 <% end %>
 
                 <!-- DELETE -->
-                <% if !delete_locked && user != current_user %>
+                <% if delete_access && user != current_user %>
                   <%= button_to t('delete'), staff_path(user),
                       method: :delete,
                       data: { turbo_confirm: t('are_you_sure_cannot_undo') },

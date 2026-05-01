@@ -37,7 +37,12 @@ class OwnerController < ApplicationController
 
   def history
     @users = current_organization.users.select(:id, :email).order(:email)
+
     @requests = filtered_requests
+                  .order(created_at: :desc)
+
+    # ✅ pagination (safe check)
+    @requests = @requests.page(params[:page]).per(5) if @requests.respond_to?(:page)
 
     respond_to do |format|
       format.html
@@ -101,12 +106,10 @@ class OwnerController < ApplicationController
     requests = requests.where(status: filters["status"]) if filters["status"].present?
     requests = requests.where(user_id: filters["user_id"]) if filters["user_id"].present?
 
-    pdf = HistoryPdf.new(requests, filters).render
-
-    OwnerMailer.history_pdf_email(current_user, pdf, filters).deliver_now
+    OwnerMailer.history_pdf_email(current_user, requests, filters).deliver_now
 
     redirect_to history_path(filters),
-                notice: t('pdf_sent_successfully')
+                notice: t("pdf_sent_successfully")
   end
 
   def pending_requests
@@ -118,18 +121,323 @@ class OwnerController < ApplicationController
   end
 
   def trends
-    # DAILY (items taken out)
-    @daily_trends = current_organization.requests
-      .where(status: :approved)
+    requests = current_organization.requests.where(status: :approved)
+
+    # ================= DAILY TREND =================
+    @daily_trends = requests
       .where("quantity_change < 0")
       .group("DATE(created_at)")
       .sum("ABS(quantity_change)")
 
-    # MONTHLY (items taken out)
-    @monthly_trends = current_organization.requests
-                        .where("quantity_change < 0")
-                        .group("DATE(created_at)")
-                        .sum("ABS(quantity_change)")
+    # ================= MONTHLY TREND =================
+    @monthly_trends = requests
+      .where("quantity_change < 0")
+      .group("DATE_TRUNC('month', created_at)")
+      .sum("ABS(quantity_change)")
+
+    # ================= WEEKDAY =================
+    weekday_raw = requests
+      .where("quantity_change < 0")
+      .group("EXTRACT(DOW FROM created_at)")
+      .sum("ABS(quantity_change)")
+
+    @weekday_trends = (0..6).map { |i| weekday_raw[i.to_f] || 0 }
+
+    # ================= PRODUCT =================
+    @product_trends = requests
+      .joins(:product)
+      .group("products.name")
+      .sum("ABS(quantity_change)")
+      .sort_by { |_, v| -v }
+      .first(7)
+      .to_h
+
+    # ================= FIXED LOW STOCK ALERTS =================
+    low_stock = current_organization.products.where("stock_count <= alert_limit")
+
+    @alert_trends = low_stock
+      .group("DATE(updated_at)")   # 🔥 FIX: use updated_at instead of created_at
+      .count
+
+    # ensure string-safe keys for Chart.js
+    @alert_trends = @alert_trends.transform_keys { |k| k.to_date.strftime("%d %b") }
+
+    # ================= FIXED USER ACTIVITY =================
+    @user_trends = requests
+      .joins(:user)
+      .group("users.id", "users.name", "users.email")
+      .sum("ABS(quantity_change)")
+      .map do |(id, name, email), value|
+        [name.presence || email, value]
+      end
+      .sort_by { |_, v| -v }
+      .first(7)
+      .to_h
+
+    # ================= KPI =================
+    all_values = @daily_trends.values
+
+    @total_items_out = all_values.sum
+    @daily_avg = all_values.any? ? (all_values.sum.to_f / all_values.size).round(2) : 0
+
+    @peak_day = @daily_trends.max_by { |_, v| v }&.first
+    @peak_day = @peak_day.is_a?(Date) ? @peak_day.strftime("%d %b") : @peak_day
+    @show_early_stage_warning =
+      current_organization.created_at > 30.days.ago ||
+      current_organization.requests.count < 100
+  end
+
+  def time_range(range)
+    case range
+    when "week"
+      [Date.current.beginning_of_week, Date.current.end_of_week]
+    when "year"
+      [Date.current.beginning_of_year, Date.current.end_of_year]
+    when "custom"
+      [
+        params[:start_date].presence || Date.current.beginning_of_month,
+        params[:end_date].presence || Date.current.end_of_month
+      ]
+    else
+      [Date.current.beginning_of_month, Date.current.end_of_month]
+    end
+  end
+
+  def previous_time_range(range)
+    case range
+    when "week"
+      [1.week.ago.beginning_of_week, 1.week.ago.end_of_week]
+    when "year"
+      [1.year.ago.beginning_of_year, 1.year.ago.end_of_year]
+    else
+      [1.month.ago.beginning_of_month, 1.month.ago.end_of_month]
+    end
+  end
+
+  def percentage_change(current, previous)
+    return 0 if previous.to_f.zero?
+    ((current.to_f - previous.to_f) / previous.to_f) * 100
+  end
+
+  def intelligence
+    @range = (params[:range] || "month")
+
+    start_date, end_date = time_range(@range)
+    prev_start, prev_end = previous_time_range(@range)
+
+    current = current_organization.requests.where(created_at: start_date..end_date)
+    previous = current_organization.requests.where(created_at: prev_start..prev_end)
+
+    # ================= CORE KPIs =================
+    @total_activity = current.sum("ABS(quantity_change)")
+    @prev_total_activity = previous.sum("ABS(quantity_change)")
+    @activity_change_pct = percentage_change(@total_activity, @prev_total_activity)
+
+    @request_count = current.count
+    @prev_request_count = previous.count
+    @request_change_pct = percentage_change(@request_count, @prev_request_count)
+
+    # ================= STAFF =================
+    staff = current.joins(:user)
+                  .group("users.id", "users.name", "users.email")
+                  .sum("ABS(quantity_change)")
+
+    @staff_leaderboard = staff.map do |(_, name, email), total|
+      {
+        name: name.presence || email.split("@").first,
+        total: total.to_i
+      }
+    end.sort_by { |s| -s[:total] }
+
+    @top_staff = @staff_leaderboard.first
+
+    # ================= PRODUCTS =================
+    product = current.joins(:product)
+                    .group("products.name")
+                    .sum("ABS(quantity_change)")
+
+    @product_usage = product
+    @top_product = product.max_by { |_, v| v }
+
+    @least_used = product.min_by { |_, v| v }
+
+    # ================= SPARKLINE DATA =================
+    @daily_series = current.group_by_day(:created_at).sum("ABS(quantity_change)")
+    @daily_prev   = previous.group_by_day(:created_at).sum("ABS(quantity_change)")
+
+    # ================= HEALTH SCORE =================
+
+    activity_score = 100 - ((@activity_change_pct.to_f.abs / 2).clamp(0, 100))
+
+    top = @staff_leaderboard.first
+    second = @staff_leaderboard.second
+
+    staff_score =
+      if top.nil? || second.nil?
+        70
+      else
+        ratio = top[:total].to_f / second[:total]
+        (100 - (ratio - 1) * 20).clamp(0, 100)
+      end
+
+    product_score =
+      if @product_usage.present?
+        total = @product_usage.values.sum.to_f
+        top = @product_usage.values.max.to_f
+
+        if total == 0
+          50
+        else
+          concentration = top / total
+          (100 - concentration * 100).clamp(0, 100)
+        end
+      else
+        50
+      end
+
+    risk_score = (100 - (@low_usage_count.to_i * 10)).clamp(0, 100)
+
+    @health_score =
+      (
+        activity_score * 0.30 +
+        staff_score * 0.25 +
+        product_score * 0.25 +
+        risk_score * 0.20
+      ).round(1)
+
+    @score_components = {
+        activity: activity_score,
+        staff: staff_score,
+        product: product_score,
+        risk: risk_score
+      }
+
+    @health_insights = build_health_insights(@score_components)
+    @health_breakdown =
+      health_score_breakdown(current, previous, staff, product)
+
+    # ================= INSIGHTS =================
+    @show_early_stage_warning =
+      current_organization.created_at > 30.days.ago ||
+      current_organization.requests.count < 100
+    @insights = build_insights(@activity_change_pct, @top_staff, @top_product, @least_used)
+  end
+
+  def health_score_breakdown(current, previous, staff, product_usage)
+    breakdown = {}
+
+    # ================= ACTIVITY CHANGE =================
+    current_activity = current.sum("ABS(quantity_change)")
+    previous_activity = previous.sum("ABS(quantity_change)")
+
+    activity_delta = current_activity - previous_activity
+
+    breakdown[:activity] = {
+      current: current_activity,
+      previous: previous_activity,
+      change: activity_delta,
+      change_pct: percentage_change(current_activity, previous_activity)
+    }
+
+    # ================= STAFF IMPACT =================
+    staff_sorted = staff.sort_by { |_, v| -v }
+
+    top_staff = staff_sorted.first
+    worst_staff = staff_sorted.last
+
+    breakdown[:staff] = {
+      top: { name: top_staff&.first&.dig(1), value: top_staff&.last },
+      overloaded: top_staff,
+      low: worst_staff
+    }
+
+    # ================= PRODUCT DEPENDENCY =================
+    sorted_products = product_usage.sort_by { |_, v| -v }
+
+    breakdown[:product] = {
+      top: sorted_products.first,
+      second: sorted_products.second,
+      concentration: (sorted_products.first&.last.to_f / product_usage.values.sum).round(2)
+    }
+
+    # ================= RISK SIGNALS =================
+    breakdown[:risk] = {
+      low_usage_count: product_usage.count { |_, v| v < 5 },
+      inactive_products: product_usage.select { |_, v| v == 0 }.keys
+    }
+
+    breakdown
+  end
+
+  def build_insights(activity_change, top_staff, top_product, least_used)
+    insights = []
+
+    insights << if activity_change > 25
+      { type: "positive", text: "Activity is up #{activity_change.round(1)}% vs last period 🚀" }
+    elsif activity_change < -20
+      { type: "danger", text: "Activity dropped #{activity_change.abs.round(1)}% ⚠️" }
+    else
+      { type: "neutral", text: "Stable inventory movement 📊" }
+    end
+
+    insights << { type: "info", text: "Top staff: #{top_staff&.dig(:name)}" } if top_staff
+    insights << { type: "info", text: "Top product: #{top_product&.first}" } if top_product
+    insights << { type: "warning", text: "Low usage: #{least_used&.first}" } if least_used
+
+    insights
+  end
+
+  def build_health_insights(score_components)
+    insights = []
+
+    # ACTIVITY
+    if score_components[:activity] < 60
+      insights << {
+        type: :warning,
+        title: "Low Activity",
+        message: "Inventory movement is slower than normal. Stock may be idle.",
+        impact: "High impact on sales flow"
+      }
+    elsif score_components[:activity] > 85
+      insights << {
+        type: :positive,
+        title: "Strong Demand",
+        message: "High inventory movement detected. Products are selling fast.",
+        impact: "Good growth signal"
+      }
+    end
+
+    # STAFF IMBALANCE
+    if score_components[:staff] < 60
+      insights << {
+        type: :warning,
+        title: "Staff Imbalance",
+        message: "Workload is uneven across staff members.",
+        impact: "May affect efficiency"
+      }
+    end
+
+    # PRODUCT CONCENTRATION
+    if score_components[:product] < 60
+      insights << {
+        type: :warning,
+        title: "Product Dependency Risk",
+        message: "Few products dominate overall usage.",
+        impact: "High risk if demand shifts"
+      }
+    end
+
+    # RISK
+    if score_components[:risk] < 50
+      insights << {
+        type: :danger,
+        title: "Inactive Stock Detected",
+        message: "Several products are underutilized or idle.",
+        impact: "Capital is blocked"
+      }
+    end
+
+    insights
   end
 
   def approve_all_requests

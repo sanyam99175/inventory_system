@@ -6,9 +6,10 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  belongs_to :organization
+  belongs_to :organization, optional: true
+  validates :organization, presence: true, unless: :superadmin_user?
 
-  enum role: { worker: 0, owner: 1 }
+  enum role: { worker: 0, owner: 1, superadmin: 2 }
 
   PERMISSION_MODULES = {
     products: ["view", "create_update", "delete"],
@@ -16,11 +17,14 @@ class User < ApplicationRecord
     alerts: ["view"],
     history: ["view"],
     trends: ["view"],
+    intelligence: ["view"],
     recycle_bin: ["view", "restore"],
     audits: ["view"],
-    users: ["view", "create_update", "delete", "change_permissions"]
+    users: ["view", "create_update", "delete", "change_permissions"],
+    manage_subscription: ["view"]
   }
 
+  has_one :notification_preference
   has_many :requests, dependent: :nullify
   has_many :notifications, dependent: :destroy
   has_many :histories, dependent: :nullify
@@ -29,6 +33,27 @@ class User < ApplicationRecord
 
   before_create :set_default_permissions
   before_save :normalize_permissions
+  after_create :create_default_notification_preference, if: :owner?
+  after_create :send_welcome_email
+
+  def create_default_notification_preference
+    NotificationPreference.find_or_create_by!(
+      user: self,
+      organization: organization,
+      low_stock_alert: false,
+      email: false,
+      whatsapp: false
+    )
+  end
+
+
+  def send_welcome_email
+    NotificationMailer.welcome_email(self).deliver_now
+  end
+
+  def superadmin_user?
+    self.superadmin?
+  end
 
   def set_default_permissions
     return if self.permissions.present? # don't override if already set
@@ -80,7 +105,11 @@ class User < ApplicationRecord
       User::PERMISSION_MODULES.transform_values(&:dup)
     else
       User::PERMISSION_MODULES.keys.index_with do |key|
-        key.to_s == "products" ? ["view"] : []
+        if %w[products requests users].include?(key.to_s)
+          ["view"]
+        else
+          []
+        end
       end
     end
   end

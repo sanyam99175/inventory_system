@@ -1,13 +1,15 @@
 class OwnerMailer < ApplicationMailer
-    def history_pdf_email(user, pdf_data, filters = {})
+  def history_pdf_email(user, requests, filters = {})
     @user = user
-    @filters = filters
+    @filters = filters.to_h
 
-    attachments["stock-history.pdf"] = pdf_data
+    pdf = HistoryPdf.new(requests, @filters).render
 
-    mail(
-        to: @user.email,
-        subject: "Stock History Report"
-    )
-    end
+    attachments["stock-history.pdf"] = {
+      mime_type: "application/pdf",
+      content: pdf.force_encoding("BINARY")
+     }
+
+    mail(to: @user.email, subject: "Stock History Report")
+  end
 end

@@ -1,98 +1,110 @@
-<div style="max-width: 1000px; margin: auto; padding: 20px;">
+<div class="min-h-screen bg-indigo-50 p-6">
 
-  <!-- HEADER -->
-  <div style="
-    background: #1e3a8a;
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-  ">
-    <h2>👷 <%= t('worker_dashboard') %></h2>
-    <p style="color: #bfdbfe;"><%= t('search_request_items') %></p>
+  <!-- ================= HEADER ================= -->
+  <div class="bg-indigo-700 text-white p-6 rounded-2xl shadow-md mb-6 flex items-center justify-between">
+
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-lg font-bold">
+        👷
+      </div>
+
+      <div>
+        <h1 class="text-2xl font-bold">
+          <%= t('worker_dashboard') %>
+        </h1>
+        <p class="text-indigo-100 text-sm">
+          <%= t('search_request_items') %>
+        </p>
+      </div>
+    </div>
+
+    <div class="hidden md:block">
+      <span class="text-xs bg-white/20 px-3 py-1 rounded-full">
+        Worker Panel
+      </span>
+    </div>
+
   </div>
 
-  <!-- SEARCH -->
-  <div style="
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #bfdbfe;
-  ">
+  <!-- ================= SEARCH ================= -->
+  <div class="bg-white border border-indigo-100 rounded-2xl p-5 shadow-sm mb-6">
 
-   <%= form_with url: dashboard_path, method: :get, local: true do %>
+    <%= form_with url: dashboard_path, method: :get, local: true do %>
       <%= hidden_field_tag :locale, I18n.locale %>
 
-      <%= text_field_tag :search, params[:search],
-    placeholder: "🔍 #{t('search_products')}...",
-    style: "width: 75%; padding: 10px; border: 1px solid #93c5fd; border-radius: 6px;" %>
+      <div class="flex flex-col md:flex-row gap-3">
 
-      <%= submit_tag t('search'),
-          style: "
-            padding: 10px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 6px;
-          " %>
+        <%= text_field_tag :search, params[:search],
+            placeholder: "🔍 #{t('search_products')}...",
+            class: "flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-300" %>
 
-    <% end %>
-
-  </div>
-
-  <!-- PRODUCT GRID -->
-  <div style="
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-  ">
-
-    <% @products.each do |product| %>
-
-      <div style="
-        background: white;
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid #bfdbfe;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      ">
-
-        <h3 style="margin-bottom: 10px;"><%= product.name %></h3>
-
-        <% stock_count = product.stock_count || 0 %>
-        <% alert_limit = product.alert_limit || 0 %>
-        <p>
-          <%= t('stock') %>:
-          <span style="
-            font-weight: bold;
-            color: <%= stock_count <= alert_limit ? '#dc2626' : '#16a34a' %>;
-          ">
-            <%= product.stock_count %>
-          </span>
-        </p>
-
-        <p style="color: #64748b; font-size: 14px;">
-          <%= product.product_type.name %>
-        </p>
-
-        <%= link_to t('open'),
-            product_path(product),
-            style: "
-              display: block;
-              margin-top: 10px;
-              text-align: center;
-              background: #2563eb;
-              color: white;
-              padding: 8px;
-              border-radius: 6px;
-              text-decoration: none;
-            " %>
+        <%= submit_tag t('search'),
+            class: "bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition" %>
 
       </div>
 
     <% end %>
 
   </div>
+
+  <!-- ================= PRODUCT GRID ================= -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+    <% @products.each do |product| %>
+
+      <% stock_count = product.stock_count || 0 %>
+      <% alert_limit = product.alert_limit || 0 %>
+      <% low_stock = stock_count <= alert_limit %>
+
+      <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm hover:shadow-md transition">
+
+        <!-- TITLE -->
+        <div class="flex justify-between items-start mb-2">
+          <h3 class="font-semibold text-gray-800">
+            <%= product.name %>
+          </h3>
+
+          <% if low_stock %>
+            <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+              Low
+            </span>
+          <% end %>
+        </div>
+
+        <!-- CATEGORY -->
+        <p class="text-xs text-gray-500 mb-3">
+          <%= product.product_type&.name %>
+        </p>
+
+        <!-- STOCK -->
+        <div class="flex items-center justify-between mb-4">
+
+          <span class="text-sm text-gray-500">
+            <%= t('stock') %>
+          </span>
+
+          <span class="font-bold text-lg <%= low_stock ? 'text-red-600' : 'text-green-600' %>">
+            <%= stock_count %>
+          </span>
+
+        </div>
+
+        <!-- ACTION -->
+        <%= link_to t('open'),
+            product_path(product),
+            class: "block text-center bg-indigo-600 text-white py-2 rounded-lg text-sm hover:bg-indigo-700 transition" %>
+
+      </div>
+
+    <% end %>
+
+  </div>
+
+  <!-- EMPTY STATE -->
+  <% if @products.empty? %>
+    <div class="text-center py-16 text-gray-500">
+      📦 No products found
+    </div>
+  <% end %>
 
 </div>

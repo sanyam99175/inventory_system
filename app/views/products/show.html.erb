@@ -46,52 +46,83 @@
   <!-- OWNER ACTION CARD -->
   <% if current_user.owner? && current_user.has_permission?("products", "create_update") %>
 
-    <div style="
-      background: #eff6ff;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #c7d2fe;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    ">
+<% users = current_organization.users %>
 
-      <h3 style="color: #1e3a8a; margin-bottom: 10px;">
-        ⚡ <%= t('direct_stock_update') %>
-      </h3>
+<div style="
+  background: #eff6ff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #c7d2fe;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+">
 
-      <%= form_with url: update_stock_product_path(@product), method: :patch, local: true do %>
+  <h3 style="color: #1e3a8a; margin-bottom: 10px;">
+    ⚡ <%= t('direct_stock_update') %>
+  </h3>
 
-        <div style="margin-bottom: 12px;">
-          <label style="color: #3730a3; font-weight: 500;">
-            <%= t('quantity_change') %> (+ / -)
-          </label><br>
+  <%= form_with url: update_stock_product_path(@product),
+                method: :patch,
+                local: true do %>
 
-          <%= number_field_tag :quantity_change, nil,
-              placeholder: t('enter_quantity'),
-              style: "
-                padding: 10px;
-                width: 100%;
-                border-radius: 8px;
-                border: 1px solid #c7d2fe;
-                outline: none;
-              " %>
-        </div>
+    <!-- PERFORMED BY -->
+    <div style="margin-bottom: 12px;">
+      <label style="color: #3730a3; font-weight: 500;">
+        Performed by
+      </label><br>
 
-        <%= submit_tag t('apply_change'),
-            style: "
-              background: #4f46e5;
-              color: white;
-              padding: 10px;
-              border-radius: 8px;
-              border: none;
-              width: 100%;
-              cursor: pointer;
-              font-weight: 600;
-            " %>
+      <%= select_tag :performed_by_user_id,
+          options_from_collection_for_select(
+            users,
+            :id,
+            :name,
+            current_user.id
+          ),
+          style: "
+            padding: 10px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #c7d2fe;
+            background: white;
+          " %>
 
-      <% end %>
-
+      <p style="font-size: 12px; color: #64748b; margin-top: 4px;">
+        Stock update will be recorded under selected user
+      </p>
     </div>
+
+    <!-- QUANTITY -->
+    <div style="margin-bottom: 12px;">
+      <label style="color: #3730a3; font-weight: 500;">
+        <%= t('quantity_change') %> (+ / -)
+      </label><br>
+
+      <%= number_field_tag :quantity_change, nil,
+          placeholder: t('enter_quantity'),
+          style: "
+            padding: 10px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #c7d2fe;
+            outline: none;
+          " %>
+    </div>
+
+    <%= submit_tag t('apply_change'),
+        style: "
+          background: #4f46e5;
+          color: white;
+          padding: 10px;
+          border-radius: 8px;
+          border: none;
+          width: 100%;
+          cursor: pointer;
+          font-weight: 600;
+        " %>
+
+  <% end %>
+
+</div>
 
   <% end %>
 

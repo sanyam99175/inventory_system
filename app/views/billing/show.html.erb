@@ -1,0 +1,48 @@
+
+
+<h2 class="text-xl font-semibold mb-4">Subscription</h2>
+
+<div class="bg-white shadow rounded-xl p-6 border">
+
+  <p class="mb-2">
+    <strong>Plan:</strong> <%= @org.plan.capitalize %>
+  </p>
+
+  <p class="mb-2">
+    <strong>Status:</strong> <%= @org.subscription_status %>
+  </p>
+
+  <% if @org.trial_ends_at %>
+    <p class="mb-2">
+      <strong>Trial Ends:</strong>
+      <%= @org.trial_ends_at.strftime("%d %b %Y") %>
+    </p>
+  <% end %>
+
+  <% if @subscription %>
+    <p class="mb-4">
+      <strong>Renews On:</strong>
+      <%= Time.at(@subscription.current_period_end).strftime("%d %b %Y") %>
+    </p>
+  <% end %>
+
+  <div class="flex gap-4">
+
+    <!-- Stripe full billing portal -->
+    <%= button_to "Manage Payment / Invoices",
+        create_portal_billing_path,
+        method: :post,
+        form: { data: { turbo: false } },
+        class: "bg-gray-100 px-4 py-2 rounded" %>
+
+    <!-- Cancel inside app -->
+    <% if @org.subscription_status.in?(%w[active trialing]) %>
+      <%= button_to "Cancel Subscription",
+          cancel_subscription_billing_path,
+          method: :post,
+          data: { confirm: "Are you sure?" },
+          class: "bg-red-500 text-white px-4 py-2 rounded" %>
+    <% end %>
+
+  </div>
+</div>

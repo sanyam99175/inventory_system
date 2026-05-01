@@ -1,49 +1,99 @@
-<div class="max-w-6xl mx-auto p-6">
+<div class="max-w-7xl mx-auto p-6">
 
   <!-- HEADER -->
-  <h1 class="text-2xl font-bold text-blue-800 mb-6">📊 <%= t('trends') %></h1>
+  <h1 class="text-2xl font-bold mb-6 text-gray-800">
+    📊 Trends Dashboard
+  </h1>
+  
 
-  <!-- DAILY TREND -->
-  <div class="bg-white p-6 rounded-2xl shadow mb-8">
-    <h2 class="text-lg font-semibold mb-4 text-blue-700"><%= t('daily_stock_movement') %></h2>
-    <canvas id="dailyChart"></canvas>
+  <!-- ================= KPI CARDS ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+    <div class="bg-white p-4 rounded-lg shadow">
+      <p class="text-xs text-gray-500">Total Items Out</p>
+      <p class="text-xl font-bold text-blue-600"><%= @total_items_out %></p>
+    </div>
+
+    <div class="bg-white p-4 rounded-lg shadow">
+      <p class="text-xs text-gray-500">Daily Avg</p>
+      <p class="text-xl font-bold text-green-600"><%= @daily_avg %></p>
+    </div>
+
+    <div class="bg-white p-4 rounded-lg shadow">
+      <p class="text-xs text-gray-500">Peak Day</p>
+      <p class="text-xl font-bold text-red-600"><%= @peak_day %></p>
+    </div>
+
   </div>
 
-  <!-- MONTHLY TREND -->
-  <div class="bg-white p-6 rounded-2xl shadow">
-    <h2 class="text-lg font-semibold mb-4 text-blue-700"><%= t('monthly_stock_movement') %></h2>
-    <canvas id="monthlyChart"></canvas>
-  </div>
+  <!-- ================= CHART GRID ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
+    <!-- DAILY -->
+    <div class="bg-white p-4 rounded-xl shadow">
+      <h2 class="text-sm font-semibold mb-2">📈 Daily Movement</h2>
+      <div class="h-40 relative">
+        <canvas id="dailyChart"></canvas>
+      </div>
+    </div>
+
+    <!-- MONTHLY -->
+    <div class="bg-white p-4 rounded-xl shadow">
+      <h2 class="text-sm font-semibold mb-2">📊 Monthly Movement</h2>
+      <div class="h-40 relative">
+        <canvas id="monthlyChart"></canvas>
+      </div>
+    </div>
+
+    <!-- WEEKDAY -->
+    <div class="bg-white p-4 rounded-xl shadow">
+      <h2 class="text-sm font-semibold mb-2">🧠 Weekday Pattern</h2>
+      <div class="h-40 relative">
+        <canvas id="weekdayChart"></canvas>
+      </div>
+    </div>
+
+
+    <!-- ALERTS -->
+    <div class="bg-white p-4 rounded-xl shadow">
+      <h2 class="text-sm font-semibold mb-2">🚨 Low Stock Alerts</h2>
+      <div class="h-40 relative">
+        <canvas id="alertChart"></canvas>
+      </div>
+    </div>
+
+  </div>
 </div>
 
+<!-- ================= CHART JS ================= -->
 <script>
-let dailyChartInstance = null;
-let monthlyChartInstance = null;
 
 document.addEventListener("turbo:load", function () {
 
-  // ========================
-  // DAILY DATA
-  // ========================
-  const dailyLabels = <%= raw @daily_trends.keys.map { |d|
-    (d.is_a?(String) ? Date.parse(d) : d).strftime("%d %b")
-  }.to_json %>;
+  function safeGetContext(id) {
+    const el = document.getElementById(id);
+    if (!el) return null;
+    return el.getContext("2d");
+  }
 
-  const dailyData = <%= raw @daily_trends.values.to_json %>;
+  // destroy old charts (IMPORTANT for Turbo)
+  if (window.dailyChartInstance) window.dailyChartInstance.destroy();
+  if (window.monthlyChartInstance) window.monthlyChartInstance.destroy();
+  if (window.weekdayChartInstance) window.weekdayChartInstance.destroy();
+  if (window.productChartInstance) window.productChartInstance.destroy();
+  if (window.alertChartInstance) window.alertChartInstance.destroy();
+  if (window.userChartInstance) window.userChartInstance.destroy();
 
-  const dailyCanvas = document.getElementById('dailyChart');
-
-  if (dailyCanvas) {
-    if (dailyChartInstance) dailyChartInstance.destroy();
-
-    dailyChartInstance = new Chart(dailyCanvas, {
-      type: 'line',
+  // ================= DAILY =================
+  const dailyCtx = safeGetContext("dailyChart");
+  if (dailyCtx) {
+    window.dailyChartInstance = new Chart(dailyCtx, {
+      type: "line",
       data: {
-        labels: dailyLabels,
+        labels: <%= raw @daily_trends.keys.map { |d| d.to_date.strftime("%d %b") }.to_json %>,
         datasets: [{
-          label: '<%= t('items_taken_out') %>',
-          data: dailyData,
+          label: "Daily",
+          data: <%= raw @daily_trends.values.to_json %>,
           borderWidth: 2,
           tension: 0.3
         }]
@@ -51,39 +101,80 @@ document.addEventListener("turbo:load", function () {
     });
   }
 
-  // ========================
-  // MONTHLY DATA
-  // ========================
-  const monthlyLabels = <%= raw @monthly_trends.keys.map { |d|
-    (d.is_a?(String) ? Date.parse(d) : d).strftime("%b %Y")
-  }.to_json %>;
-
-  const monthlyData = <%= raw @monthly_trends.values.to_json %>;
-
-  const monthlyCanvas = document.getElementById("monthlyChart");
-
-  if (monthlyCanvas) {
-    if (monthlyChartInstance) monthlyChartInstance.destroy();
-
-    monthlyChartInstance = new Chart(monthlyCanvas, {
+  // ================= MONTHLY =================
+  const monthlyCtx = safeGetContext("monthlyChart");
+  if (monthlyCtx) {
+    window.monthlyChartInstance = new Chart(monthlyCtx, {
       type: "bar",
       data: {
-        labels: monthlyLabels,
+        labels: <%= raw @monthly_trends.keys.map { |d| d.to_date.strftime("%b %Y") }.to_json %>,
         datasets: [{
-          label: '<%= t('items_taken_out') %>',
-          data: monthlyData,
-          backgroundColor: "rgba(59, 130, 246, 0.5)",
-          borderColor: "rgba(59, 130, 246, 1)",
-          borderWidth: 1
+          label: "Monthly",
+          data: <%= raw @monthly_trends.values.to_json %>
         }]
-      },
-      options: {
-        scales: {
-          y: { beginAtZero: true }
-        }
+      }
+    });
+  }
+
+  // ================= WEEKDAY =================
+  const weekdayCtx = safeGetContext("weekdayChart");
+  if (weekdayCtx) {
+    window.weekdayChartInstance = new Chart(weekdayCtx, {
+      type: "bar",
+      data: {
+        labels: ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+        datasets: [{
+          label: "Weekday",
+          data: <%= raw @weekday_trends.to_json %>
+        }]
+      }
+    });
+  }
+
+  // ================= PRODUCT =================
+  const productCtx = safeGetContext("productChart");
+  if (productCtx) {
+    window.productChartInstance = new Chart(productCtx, {
+      type: "pie",
+      data: {
+        labels: <%= raw @product_trends.keys.to_json %>,
+        datasets: [{
+          data: <%= raw @product_trends.values.to_json %>
+        }]
+      }
+    });
+  }
+
+  // ================= ALERT =================
+  const alertCtx = safeGetContext("alertChart");
+  if (alertCtx) {
+    window.alertChartInstance = new Chart(alertCtx, {
+      type: "line",
+      data: {
+        labels: <%= raw @alert_trends.keys.map { |d| d.to_date.strftime("%d %b") }.to_json %>,
+        datasets: [{
+          label: "Alerts",
+          data: <%= raw @alert_trends.values.to_json %>
+        }]
+      }
+    });
+  }
+
+  // ================= USER =================
+  const userCtx = safeGetContext("userChart");
+  if (userCtx) {
+    window.userChartInstance = new Chart(userCtx, {
+      type: "bar",
+      data: {
+        labels: <%= raw @user_trends.keys.to_json %>,
+        datasets: [{
+          label: "Activity",
+          data: <%= raw @user_trends.values.to_json %>
+        }]
       }
     });
   }
 
 });
+
 </script>

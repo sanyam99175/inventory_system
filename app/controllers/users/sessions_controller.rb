@@ -1,12 +1,16 @@
 class Users::SessionsController < Devise::SessionsController
 
-  def after_sign_in_path_for(resource)
-    org = resource.organization
+  def after_sign_in_path_for(user)
+    return admin_root_path if user.superadmin?
 
-    if org
-      dashboard_path(org_id: org.id)
+    org = user.organization
+
+    return new_organization_path unless org
+
+    if org.subscription_status == "incomplete"
+      billing_checkout_path(plan: org.plan)
     else
-      root_path
+      dashboard_path(organization_id: org.id)
     end
   end
 

@@ -3,14 +3,16 @@ class PlanPermissions
     "free" => {
       products: ["view", "create_update"],
       requests: ["view", "update"],
-      users: ["view", "create_update"]
+      users: ["view", "create_update"],
+      manage_subscription: ["view"]
     },
     "basic" => {
       products: ["view", "create_update"],
       requests: ["view", "update"],
       alerts: ["view"],
       history: ["view"],
-      users: ["view", "create_update"]
+      users: ["view", "create_update"],
+      manage_subscription: ["view"]
     },
     "premium" => {
       products: ["view", "create_update", "delete"],
@@ -18,9 +20,11 @@ class PlanPermissions
       alerts: ["view"],
       history: ["view"],
       trends: ["view"],
+      intelligence: ["view"],
       users: ["view", "create_update", "delete", "change_permissions"],
       audits: ["view"],
-      recycle_bin: ["view", "restore"]
+      recycle_bin: ["view", "restore"],
+      manage_subscription: ["view"]
     }
   }
 

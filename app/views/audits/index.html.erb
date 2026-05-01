@@ -1,113 +1,124 @@
-<div class="max-w-6xl mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold text-gray-900 mb-8"><%= t('audit_logs') %></h1>
+<div class="max-w-4xl mx-auto p-6">
 
-  <!-- Date Range Filter -->
-  <div class="bg-white shadow rounded-lg mb-6">
-    <div class="px-6 py-4">
-      <%= form_with url: audits_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |f| %>
-        <%= hidden_field_tag :locale, I18n.locale %>
-        <div class="flex-1 min-w-[180px]">
-          <%= f.label :start_date, t('from'), class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.date_field :start_date, value: @start_date, class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
-        </div>
-        <div class="flex-1 min-w-[180px]">
-          <%= f.label :end_date, t('to'), class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.date_field :end_date, value: @end_date, class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
-        </div>
-        <div class="flex gap-2">
-          <%= f.submit t('filter'), class: "px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" %>
-          <%= link_to t('reset'), audits_path, class: "px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400" %>
-        </div>
-      <% end %>
-    </div>
+  <h2 class="text-2xl font-bold mb-6 text-gray-800">Audit Logs</h2>
+
+  <!-- DATE FILTER -->
+  <div class="flex gap-2 mb-6">
+    <%= form_with url: audits_path, method: :get, local: true, class: "flex gap-2" do %>
+      <%= date_field_tag :start_date, @start_date, class: "border p-2 rounded text-sm" %>
+      <%= date_field_tag :end_date, @end_date, class: "border p-2 rounded text-sm" %>
+      <%= submit_tag "Filter", class: "bg-indigo-600 text-white px-4 py-2 rounded text-sm" %>
+    <% end %>
   </div>
 
-  <div class="bg-white shadow rounded-lg">
-    <div class="px-6 py-4 border-b border-gray-200">
-      <p class="text-sm text-gray-600"><%= t('showing_transactions', count: @audit_logs.count) %></p>
+  <!-- EMPTY STATE -->
+  <% if @audit_logs.empty? %>
+
+    <div class="flex flex-col items-center justify-center py-20 text-center">
+      <div class="text-5xl mb-4">📭</div>
+
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">
+        No activity found
+      </h3>
+
+      <p class="text-sm text-gray-500 mb-4 max-w-md">
+        <% if params[:start_date].present? || params[:end_date].present? %>
+          No audit logs found for the selected date range.
+        <% else %>
+          No activity yet. Start by creating or updating a product.
+        <% end %>
+      </p>
+
+      <%= link_to "Reset Filters",
+          audits_path,
+          class: "bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 text-sm" %>
+
     </div>
 
-    <div class="p-6">
-      <% if @audit_logs.any? %>
-        <div class="space-y-4">
-          <% @audit_logs.each do |log| %>
-            <div class="flex items-start space-x-4 pb-4 border-b border-gray-100 last:border-b-0">
-              <!-- Icon -->
-              <div class="flex-shrink-0">
-                <div class="flex items-center justify-center h-10 w-10 rounded-full <%= 
-                  case log.action
-                  when 'delete' then 'bg-red-100'
-                  when 'restore' then 'bg-blue-100'
-                  when 'permission_update' then 'bg-purple-100'
-                  when 'approve_request' then 'bg-green-100'
-                  when 'reject_request' then 'bg-yellow-100'
-                  when 'cancel_request' then 'bg-gray-100'
-                  else 'bg-blue-100'
-                  end
-                %>">
-                  <span class="<%= 
-                    case log.action
-                    when 'delete' then 'text-red-600'
-                    when 'restore' then 'text-blue-600'
-                    when 'permission_update' then 'text-purple-600'
-                    when 'approve_request' then 'text-green-600'
-                    when 'reject_request' then 'text-yellow-600'
-                    when 'cancel_request' then 'text-gray-600'
-                    else 'text-blue-600'
-                    end
-                  %>">
-                    <%= 
-                      case log.action
-                      when 'delete' then '🗑️'
-                      when 'restore' then '♻️'
-                      when 'permission_update' then '🔐'
-                      when 'approve_request' then '✅'
-                      when 'reject_request' then '❌'
-                      when 'cancel_request' then '⏹️'
-                      else '📝'
-                      end
-                    %>
+  <% else %>
+
+    <!-- GROUP BY DATE (UI ONLY, NO LOGIC CHANGE) -->
+    <% grouped_logs = @audit_logs.group_by { |log| log.created_at.to_date } %>
+
+    <div class="relative border-l border-gray-300">
+
+      <% grouped_logs.each do |date, logs| %>
+
+        <!-- DATE HEADER -->
+        <div class="mb-4 mt-6">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="h-px bg-gray-200 flex-1"></div>
+            <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+              <%= date.strftime("%d %b %Y") %>
+            </span>
+            <div class="h-px bg-gray-200 flex-1"></div>
+          </div>
+
+          <!-- LOGS -->
+          <% logs.each do |log| %>
+
+            <div class="mb-4 ml-6 relative">
+
+              <!-- DOT -->
+              <span class="absolute -left-3 top-2 w-3 h-3 rounded-full <%= timeline_color(log) %>"></span>
+
+              <!-- COMPACT CARD -->
+              <div class="bg-white p-3 rounded-lg shadow-sm border hover:shadow-md transition">
+
+                <!-- HEADER -->
+                <div class="flex justify-between items-center">
+
+                  <p class="text-sm font-medium text-gray-800 truncate">
+                    <%= timeline_title(log) %>
+                  </p>
+
+                  <span class="text-[11px] text-gray-400 whitespace-nowrap ml-2">
+                    <%= time_ago_in_words(log.created_at) %> ago
                   </span>
+
                 </div>
+
+                <!-- SUBTEXT -->
+                <p class="text-xs text-gray-500 mt-1 line-clamp-2">
+                  <%= timeline_subtext(log) %>
+                </p>
+
+                <!-- ACTION -->
+                <div class="mt-2">
+                  <%= link_to "View",
+                      audit_path(log),
+                      class: "text-indigo-600 text-xs hover:underline" %>
+                </div>
+
               </div>
 
-              <!-- Content -->
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900">
-                  <%= log.description %>
-                </p>
-                <p class="mt-1 text-sm text-gray-500">
-                  <%= t('by') %> <strong><%= log.actor_name %></strong> • 
-                  <%= log.created_at.strftime("%B %d, %Y at %I:%M %p") %>
-                </p>
-              </div>
             </div>
+
           <% end %>
+
         </div>
-      <% else %>
-        <p class="text-gray-500 text-center py-12"><%= t('no_audit_logs_found') %></p>
+
       <% end %>
+
     </div>
-  </div>
-</div>
-<div class="mt-6 flex justify-center items-center gap-2">
 
-  <% if @current_page > 1 %>
-    <%= link_to "← Prev",
-        audits_path(page: @current_page - 1, start_date: params[:start_date], end_date: params[:end_date]),
-        class: "px-3 py-1 border rounded" %>
-  <% end %>
+    <!-- PAGINATION (UNCHANGED) -->
+    <div class="flex justify-between mt-6 text-sm">
 
-  <% (1..@total_pages).each do |page| %>
-    <%= link_to page,
-        audits_path(page: page, start_date: params[:start_date], end_date: params[:end_date]),
-        class: "px-3 py-1 border rounded #{'bg-blue-500 text-white' if page == @current_page}" %>
-  <% end %>
+      <% if @current_page > 1 %>
+        <%= link_to "← Previous",
+            audits_path(page: @current_page - 1, start_date: @start_date, end_date: @end_date),
+            class: "text-indigo-600" %>
+      <% end %>
 
-  <% if @current_page < @total_pages %>
-    <%= link_to "Next →",
-        audits_path(page: @current_page + 1, start_date: params[:start_date], end_date: params[:end_date]),
-        class: "px-3 py-1 border rounded" %>
+      <% if @current_page < @total_pages %>
+        <%= link_to "Next →",
+            audits_path(page: @current_page + 1, start_date: @start_date, end_date: @end_date),
+            class: "text-indigo-600 ml-auto" %>
+      <% end %>
+
+    </div>
+
   <% end %>
 
 </div>

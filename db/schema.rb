@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_25_202356) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_30_182940) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,7 +18,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_25_202356) do
     t.string "record_type"
     t.integer "record_id"
     t.string "action"
-    t.text "details"
+    t.jsonb "details"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -50,6 +50,18 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_25_202356) do
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
+  create_table "notification_preferences", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.boolean "email"
+    t.boolean "whatsapp"
+    t.boolean "low_stock_alert"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "organization_id", null: false
+    t.index ["organization_id"], name: "index_notification_preferences_on_organization_id"
+    t.index ["user_id"], name: "index_notification_preferences_on_user_id"
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "request_id", null: false
@@ -70,6 +82,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_25_202356) do
     t.string "stripe_customer_id"
     t.string "stripe_subscription_id"
     t.string "subscription_status"
+    t.datetime "trial_ends_at"
+    t.boolean "trial_used"
   end
 
   create_table "product_types", force: :cascade do |t|
@@ -137,10 +151,12 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_25_202356) do
     t.datetime "deleted_at"
     t.jsonb "permissions", default: {}, null: false
     t.bigint "organization_id"
+    t.boolean "superadmin", default: false
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["superadmin"], name: "index_users_on_superadmin"
   end
 
   add_foreign_key "audit_logs", "organizations"
@@ -149,6 +165,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_25_202356) do
   add_foreign_key "histories", "users"
   add_foreign_key "memberships", "organizations"
   add_foreign_key "memberships", "users"
+  add_foreign_key "notification_preferences", "organizations"
+  add_foreign_key "notification_preferences", "users"
   add_foreign_key "notifications", "organizations"
   add_foreign_key "notifications", "requests"
   add_foreign_key "notifications", "users"
