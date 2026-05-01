@@ -12,10 +12,10 @@
 
       <div>
         <h1 class="text-2xl font-bold">
-          Dashboard Overview
+          <%= t('dashboard_overview') %>
         </h1>
         <p class="text-indigo-100 text-sm">
-          Real-time stock & request intelligence
+          <%= t('realtime_stock_intelligence') %>
         </p>
       </div>
 
@@ -25,11 +25,11 @@
     <div class="hidden md:flex gap-2">
 
       <span class="text-xs bg-white/20 px-3 py-1 rounded-full">
-        Live Data
+        <%= t('live_data') %>
       </span>
 
       <span class="text-xs bg-white/20 px-3 py-1 rounded-full">
-        AI Ready
+        <%= t('ai_ready') %>
       </span>
 
     </div>
@@ -40,21 +40,21 @@
   <div class="grid md:grid-cols-3 gap-6 mb-6">
 
     <div class="bg-white p-5 rounded-2xl shadow border border-indigo-100 hover:shadow-md transition">
-      <p class="text-gray-500 text-sm">📦 Total Products</p>
+      <p class="text-gray-500 text-sm">📦 <%= t('total_products_label') %></p>
       <h2 class="text-3xl font-bold text-indigo-700 mt-2">
         <%= @products.count %>
       </h2>
     </div>
 
     <div class="bg-white p-5 rounded-2xl shadow border border-indigo-100 hover:shadow-md transition">
-      <p class="text-gray-500 text-sm">📝 Pending Requests</p>
+      <p class="text-gray-500 text-sm">📝 <%= t('pending_requests_label') %></p>
       <h2 class="text-3xl font-bold text-indigo-700 mt-2">
         <%= @requests.where(status: :pending).count %>
       </h2>
     </div>
 
     <div class="bg-white p-5 rounded-2xl shadow border border-indigo-100 hover:shadow-md transition">
-      <p class="text-gray-500 text-sm">⚠ Low Stock Items</p>
+      <p class="text-gray-500 text-sm">⚠ <%= t('low_stock_items_label') %></p>
       <h2 class="text-3xl font-bold text-red-600 mt-2">
         <%= @low_stock_products.count %>
       </h2>
@@ -70,11 +70,11 @@
 
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-bold text-indigo-800">
-          Pending Requests
+          <%= t('pending_requests_label') %>
         </h2>
 
         <% if @pending_requests_count > 3 %>
-          <%= link_to "View All →", pending_requests_path,
+          <%= link_to t('view_all_link'), pending_requests_path,
               class: "text-sm text-indigo-600 hover:underline" %>
         <% end %>
       </div>
@@ -96,7 +96,7 @@
                 </p>
 
                 <p class="text-xs text-gray-500">
-                  👷 <%= req.user_name || req.user&.email || "Unknown" %>
+                  👷 <%= req.user_name || req.user&.email || t('unknown_user_dashboard') %>
                 </p>
               </div>
 
@@ -135,7 +135,7 @@
       <% else %>
 
         <div class="text-center py-10 text-gray-500">
-          No pending requests
+          <%= t('no_pending_requests_dashboard') %>
         </div>
 
       <% end %>
@@ -149,7 +149,7 @@
       <div class="bg-white p-5 rounded-2xl shadow border border-indigo-100">
 
         <h3 class="font-bold text-indigo-800 mb-3">
-          ⚠ Low Stock Alerts
+          ⚠ <%= t('low_stock_alerts') %>
         </h3>
 
         <% if @low_stock_products.any? %>
@@ -177,7 +177,7 @@
         <% else %>
 
           <p class="text-sm text-gray-500">
-            All stocks are healthy
+            <%= t('all_stocks_healthy') %>
           </p>
 
         <% end %>
@@ -188,11 +188,11 @@
       <div class="bg-white p-5 rounded-2xl shadow border border-indigo-100">
 
         <h3 class="font-bold text-indigo-800 mb-2">
-          🧠 AI Insight (Coming Soon)
+          🧠 <%= t('ai_insight_coming_soon') %>
         </h3>
 
         <p class="text-sm text-gray-500">
-          Smart insights like demand prediction, reorder suggestions & anomalies will appear here.
+          <%= t('ai_insight_description') %>
         </p>
 
       </div>

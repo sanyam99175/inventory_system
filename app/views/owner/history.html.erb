@@ -7,7 +7,7 @@
       <h1 class="text-2xl font-bold text-indigo-700">
         📜 <%= t('stock_history') %>
       </h1>
-      <p class="text-sm text-gray-500">Track all stock movements & approvals</p>
+      <p class="text-sm text-gray-500"><%= t('track_all_stock_movements') %></p>
     </div>
 
     <div class="flex gap-2">
@@ -33,24 +33,24 @@
 
         <%= select_tag :user_id,
             options_from_collection_for_select(@users, :id, :email, params[:user_id]),
-            include_blank: "All Users",
+            include_blank: t('all_users_label'),
             class: "w-full px-3 py-2 border rounded-lg text-sm" %>
 
         <%= select_tag :status,
             options_for_select([
-              ["All", ""],
-              ["Pending", "pending"],
-              ["Approved", "approved"],
-              ["Rejected", "rejected"],
-              ["Cancelled", "cancelled"]
+              [t('all_status'), ""],
+              [t('pending'), "pending"],
+              [t('approved'), "approved"],
+              [t('rejected'), "rejected"],
+              [t('cancelled'), "cancelled"]
             ], params[:status]),
             class: "w-full px-3 py-2 border rounded-lg text-sm" %>
 
         <div class="flex gap-2">
-          <%= submit_tag "Apply",
+          <%= submit_tag t('apply_filter'),
               class: "bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm w-full" %>
 
-          <%= link_to "Reset", history_path,
+          <%= link_to t('reset_filter'), history_path,
               class: "text-indigo-600 hover:underline px-2 py-2 text-sm" %>
         </div>
 
@@ -62,11 +62,11 @@
   <!-- ACTIONS -->
   <div class="flex justify-end gap-3 mb-4">
 
-    <%= link_to "⬇ PDF",
+    <%= link_to t('pdf_download'),
         owner_history_pdf_path(request.query_parameters.merge(format: :pdf)),
         class: "bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 text-sm" %>
 
-    <%= button_to "Email PDF",
+    <%= button_to t('email_pdf_button'),
         history_send_email_path(request.query_parameters),
         method: :post,
         class: "bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm" %>
@@ -84,13 +84,13 @@
 
           <thead class="bg-indigo-50 text-indigo-800 sticky top-0 z-10">
             <tr>
-              <th class="p-3 text-left">User</th>
-              <th class="p-3 text-left">Type</th>
-              <th class="p-3 text-left">Product</th>
-              <th class="p-3 text-left">Godown</th>
-              <th class="p-3 text-left">Change</th>
-              <th class="p-3 text-left">Status</th>
-              <th class="p-3 text-left">Time</th>
+              <th class="p-3 text-left"><%= t('user_label') %></th>
+              <th class="p-3 text-left"><%= t('type_label') %></th>
+              <th class="p-3 text-left"><%= t('product_label') %></th>
+              <th class="p-3 text-left"><%= t('godown_label') %></th>
+              <th class="p-3 text-left"><%= t('change_label') %></th>
+              <th class="p-3 text-left"><%= t('status_label') %></th>
+              <th class="p-3 text-left"><%= t('time_label') %></th>
             </tr>
           </thead>
 

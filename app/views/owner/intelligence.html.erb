@@ -2,10 +2,10 @@
 
   <!-- HEADER -->
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-indigo-700">Stockflow Intelligence</h1>
+    <h1 class="text-2xl font-bold text-indigo-700"><%= t('stockflow_intelligence') %></h1>
 
     <div class="text-sm text-gray-500">
-      Range: <span class="font-semibold text-indigo-700"><%= @range %></span>
+      <%= t('range_label') %> <span class="font-semibold text-indigo-700"><%= @range %></span>
     </div>
   </div>
 
@@ -26,16 +26,15 @@
         <div class="text-sm leading-5">
 
           <p class="font-semibold">
-            Early-stage data warning
+            <%= t('early_stage_data_warning') %>
           </p>
 
           <p class="text-amber-700 mt-1">
-            StockFlow insights are still learning from your usage patterns.
-            Predictions may not be fully accurate yet.
+            <%= t('stockflow_learning_patterns') %>
           </p>
 
           <p class="text-amber-600 mt-1 font-medium">
-            Data becomes more reliable after ~30 days of usage.
+            <%= t('data_reliable_after_30_days') %>
           </p>
 
         </div>
@@ -57,23 +56,23 @@
 <% end %>
 
   <!-- HEALTH SCORE -->
-<!-- HEALTH SCORE CARD -->
+  <!-- HEALTH SCORE CARD -->
     <div class="bg-white border rounded-2xl p-6 shadow mb-6 flex justify-between items-center cursor-pointer"
         onclick="document.getElementById('healthModal').classList.remove('hidden')">
 
     <div>
-        <p class="text-sm text-gray-500">StockFlow Health Score</p>
+        <p class="text-sm text-gray-500"><%= t('stockflow_health_score') %></p>
         <p class="text-4xl font-bold text-indigo-600">
         <%= @health_score %>/100
         </p>
 
         <p class="text-xs text-gray-400 mt-1">
-        Click to see why this changed
+        <%= t('click_see_why_changed') %>
         </p>
     </div>
 
     <div>
-        <span class="text-indigo-600 font-semibold">View breakdown →</span>
+        <span class="text-indigo-600 font-semibold"><%= t('view_breakdown') %></span>
     </div>
 
     </div>
