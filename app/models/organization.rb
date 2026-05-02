@@ -1,12 +1,12 @@
 class Organization < ApplicationRecord
-  has_many :users, dependent: :destroy
-  has_many :products, dependent: :destroy
-  has_many :product_types, dependent: :destroy
-  has_many :requests, dependent: :destroy
-  has_many :notifications, dependent: :destroy
-  has_many :histories, dependent: :destroy
-  has_many :stock_requests, dependent: :destroy
-  has_many :audit_logs, dependent: :destroy
+  has_many :users, dependent: :delete_all
+  has_many :products, dependent: :delete_all
+  has_many :product_types, dependent: :delete_all
+  has_many :requests, dependent: :delete_all
+  has_many :notifications, dependent: :delete_all
+  has_many :histories, dependent: :delete_all
+  has_many :stock_requests, dependent: :delete_all
+  has_many :audit_logs, dependent: :delete_all
 
   validates :name, presence: true
 
@@ -31,21 +31,31 @@ class Organization < ApplicationRecord
     end
   end
 
+  def trial_used?
+    trial_used == true
+  end
+
+  def trial_active?
+    return false if trial_ends_at.blank?
+    Time.current < trial_ends_at
+  end
+
+  def trial_expired?
+    return false if trial_ends_at.blank?
+    Time.current >= trial_ends_at
+  end
+
+  def access_allowed?
+    return true if subscription_status == "active"
+    return true if subscription_status == "trialing" && trial_active?
+
+    false
+  end
+
   def trialing?
     subscription_status == "trialing" || self.trial_days_left > 0
   end
 
-  def active?
-    subscription_status.in?(%w[trialing active])
-  end
-
-  def past_due?
-    subscription_status == "past_due"
-  end
-
-  def canceled?
-    subscription_status == "canceled"
-  end
 
   def stripe_now
     return Time.current unless Rails.env.development?

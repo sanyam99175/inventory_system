@@ -1,7 +1,7 @@
 class Admin::BaseController < ApplicationController
   before_action :authenticate_user!
   before_action :require_superadmin!
-  before_action :ensure_not_in_subdomain
+  before_action :ensure_not_in_subdomain 
 
   private
 

@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index]
+  skip_before_action :authenticate_user!, only: [:index, :suspended]
   skip_before_action :set_current_organization, only: [:index]
   skip_before_action :check_subscription, only: [:index]
   skip_before_action :set_global_counts, only: [:index]
@@ -17,5 +17,8 @@ class HomeController < ApplicationController
     else
       render :index
     end
+  end
+
+  def suspended
   end
 end

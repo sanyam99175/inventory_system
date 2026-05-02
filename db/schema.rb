@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_30_182940) do
+ActiveRecord::Schema[7.1].define(version: 2026_05_02_191437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -84,6 +84,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_30_182940) do
     t.string "subscription_status"
     t.datetime "trial_ends_at"
     t.boolean "trial_used"
+    t.string "account_status", default: "active"
   end
 
   create_table "product_types", force: :cascade do |t|
@@ -157,6 +158,13 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_30_182940) do
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["superadmin"], name: "index_users_on_superadmin"
+  end
+
+  create_table "webhook_events", force: :cascade do |t|
+    t.string "stripe_event_id"
+    t.string "event_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "audit_logs", "organizations"

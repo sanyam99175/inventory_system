@@ -1,48 +1,72 @@
+<h2 class="text-2xl font-bold mb-6 text-gray-900">Subscription</h2>
 
+<div class="bg-white shadow-lg rounded-2xl p-8 border border-gray-100 max-w-xl">
 
-<h2 class="text-xl font-semibold mb-4">Subscription</h2>
+  <!-- PLAN -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <p class="text-sm text-gray-500">Current Plan</p>
+      <p class="text-2xl font-semibold text-gray-900">
+        <%= @org.plan.to_s.capitalize %>
+      </p>
+    </div>
 
-<div class="bg-white shadow rounded-xl p-6 border">
+    <!-- STATUS BADGE -->
+    <% status = @org.subscription_status %>
+    <% status_classes = case status
+      when "active" then "bg-green-100 text-green-700"
+      when "trialing" then "bg-indigo-100 text-indigo-700"
+      when "canceled" then "bg-red-100 text-red-700"
+      else "bg-gray-100 text-gray-600"
+    end %>
 
-  <p class="mb-2">
-    <strong>Plan:</strong> <%= @org.plan.capitalize %>
-  </p>
+    <span class="px-3 py-1 text-xs font-semibold rounded-full <%= status_classes %>">
+      <%= status.capitalize %>
+    </span>
+  </div>
 
-  <p class="mb-2">
-    <strong>Status:</strong> <%= @org.subscription_status %>
-  </p>
+  <!-- DETAILS -->
+  <div class="space-y-3 text-sm text-gray-600 mb-6">
 
-  <% if @org.trial_ends_at %>
-    <p class="mb-2">
-      <strong>Trial Ends:</strong>
-      <%= @org.trial_ends_at.strftime("%d %b %Y") %>
-    </p>
-  <% end %>
+    <% if @org.trial_ends_at %>
+      <div class="flex justify-between">
+        <span>Trial Ends</span>
+        <span class="font-medium text-gray-800">
+          <%= @org.trial_ends_at.strftime("%d %b %Y") %>
+        </span>
+      </div>
+    <% end %>
 
-  <% if @subscription %>
-    <p class="mb-4">
-      <strong>Renews On:</strong>
-      <%= Time.at(@subscription.current_period_end).strftime("%d %b %Y") %>
-    </p>
-  <% end %>
+    <% if @subscription && @subscription["current_period_end"].present? %>
+      <div class="flex justify-between">
+        <span>Renews On</span>
+        <span class="font-medium text-gray-800">
+          <%= Time.at(@subscription["current_period_end"]).strftime("%d %b %Y") %>
+        </span>
+      </div>
+    <% end %>
 
-  <div class="flex gap-4">
+  </div>
 
-    <!-- Stripe full billing portal -->
-    <%= button_to "Manage Payment / Invoices",
+  <!-- ACTIONS -->
+  <div class="flex flex-col sm:flex-row gap-3">
+
+    <!-- Manage Billing -->
+    <%= button_to "Manage Billing",
         create_portal_billing_path,
-        method: :post,
+        method: :get,
         form: { data: { turbo: false } },
-        class: "bg-gray-100 px-4 py-2 rounded" %>
+        class: "flex-1 text-center px-4 py-2 rounded-xl border border-gray-300 hover:bg-gray-50 transition font-medium" %>
 
-    <!-- Cancel inside app -->
+    <!-- Cancel -->
     <% if @org.subscription_status.in?(%w[active trialing]) %>
       <%= button_to "Cancel Subscription",
           cancel_subscription_billing_path,
           method: :post,
-          data: { confirm: "Are you sure?" },
-          class: "bg-red-500 text-white px-4 py-2 rounded" %>
+          data: { confirm: "Are you sure you want to cancel your subscription?" },
+          class: "flex-1 text-center px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition font-medium shadow-sm" %>
     <% end %>
 
   </div>
+
 </div>

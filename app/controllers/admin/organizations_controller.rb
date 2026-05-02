@@ -9,12 +9,12 @@ class Admin::OrganizationsController < Admin::BaseController
   end
 
   def suspend
-    @org.update!(subscription_status: "suspended")
+    @org.update!(account_status: "suspended")
     redirect_to admin_organization_path(@org), notice: "Org suspended"
   end
 
   def activate
-    @org.update!(subscription_status: "active")
+    @org.update!(account_status: "active")
     redirect_to admin_organization_path(@org), notice: "Org activated"
   end
 
@@ -28,6 +28,19 @@ class Admin::OrganizationsController < Admin::BaseController
     session[:user_id] = @org.users.first.id # or owner
 
     redirect_to dashboard_url(subdomain: @org.subdomain)
+  end
+
+  def reset_data
+    org = Organization.find(params[:id])
+
+    ActiveRecord::Base.transaction do
+      org.users.delete_all
+      org.products.delete_all
+      org.requests.delete_all
+      org.audits.delete_all if org.respond_to?(:audits)
+    end
+
+    redirect_to admin_organization_path(org), notice: "Organization data reset successfully"
   end
 
   private

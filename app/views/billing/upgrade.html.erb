@@ -43,37 +43,11 @@
 
     <% org = current_organization %>
 
-    <% message =
-        if org.plan == "free"
-        "Start #{plan.capitalize} Free Trial (7 days)"
-        elsif org.subscription_status == "trialing"
-        "Upgrade to #{plan.capitalize} (Trial ends on #{org.trial_ends_at.strftime("%d %b")})"
-        elsif org.subscription_status == "active"
-        "Upgrade to #{plan.capitalize} (Charges apply immediately)"
-        else
-        "Upgrade to #{plan.capitalize}"
-        end
-    %>
-
-
-    <% if current_organization.trial_used? %>
-    <p class="text-sm text-gray-500 mb-2">
-        Free trial already used
-    </p>
-
     <%= button_to "Upgrade to #{plan.capitalize}",
-        billing_change_plan_billing_path(price_id: price_for(plan)),
+        change_plan_billing_path(plan: plan),
+        method: :patch,
         data: { turbo: false },
         class: "block w-full bg-indigo-600 text-white py-3 rounded-xl" %>
-
-    <% else %>
-
-    <%= button_to "Start #{plan.capitalize} Free Trial (7 days)",
-        billing_change_plan_billing_path(price_id: price_for(plan)),
-        data: { turbo: false },
-        class: "block w-full bg-green-600 text-white py-3 rounded-xl" %>
-
-    <% end %>
 
     <% end %>
   </div>

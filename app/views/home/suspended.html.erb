@@ -1,0 +1,56 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-white to-gray-100 px-6">
+
+  <div class="max-w-lg w-full bg-white shadow-xl rounded-2xl p-8 text-center border">
+
+    <!-- Icon -->
+    <div class="flex justify-center mb-6">
+      <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M18.364 5.636l-12.728 12.728M6 6l12 12" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-2xl font-bold text-gray-800 mb-3">
+      Account Suspended
+    </h1>
+
+    <!-- Description -->
+    <p class="text-gray-600 mb-6">
+      Your organization’s access has been temporarily suspended.
+      You can’t use the platform until this issue is resolved.
+    </p>
+
+    <!-- Optional reason -->
+    <% if current_user.organization.respond_to?(:suspension_reason) && current_user.organization.suspension_reason.present? %>
+      <div class="bg-red-50 text-red-700 text-sm rounded-lg p-3 mb-6 border border-red-200">
+        <strong>Reason:</strong> <%= current_user.organization.suspension_reason %>
+      </div>
+    <% end %>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+
+      <!-- Billing -->
+      <%= link_to "Go to Billing",
+          billing_path,
+          class: "bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition" %>
+
+      <!-- Contact support -->
+      <a href="mailto:support@yourapp.com"
+         class="bg-gray-100 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-200 transition">
+        Contact Support
+      </a>
+
+      <!-- Logout -->
+      <%= button_to "Logout",
+          destroy_user_session_path,
+          method: :delete,
+          class: "bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition" %>
+
+    </div>
+
+  </div>
+</div>

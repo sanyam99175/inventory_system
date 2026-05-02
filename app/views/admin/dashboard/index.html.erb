@@ -54,7 +54,8 @@
         <tr>
           <th class="px-6 py-3 font-medium text-gray-600">Name</th>
           <th class="px-6 py-3 font-medium text-gray-600">Plan</th>
-          <th class="px-6 py-3 font-medium text-gray-600">Status</th>
+          <th class="px-6 py-3 font-medium text-gray-600">Account Status</th>
+          <th class="px-6 py-3 font-medium text-gray-600">Subscription Status</th>
           <th class="px-6 py-3 font-medium text-gray-600">Trial Ends</th>
           <th class="px-6 py-3 font-medium text-gray-600">Actions</th>
         </tr>
@@ -74,6 +75,10 @@
             <!-- Plan -->
             <td class="px-6 py-4 capitalize text-gray-600">
               <%= org.plan %>
+            </td>
+
+            <td class="px-6 py-4 capitalize text-gray-600">
+              <%= org.account_status %>
             </td>
 
             <!-- Status Badge -->

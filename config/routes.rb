@@ -27,8 +27,11 @@ Rails.application.routes.draw do
   resource :billing, controller: "billing", only: [:show] do
     get :create_portal
     post :cancel_subscription
-    patch :change_plan,  as: :billing_change_plan
+    patch :change_plan
   end
+
+  # routes.rb
+  get "/suspended", to: "home#suspended"
 
   get "upgrade", to: "billing#upgrade", as: :upgrade
 
@@ -46,6 +49,7 @@ Rails.application.routes.draw do
         patch :activate
         delete :destroy
         post :impersonate
+        post :reset_data
       end
     end
   end

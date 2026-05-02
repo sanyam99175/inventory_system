@@ -3,6 +3,10 @@ module ApplicationHelper
         "#{path}?org_id=#{current_organization.id}"
     end
 
+    def free_trial_access?
+        current_organization&.subscription_status == "trialing"
+    end
+
     def pagination_links(current_page, total_pages, param_name)
     return if total_pages <= 1
 

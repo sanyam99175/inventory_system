@@ -1,11 +1,5 @@
 class PlanPermissions
   PLANS = {
-    "free" => {
-      products: ["view", "create_update"],
-      requests: ["view", "update"],
-      users: ["view", "create_update"],
-      manage_subscription: ["view"]
-    },
     "basic" => {
       products: ["view", "create_update"],
       requests: ["view", "update"],
@@ -25,6 +19,17 @@ class PlanPermissions
       audits: ["view"],
       recycle_bin: ["view", "restore"],
       manage_subscription: ["view"]
+    },
+    "free_trial" => {
+      products: ["view", "create_update", "delete"],
+      requests: ["view", "update"],
+      alerts: ["view"],
+      history: ["view"],
+      trends: ["view"],
+      intelligence: ["view"],
+      users: ["view", "create_update", "delete", "change_permissions"],
+      audits: ["view"],
+      recycle_bin: ["view", "restore"],
     }
   }
 
@@ -52,7 +57,6 @@ class PlanPermissions
 
   def self.upgrade_options(plan)
     case plan
-    when "free" then %w[basic premium]
     when "basic" then %w[premium]
     else []
     end
