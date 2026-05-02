@@ -48,7 +48,7 @@ class User < ApplicationRecord
 
 
   def send_welcome_email
-    NotificationMailer.welcome_email(self).deliver_now
+    SendWelcomeEmailJob.perform_later(self.id)
   end
 
   def superadmin_user?
