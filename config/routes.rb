@@ -137,6 +137,7 @@ Rails.application.routes.draw do
   # ===============================
   post "/stripe/webhook", to: "webhooks#stripe"
   post "/webhooks", to: "webhooks#stripe"
+  post "/webhooks/sendgrid", to: "webhooks#sendgrid"
 
   # (Optional legacy)
   post "/subscriptions", to: "subscriptions#create"

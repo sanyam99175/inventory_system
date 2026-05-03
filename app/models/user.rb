@@ -48,7 +48,14 @@ class User < ApplicationRecord
 
 
   def send_welcome_email
-    SendWelcomeEmailJob.perform_later(self.id)
+    user = self
+    email = NotificationMailer.new.welcome(user)
+    EmailSender.send_with_retry(
+      to: user.email,
+      subject: email[:subject],
+      html: email[:html],
+      text: email[:text]
+    )
   end
 
   def superadmin_user?

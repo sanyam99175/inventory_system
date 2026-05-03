@@ -9,12 +9,27 @@ class NotificationMailer < ApplicationMailer
         )
     end
 
-    def welcome_email(user)
+    def welcome(user)
         @user = user
-        @dashboard_url = Rails.application.routes.url_helpers.dashboard_path(organization_id: @user.organization.id)
-        mail(
-        to: @user.email,
-        subject: "Welcome to Inventory System, #{@user.name}!"
+
+        html = ApplicationController.render(
+        template: "notification_mailer/welcome",
+        formats: [:html],
+        assigns: { user: user },
+        layout: false
         )
+
+        text = ApplicationController.render(
+        template: "notification_mailer/welcome",
+        formats: [:text],
+        assigns: { user: user },
+        layout: false
+        )
+
+        {
+        subject: "Welcome to StockFlow 🚀",
+        html: html,
+        text: text
+        }
     end
 end
