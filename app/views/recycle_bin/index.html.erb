@@ -4,25 +4,26 @@
 
   <!-- ================= PRODUCTS ================= -->
   <div class="bg-white shadow rounded-xl mb-10">
-    <div class="flex justify-between items-center px-6 py-4 border-b">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 sm:px-6 py-4 border-b">
       <h2 class="text-lg font-semibold">Deleted Products</h2>
 
       <!-- 🔍 Search -->
-      <%= form_with url: recycle_bin_path, method: :get, local: true do %>
+      <%= form_with url: recycle_bin_path, method: :get, local: true, class: "w-full sm:w-auto" do %>
         <input type="text" name="product_search" value="<%= params[:product_search] %>"
           placeholder="Search products..."
-          class="border rounded px-3 py-1 text-sm" />
+          class="w-full sm:w-auto border rounded px-3 py-1 text-sm" />
       <% end %>
     </div>
 
     <% if @deleted_products.any? %>
 
       <!-- 📊 Count -->
-      <div class="px-6 py-2 text-sm text-gray-500">
+      <div class="px-4 sm:px-6 py-2 text-sm text-gray-500">
         Showing <%= @deleted_products.size %> of <%= @total_products %> products
       </div>
 
-      <div class="overflow-auto max-h-[400px]">
+      <!-- DESKTOP TABLE -->
+      <div class="hidden md:block overflow-auto max-h-[400px]">
         <table class="min-w-full text-sm">
 
           <thead class="bg-gray-50 sticky top-0 z-10">
@@ -60,12 +61,54 @@
         </table>
       </div>
 
+      <!-- MOBILE CARD VIEW -->
+      <div class="md:hidden space-y-3 px-4 py-4">
+        <% @deleted_products.each do |product| %>
+          <div class="border rounded-lg p-4 space-y-3">
+            <div>
+              <p class="text-xs text-gray-500">Name</p>
+              <p class="font-semibold text-gray-900"><%= product.name %></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+              <div>
+                <p class="text-xs text-gray-500">Type</p>
+                <p class="text-sm font-medium text-gray-700"><%= product.product_type&.name %></p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Stock</p>
+                <p class="text-sm font-medium text-gray-700"><%= product.stock_count %></p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-xs text-gray-500">Godown</p>
+                <p class="text-sm font-medium text-gray-700"><%= product.godown_number %></p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Deleted</p>
+                <p class="text-sm font-medium text-gray-700"><%= time_ago_in_words(product.deleted_at) %> ago</p>
+              </div>
+            </div>
+
+            <% if current_user.has_permission?("recycle_bin", "restore") %>
+              <div class="pt-3 border-t border-gray-100">
+                <%= button_to "Restore", restore_product_path(product),
+                    method: :patch,
+                    class: "w-full bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 text-sm" %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
       <!-- 📄 Pagination -->
-      <div class="p-4 flex justify-center gap-2">
+      <div class="p-4 flex justify-center gap-1 overflow-x-auto">
         <% if @product_page > 1 %>
           <%= link_to "←",
               params.permit!.merge(product_page: @product_page - 1),
-              class: "px-3 py-1 border rounded" %>
+              class: "px-2 sm:px-3 py-1 border rounded text-sm" %>
         <% end %>
 
         <% start_page = [@product_page - 2, 1].max %>
@@ -74,13 +117,13 @@
         <% (start_page..end_page).each do |page| %>
           <%= link_to page,
               params.permit!.merge(product_page: page),
-              class: "px-3 py-1 border rounded #{page == @product_page ? 'bg-blue-600 text-white' : ''}" %>
+              class: "px-2 sm:px-3 py-1 border rounded text-sm #{page == @product_page ? 'bg-blue-600 text-white' : ''}" %>
         <% end %>
 
         <% if @product_page < @product_total_pages %>
           <%= link_to "→",
               params.permit!.merge(product_page: @product_page + 1),
-              class: "px-3 py-1 border rounded" %>
+              class: "px-2 sm:px-3 py-1 border rounded text-sm" %>
         <% end %>
       </div>
 
@@ -93,25 +136,26 @@
 
   <!-- ================= USERS ================= -->
   <div class="bg-white shadow rounded-xl">
-    <div class="flex justify-between items-center px-6 py-4 border-b">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 sm:px-6 py-4 border-b">
       <h2 class="text-lg font-semibold">Deleted Users</h2>
 
       <!-- 🔍 Search -->
-      <%= form_with url: recycle_bin_path, method: :get, local: true do %>
+      <%= form_with url: recycle_bin_path, method: :get, local: true, class: "w-full sm:w-auto" do %>
         <input type="text" name="user_search" value="<%= params[:user_search] %>"
           placeholder="Search users..."
-          class="border rounded px-3 py-1 text-sm" />
+          class="w-full sm:w-auto border rounded px-3 py-1 text-sm" />
       <% end %>
     </div>
 
     <% if @deleted_users.any? %>
 
       <!-- 📊 Count -->
-      <div class="px-6 py-2 text-sm text-gray-500">
+      <div class="px-4 sm:px-6 py-2 text-sm text-gray-500">
         Showing <%= @deleted_users.size %> of <%= @total_users %> users
       </div>
 
-      <div class="overflow-auto max-h-[400px]">
+      <!-- DESKTOP TABLE -->
+      <div class="hidden md:block overflow-auto max-h-[400px]">
         <table class="min-w-full text-sm">
 
           <thead class="bg-gray-50 sticky top-0 z-10">
@@ -150,12 +194,46 @@
         </table>
       </div>
 
+      <!-- MOBILE CARD VIEW -->
+      <div class="md:hidden space-y-3 px-4 py-4">
+        <% @deleted_users.each do |user| %>
+          <div class="border rounded-lg p-4 space-y-3">
+            <div>
+              <p class="text-xs text-gray-500">Email</p>
+              <p class="font-semibold text-gray-900 break-all"><%= user.email %></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+              <div>
+                <p class="text-xs text-gray-500">Role</p>
+                <span class="text-xs px-2 py-1 rounded inline-block
+                  <%= user.owner? ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' %>">
+                  <%= user.role.titleize %>
+                </span>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Deleted</p>
+                <p class="text-sm font-medium text-gray-700"><%= time_ago_in_words(user.deleted_at) %> ago</p>
+              </div>
+            </div>
+
+            <% if current_user.has_permission?("recycle_bin", "restore") %>
+              <div class="pt-3 border-t border-gray-100">
+                <%= button_to "Restore", restore_staff_path(user),
+                    method: :patch,
+                    class: "w-full bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 text-sm" %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
       <!-- 📄 Pagination -->
-      <div class="p-4 flex justify-center gap-2">
+      <div class="p-4 flex justify-center gap-1 overflow-x-auto">
         <% if @user_page > 1 %>
           <%= link_to "←",
               params.permit!.merge(user_page: @user_page - 1),
-              class: "px-3 py-1 border rounded" %>
+              class: "px-2 sm:px-3 py-1 border rounded text-sm" %>
         <% end %>
 
         <% start_page = [@user_page - 2, 1].max %>
@@ -164,13 +242,13 @@
         <% (start_page..end_page).each do |page| %>
           <%= link_to page,
               params.permit!.merge(user_page: page),
-              class: "px-3 py-1 border rounded #{page == @user_page ? 'bg-blue-600 text-white' : ''}" %>
+              class: "px-2 sm:px-3 py-1 border rounded text-sm #{page == @user_page ? 'bg-blue-600 text-white' : ''}" %>
         <% end %>
 
         <% if @user_page < @user_total_pages %>
           <%= link_to "→",
               params.permit!.merge(user_page: @user_page + 1),
-              class: "px-3 py-1 border rounded" %>
+              class: "px-2 sm:px-3 py-1 border rounded text-sm" %>
         <% end %>
       </div>
 

@@ -256,6 +256,7 @@ en:
   no_audit_logs_found: "No audit logs found."
   # Navigation
   administration: "Administration"
+  settings: "Settings"
   users: "Users"
   audits: "Audits"
   edit_profile: "Edit profile"

@@ -16,7 +16,7 @@
 
 
 <!-- HEADER -->
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
   <div>
     <h1 class="text-2xl font-bold text-indigo-700"><%= t('all_users') %></h1>
     <p class="text-sm text-gray-600">
@@ -28,19 +28,19 @@
     </p>
   </div>
 
-  <div class="flex items-center gap-3">
+  <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
 
     <!-- CREATE / UPDATE -->
     <% if update_create_access %>
       <%= link_to new_staff_path,
-          class: "rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700" do %>
+          class: "w-full sm:w-auto rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 text-center" do %>
         ➕ <%= t('add_user') %>
       <% end %>
     <% end %>
 
     <!-- FIXED BACK BUTTON -->
     <%= link_to dashboard_path,
-        class: "rounded-lg border border-indigo-200 bg-white px-4 py-2 text-indigo-700 hover:bg-indigo-50" do %>
+        class: "w-full sm:w-auto rounded-lg border border-indigo-200 bg-white px-4 py-2 text-indigo-700 hover:bg-indigo-50 text-center" do %>
       <%= t('back') %>
     <% end %>
 
@@ -49,7 +49,7 @@
 
 <!-- SEARCH -->
 <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
-  <%= form_with url: staffs_path, method: :get, local: true, class: "flex gap-4" do %>
+  <%= form_with url: staffs_path, method: :get, local: true, class: "flex flex-col sm:flex-row gap-4" do %>
     <%= hidden_field_tag :locale, I18n.locale %>
 
     <div class="flex-1">
@@ -58,21 +58,21 @@
           class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" %>
     </div>
 
-    <div class="flex gap-2">
+    <div class="flex gap-2 flex-col sm:flex-row">
       <%= submit_tag t('search'),
           class: "px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" %>
 
       <% if params[:search].present? %>
         <%= link_to t('clear'),
             staffs_path,
-            class: "px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600" %>
+            class: "px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-center" %>
       <% end %>
     </div>
   <% end %>
 </div>
 
-<!-- TABLE -->
-<div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+<!-- DESKTOP TABLE -->
+<div class="hidden md:block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
   <table class="min-w-full divide-y divide-gray-200">
 
     <thead class="bg-blue-50 text-blue-900">
@@ -144,6 +144,75 @@
     </tbody>
 
   </table>
+</div>
+
+<!-- MOBILE CARD VIEW -->
+<div class="md:hidden space-y-4">
+  <% if @users.present? %>
+
+    <% @users.each do |user| %>
+      <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 space-y-3">
+        
+        <!-- USER NAME AND EMAIL -->
+        <div>
+          <p class="text-sm text-gray-500"><%= t('name') %></p>
+          <p class="text-lg font-semibold text-gray-900">
+            <%= user.name.presence || "—" %>
+          </p>
+        </div>
+
+        <div class="pt-2 border-t border-gray-100">
+          <p class="text-sm text-gray-500"><%= t('email') %></p>
+          <p class="text-sm font-medium text-gray-700 break-all">
+            <%= user.email %>
+          </p>
+        </div>
+
+        <!-- ROLE AND JOINED DATE -->
+        <div class="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+          <div>
+            <p class="text-sm text-gray-500"><%= t('role') %></p>
+            <p class="text-sm font-medium text-gray-700">
+              <%= user.role.capitalize %>
+            </p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500"><%= t('joined') %></p>
+            <p class="text-sm font-medium text-gray-700">
+              <%= user.created_at.strftime("%d %b %Y") %>
+            </p>
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="pt-3 border-t border-gray-100 flex gap-2 flex-col sm:flex-row">
+          <!-- CHANGE PERMISSIONS -->
+          <% if change_permissions_access %>
+            <%= link_to t('permissions'), permissions_staff_path(user),
+                class: "flex-1 bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700 text-center text-sm" %>
+          <% end %>
+
+          <!-- DELETE -->
+          <% if delete_access && user != current_user %>
+            <%= button_to t('delete'), staff_path(user),
+                method: :delete,
+                data: { turbo_confirm: t('are_you_sure_cannot_undo') },
+                class: "flex-1 bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700 text-center text-sm" %>
+          <% end %>
+        </div>
+
+      </div>
+    <% end %>
+
+  <% else %>
+    <div class="text-center py-8 text-gray-500">
+      <% if params[:search].present? %>
+        <%= t('no_users_found_matching', search: params[:search]) %>
+      <% else %>
+        <%= t('no_users_found') %>
+      <% end %>
+    </div>
+  <% end %>
 </div>
 
 

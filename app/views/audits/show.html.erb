@@ -1,153 +1,204 @@
-<div class="max-w-3xl mx-auto p-6 bg-white shadow rounded-lg">
-  <h2 class="text-xl font-bold mb-4">Audit Details</h2>
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto p-4 sm:p-6 bg-white shadow rounded-lg m-4">
+    <h2 class="text-xl font-bold mb-4">Audit Details</h2>
 
-  <p class="text-sm text-gray-600 mb-4">
-    By <strong><%= @audit_log.actor_name %></strong> • 
-    <%= @audit_log.created_at.strftime("%B %d, %Y %I:%M %p") %>
-  </p>
-
-  <% if @performed_user %>
-    <p class="mb-4">
-      <strong>On behalf of:</strong> <%= @performed_user.name %>
+    <p class="text-sm text-gray-600 mb-4">
+      By <strong><%= @audit_log.actor_name %></strong> • 
+      <%= @audit_log.created_at.strftime("%B %d, %Y %I:%M %p") %>
     </p>
-  <% end %>
 
-  <% details = @audit_log.details.is_a?(Hash) ? @audit_log.details : {} %>
-  <% meta    = details["meta"] || {} %>
-  <% source  = meta["source"] %>
-
-  <!-- ================= BADGE ================= -->
-<% if @audit_log.record_type == "Product" %>
-
-  <% case @audit_log.action %>
-  <% when "create" %>
-    <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
-      Product Created
-    </span>
-
-  <% when "destroy" %>
-    <span class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">
-      Product Deleted
-    </span>
-
-  <% when "update_stock" %>
-    <% if source == "request_approval" %>
-      <span class="px-2 py-1 text-xs rounded bg-indigo-100 text-indigo-700">
-        Stock via Request Approval
-      </span>
-    <% else %>
-      <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700">
-        Direct Stock Update
-      </span>
+    <% if @performed_user %>
+      <p class="mb-4">
+        <strong>On behalf of:</strong> <%= @performed_user.name %>
+      </p>
     <% end %>
 
-  <% else %>
-    <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">
-      Product Updated
-    </span>
-  <% end %>
+    <% details = @audit_log.details.is_a?(Hash) ? @audit_log.details : {} %>
+    <% meta    = details["meta"] || {} %>
+    <% source  = meta["source"] %>
 
-<% end %>
+    <!-- ================= BADGE ================= -->
+  <% if @audit_log.record_type == "Product" %>
 
-  <!-- ================= CHANGES ================= -->
-  <div class="max-w-4xl mx-auto mt-6 p-6 bg-white shadow rounded-xl">
-    <h2 class="text-xl font-semibold mb-6">Changes</h2>
+    <% case @audit_log.action %>
+    <% when "create" %>
+      <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
+        Product Created
+      </span>
 
-    <% changes = details.except("meta") rescue {} %>
+    <% when "destroy" %>
+      <span class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">
+        Product Deleted
+      </span>
 
-    <!-- ✅ FALLBACK FOR CREATE / DELETE -->
-    <% if changes.blank? && @audit_log.record_type == "Product" %>
-
-      <% product_data =
-           details["after"] ||
-           details["before"] ||
-           details.except("meta") %>
-
-      <% if product_data.present? %>
-
-        <div class="border rounded-lg p-4 bg-gray-50">
-          <h3 class="text-sm font-semibold text-gray-700 mb-3">
-            <%= @audit_log.action == "create" ? "Created Product Data" : "Deleted Product Snapshot" %>
-          </h3>
-
-          <div class="grid grid-cols-2 gap-4 text-sm">
-            <% product_data.each do |key, value| %>
-              <div>
-                <p class="text-gray-500 text-xs"><%= key.humanize %></p>
-                <p class="font-medium text-gray-800 break-words">
-                  <%= format_diff_value(key, value) %>
-                </p>
-              </div>
-            <% end %>
-          </div>
-        </div>
-
+    <% when "update_stock" %>
+      <% if source == "request_approval" %>
+        <span class="px-2 py-1 text-xs rounded bg-indigo-100 text-indigo-700">
+          Stock via Request Approval
+        </span>
       <% else %>
-        <p class="text-gray-500 text-sm">No data available.</p>
+        <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700">
+          Direct Stock Update
+        </span>
       <% end %>
 
+    <% else %>
+      <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">
+        Product Updated
+      </span>
     <% end %>
 
-    <% if changes.blank? %>
-      <p class="text-gray-500 text-sm">No structured changes available.</p>
-    <% end %>
+  <% end %>
 
-    <% changes.each do |field, change| %>
-      <% next unless change.is_a?(Hash) %>
+    <!-- ================= CHANGES ================= -->
+    <div class="mt-6 p-4 sm:p-6 bg-white shadow rounded-xl overflow-auto">
+      <h2 class="text-xl font-semibold mb-6">Changes</h2>
 
-      <div class="mb-6 border rounded-lg overflow-hidden">
+      <% changes = details.except("meta") rescue {} %>
 
-        <!-- FIELD NAME -->
-        <div class="bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700">
-          <%= field.humanize %>
-        </div>
+      <!-- ✅ FALLBACK FOR CREATE / DELETE -->
+      <% if changes.blank? && @audit_log.record_type == "Product" %>
 
-        <!-- ================= PERMISSIONS MATRIX ================= -->
-        <% if field.to_s == "permissions" %>
+        <% product_data =
+             details["after"] ||
+             details["before"] ||
+             details.except("meta") %>
 
-          <% matrix = permission_matrix(change["before"], change["after"]) %>
+        <% if product_data.present? %>
 
-          <div class="overflow-x-auto">
-            <table class="min-w-full border text-sm">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-4 py-2 text-left">Module</th>
-                  <% matrix[:actions].each do |action| %>
-                    <th class="px-4 py-2 text-center"><%= action.humanize %></th>
+          <div class="border rounded-lg p-4 bg-gray-50">
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">
+              <%= @audit_log.action == "create" ? "Created Product Data" : "Deleted Product Snapshot" %>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm overflow-x-auto">
+              <% product_data.each do |key, value| %>
+                <div>
+                  <p class="text-gray-500 text-xs"><%= key.humanize %></p>
+                  <p class="font-medium text-gray-800 break-words">
+                    <%= format_diff_value(key, value) %>
+                  </p>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+        <% else %>
+          <p class="text-gray-500 text-sm">No data available.</p>
+        <% end %>
+
+      <% end %>
+
+      <% if changes.blank? %>
+        <p class="text-gray-500 text-sm">No structured changes available.</p>
+      <% end %>
+
+      <% changes.each do |field, change| %>
+        <% next unless change.is_a?(Hash) %>
+
+        <div class="mb-6 border rounded-lg overflow-visible">
+
+          <!-- FIELD NAME -->
+          <div class="bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700">
+            <%= field.humanize %>
+          </div>
+
+          <!-- ================= PERMISSIONS MATRIX ================= -->
+          <% if field.to_s == "permissions" %>
+
+            <% matrix = permission_matrix(change["before"], change["after"]) %>
+
+            <!-- MOBILE CARD VIEW -->
+            <div class="md:hidden space-y-4 p-4 overflow-auto">
+              <!-- BEFORE -->
+              <div>
+                <h4 class="font-medium text-red-600 mb-3 pb-2 border-b border-red-200">Before</h4>
+                <div class="space-y-3">
+                  <% matrix[:modules].each do |mod| %>
+                    <div class="border rounded p-3 bg-red-50">
+                      <p class="font-medium text-sm text-gray-700 mb-2"><%= mod.humanize %></p>
+                      <div class="grid grid-cols-2 gap-2 text-xs">
+                        <% matrix[:actions].each do |action| %>
+                          <% has_perm = Array(matrix[:before][mod]).include?(action) %>
+                          <div class="flex items-center gap-2">
+                            <span class="<%= has_perm ? 'text-green-600' : 'text-gray-400' %>">
+                              <%= has_perm ? "✅" : "—" %>
+                            </span>
+                            <span class="text-gray-600"><%= action.humanize %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
                   <% end %>
-                </tr>
-              </thead>
+                </div>
+              </div>
 
-              <tbody>
-                <!-- BEFORE -->
-                <tr class="bg-red-50">
-                  <td colspan="<%= matrix[:actions].size + 1 %>" class="px-4 py-2 font-medium text-red-600">
-                    Before
-                  </td>
-                </tr>
+              <!-- AFTER -->
+              <div>
+                <h4 class="font-medium text-green-600 mb-3 pb-2 border-b border-green-200">After</h4>
+                <div class="space-y-3">
+                  <% matrix[:modules].each do |mod| %>
+                    <div class="border rounded p-3 bg-green-50">
+                      <p class="font-medium text-sm text-gray-700 mb-2"><%= mod.humanize %></p>
+                      <div class="grid grid-cols-2 gap-2 text-xs">
+                        <% matrix[:actions].each do |action| %>
+                          <% has_perm = Array(matrix[:after][mod]).include?(action) %>
+                          <div class="flex items-center gap-2">
+                            <span class="<%= has_perm ? 'text-green-600' : 'text-gray-400' %>">
+                              <%= has_perm ? "✅" : "—" %>
+                            </span>
+                            <span class="text-gray-600"><%= action.humanize %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
 
-                <% matrix[:modules].each do |mod| %>
-                  <tr class="border-t">
-                    <td class="px-4 py-2 font-medium"><%= mod.humanize %></td>
+            <!-- DESKTOP TABLE VIEW -->
+            <div class="hidden md:block overflow-x-auto">
+              <table class="min-w-full border text-sm">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-4 py-2 text-left">Module</th>
                     <% matrix[:actions].each do |action| %>
-                      <% has_perm = Array(matrix[:before][mod]).include?(action) %>
-                      <td class="px-4 py-2 text-center">
-                        <%= has_perm ? "✅" : "—" %>
-                      </td>
+                      <th class="px-4 py-2 text-center"><%= action.humanize %></th>
                     <% end %>
                   </tr>
-                <% end %>
+                </thead>
 
-                <!-- AFTER -->
-                <tr class="bg-green-50">
-                  <td colspan="<%= matrix[:actions].size + 1 %>" class="px-4 py-2 font-medium text-green-600">
-                    After
-                  </td>
-                </tr>
+                <tbody>
+                  <!-- BEFORE -->
+                  <tr class="bg-red-50">
+                    <td colspan="<%= matrix[:actions].size + 1 %>" class="px-4 py-2 font-medium text-red-600">
+                      Before
+                    </td>
+                  </tr>
 
-                <% matrix[:modules].each do |mod| %>
-                  <tr class="border-t">
-                    <td class="px-4 py-2 font-medium"><%= mod.humanize %></td>
+                  <% matrix[:modules].each do |mod| %>
+                    <tr class="border-t">
+                      <td class="px-4 py-2 font-medium"><%= mod.humanize %></td>
+                      <% matrix[:actions].each do |action| %>
+                        <% has_perm = Array(matrix[:before][mod]).include?(action) %>
+                        <td class="px-4 py-2 text-center">
+                          <%= has_perm ? "✅" : "—" %>
+                        </td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+
+                  <!-- AFTER -->
+                  <tr class="bg-green-50">
+                    <td colspan="<%= matrix[:actions].size + 1 %>" class="px-4 py-2 font-medium text-green-600">
+                      After
+                    </td>
+                  </tr>
+
+                  <% matrix[:modules].each do |mod| %>
+                    <tr class="border-t">
+                      <td class="px-4 py-2 font-medium"><%= mod.humanize %></td>
                     <% matrix[:actions].each do |action| %>
                       <% has_perm = Array(matrix[:after][mod]).include?(action) %>
                       <td class="px-4 py-2 text-center">
@@ -164,7 +215,29 @@
         <!-- ================= NORMAL DIFF ================= -->
         <% elsif change["before"].present? && change["after"].present? %>
 
-          <div class="grid grid-cols-3 items-center">
+          <!-- MOBILE VIEW (stacked) -->
+          <div class="md:hidden">
+            <div class="bg-red-50 px-4 py-3 border-b">
+              <p class="text-xs text-red-500 mb-1">Before</p>
+              <p class="text-red-700 font-medium break-words text-sm">
+                <%= format_diff_value(field, change["before"]) %>
+              </p>
+            </div>
+
+            <div class="flex justify-center py-2">
+              <span class="text-gray-400">↓</span>
+            </div>
+
+            <div class="bg-green-50 px-4 py-3">
+              <p class="text-xs text-green-500 mb-1">After</p>
+              <p class="text-green-700 font-medium break-words text-sm">
+                <%= format_diff_value(field, change["after"]) %>
+              </p>
+            </div>
+          </div>
+
+          <!-- DESKTOP VIEW (side by side) -->
+          <div class="hidden md:grid grid-cols-3 items-center">
             <div class="bg-red-50 px-4 py-3 border-r">
               <p class="text-xs text-red-500 mb-1">Before</p>
               <p class="text-red-700 font-medium break-words">
@@ -208,5 +281,6 @@
 
       </div>
     <% end %>
+    </div>
   </div>
 </div>

@@ -1,6 +1,10 @@
 class WebhooksController < ApplicationController
   skip_before_action :authenticate_user!
   skip_before_action :verify_authenticity_token
+  skip_before_action :set_current_organization
+  skip_before_action :ensure_user_belongs_to_org
+  skip_before_action :check_subscription
+  skip_before_action :block_suspended_org
 
   def stripe
     payload = request.body.read

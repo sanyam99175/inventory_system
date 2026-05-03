@@ -240,6 +240,7 @@ hi:
   no_audit_logs_found: "कोई ऑडिट लॉग नहीं मिला।"
   # Navigation
   administration: "प्रशासन"
+  settings: "सेटिंग्स"
   users: "उपयोगकर्ता"
   audits: "ऑडिट"
   edit_profile: "प्रोफ़ाइल संपादित करें"

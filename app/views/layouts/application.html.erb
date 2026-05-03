@@ -17,22 +17,53 @@
   <body class="bg-gray-50 text-gray-800" data-controller="notification-modal">
 
 <!-- HEADER -->
-<header class="bg-white shadow-md px-6 py-4 flex items-center justify-between">
+<header class="bg-white shadow-md px-4 md:px-6 py-4 flex items-center justify-between" data-controller="mobile-menu">
 
   <!-- LEFT -->
-  <div class="flex items-center space-x-6">
+  <div class="flex items-center space-x-3 md:space-x-6">
+
+    <!-- MOBILE MENU BUTTON -->
+    <button data-action="click->mobile-menu#toggle"
+            class="md:hidden text-gray-700 hover:text-indigo-600 focus:outline-none">
+      <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+      <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
 
     <!-- LOGO -->
     <%= link_to root_path, class: "no-underline" do %>
-      <h1 class="text-xl font-bold text-indigo-700 hover:text-indigo-800 cursor-pointer">
+      <h1 class="text-lg md:text-xl font-bold text-indigo-700 hover:text-indigo-800 cursor-pointer">
         StockFlow
       </h1>
     <% end %>
 
     <% if user_signed_in? && current_organization %>
 
-      <!-- LANGUAGE -->
-      <div class="relative">
+      <!-- MOBILE LANGUAGE (next to logo) -->
+      <div class="relative md:hidden">
+        <details>
+          <summary class="flex items-center gap-1 text-xs text-gray-600 cursor-pointer px-2 py-1 hover:bg-gray-100 rounded">
+            🌐 <%= I18n.locale == :hi ? t('hindi') : t('english') %>
+          </summary>
+          <div class="absolute mt-1 w-28 bg-white border rounded shadow z-50">
+            <%= link_to url_for(request.query_parameters.merge(locale: :en)),
+                class: "block px-3 py-1 text-xs hover:bg-gray-100" do %>
+              🇬🇧 <%= t('english') %>
+            <% end %>
+            <%= link_to url_for(request.query_parameters.merge(locale: :hi)),
+                class: "block px-3 py-1 text-xs hover:bg-gray-100" do %>
+              🇮🇳 <%= t('hindi') %>
+            <% end %>
+          </div>
+        </details>
+      </div>
+
+
+      <!-- DESKTOP LANGUAGE -->
+      <div class="relative hidden md:block">
         <details>
           <summary class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer px-3 py-2 hover:bg-gray-100">
             🌐 <%= I18n.locale == :hi ? t('hindi') : t('english') %> ▾
@@ -56,9 +87,9 @@
 
       <% plan = current_organization.plan %>
 
-      <!-- DASHBOARD -->
+      <!-- DESKTOP DASHBOARD -->
       <%= link_to dashboard_path(current_organization),
-          class: "text-gray-700 hover:text-indigo-600 font-medium" do %>
+          class: "hidden md:inline text-gray-700 hover:text-indigo-600 font-medium" do %>
         <%= t('dashboard') %>
       <% end %>
 
@@ -69,6 +100,7 @@
         { key: "alerts", label: t("alerts"), path: alerts_path(current_organization) }
       ] %>
 
+      <!-- DESKTOP NAV ITEMS -->
       <% nav_items.each do |item| %>
         <% has_permission = current_user.has_permission?(item[:key], "view") %>
         <% allowed_by_plan = PlanPermissions.allowed?(plan, item[:key]) %>
@@ -78,7 +110,7 @@
           <% target_path = locked ? upgrade_path(feature: item[:key]) : item[:path] %>
 
           <%= link_to target_path,
-              class: "relative text-gray-700 hover:text-indigo-600 #{'opacity-50' if locked}" do %>
+              class: "hidden md:inline relative text-gray-700 hover:text-indigo-600 #{'opacity-50' if locked}" do %>
 
             <span><%= item[:label] %></span>
 
@@ -102,13 +134,13 @@
         <% end %>
       <% end %>
 
-      <!-- ANALYTICS -->
+      <!-- DESKTOP ANALYTICS -->
       <% analytics_items = [
         { key: "trends", label: "Trends", path: trends_path(current_organization) },
         { key: "intelligence", label: "Intelligence", path: intelligence_path(current_organization) }
       ] %>
 
-      <div class="relative">
+      <div class="relative hidden md:block">
         <details>
           <summary class="cursor-pointer text-gray-700 hover:text-indigo-600 px-2 py-1">
             Analytics
@@ -143,8 +175,8 @@
 
   </div>
 
-  <!-- RIGHT -->
-  <div class="flex items-center space-x-4">
+  <!-- RIGHT SIDE DESKTOP -->
+  <div class="hidden md:flex items-center space-x-4">
 
     <% if user_signed_in? && current_organization %>
 
@@ -218,6 +250,149 @@
 
     <% end %>
 
+  </div>
+
+  <!-- MOBILE MENU -->
+  <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-t z-40">
+    <div class="px-4 py-4 space-y-3">
+
+      <% if user_signed_in? && current_organization %>
+
+        <!-- MOBILE DASHBOARD -->
+        <%= link_to dashboard_path(current_organization),
+            class: "block text-gray-700 hover:text-indigo-600 font-medium py-2" do %>
+          📊 <%= t('dashboard') %>
+        <% end %>
+
+        <!-- MOBILE NAV ITEMS -->
+        <% nav_items.each do |item| %>
+          <% has_permission = current_user.has_permission?(item[:key], "view") %>
+          <% allowed_by_plan = PlanPermissions.allowed?(plan, item[:key]) %>
+          <% locked = has_permission && !allowed_by_plan %>
+
+          <% if has_permission %>
+            <% target_path = locked ? upgrade_path(feature: item[:key]) : item[:path] %>
+
+            <%= link_to target_path,
+                class: "block relative text-gray-700 hover:text-indigo-600 py-2 #{'opacity-50' if locked}" do %>
+
+              <span><%= item[:label] %></span>
+              <% if locked %> 🔒 <% end %>
+
+              <!-- BADGE -->
+              <% if item[:key] == "requests" && @pending_requests_count.to_i > 0 %>
+                <span class="ml-2 inline-block bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  <%= @pending_requests_count %>
+                </span>
+              <% end %>
+
+              <% if item[:key] == "alerts" && @low_stock_count.to_i > 0 %>
+                <span class="ml-2 inline-block bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  <%= @low_stock_count %>
+                </span>
+              <% end %>
+
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <!-- MOBILE ANALYTICS -->
+        <details class="py-2">
+          <summary class="cursor-pointer text-gray-700 hover:text-indigo-600">
+            Analytics
+          </summary>
+          <div class="ml-4 mt-2 space-y-2">
+            <% analytics_items.each do |item| %>
+
+              <% has_permission = current_user.has_permission?(item[:key], "view") %>
+              <% allowed_by_plan = PlanPermissions.allowed?(plan, item[:key]) %>
+              <% locked = has_permission && !allowed_by_plan %>
+
+              <% if has_permission %>
+                <% target_path = locked ? upgrade_path(feature: item[:key]) : item[:path] %>
+
+                <%= link_to target_path,
+                    class: "block text-sm text-gray-700 hover:text-indigo-600 #{'opacity-50' if locked}" do %>
+                  <%= item[:label] %>
+                  <% if locked %> 🔒 <% end %>
+                <% end %>
+
+              <% end %>
+
+            <% end %>
+          </div>
+        </details>
+
+        <!-- MOBILE SETTINGS (if owner) -->
+        <% if current_user.owner? %>
+          <button data-action="click->notification-modal#open" class="block w-full text-left text-gray-700 hover:text-indigo-600 py-2">
+            ⚙️ <%= t('settings') %>
+          </button>
+        <% end %>
+
+        <!-- MOBILE ADMINISTRATION (if owner) -->
+        <% if current_user.owner? %>
+          <details class="py-2">
+            <summary class="cursor-pointer text-gray-700 hover:text-indigo-600">
+              <%= t('administration') %>
+            </summary>
+
+            <div class="ml-4 mt-2 space-y-2">
+
+              <% admin_items = [
+                { key: "users", label: t('users'), path: staffs_path },
+                { key: "recycle_bin", label: t('recycle_bin'), path: recycle_bin_path },
+                { key: "audits", label: t('audits'), path: audits_path },
+                { key: "manage_subscription", label: t('manage_subscription'), path: create_portal_billing_path }
+              ] %>
+
+              <% admin_items.each do |item| %>
+                <% has_permission = current_user.has_permission?(item[:key], "view") %>
+                <% allowed_by_plan = PlanPermissions.allowed?(plan, item[:key]) %>
+                <% locked = has_permission && !allowed_by_plan %>
+
+                <% if has_permission %>
+                  <% target_path = locked ? upgrade_path(feature: item[:key]) : item[:path] %>
+
+                  <%= link_to target_path,
+                      class: "block text-sm text-gray-700 hover:text-indigo-600 #{'opacity-50' if locked}" do %>
+                    <%= item[:label] %>
+                    <% if locked %> 🔒 <% end %>
+                  <% end %>
+
+                <% end %>
+              <% end %>
+
+            </div>
+          </details>
+        <% end %>
+
+        <!-- MOBILE USER PROFILE -->
+        <details class="py-2 border-t">
+          <summary class="cursor-pointer text-gray-700 hover:text-indigo-600 pt-2">
+            👤 <%= current_user.name.presence || current_user.email %>
+          </summary>
+
+          <div class="ml-4 mt-2 space-y-2">
+            <%= link_to t('edit_profile'), edit_user_registration_path,
+                class: "block text-sm text-gray-700 hover:text-indigo-600" %>
+
+            <%= button_to destroy_user_session_path,
+                method: :delete,
+                form: { data: { turbo: false } },
+                class: "w-full text-left" do %>
+
+              <span class="block text-sm text-red-600 hover:text-red-800">
+                Logout
+              </span>
+
+            <% end %>
+          </div>
+        </details>
+
+      <% end %>
+
+    </div>
   </div>
 
 </header>
