@@ -52,16 +52,19 @@ class WebhooksController < ApplicationController
     events = JSON.parse(request.body.read)
 
     events.each do |event|
-      case event["event"]
-      when "delivered"
+        case event["event"]
+        when "delivered"
         Rails.logger.info("Email delivered: #{event['email']}")
-      when "open"
+        when "open"
         Rails.logger.info("Email opened: #{event['email']}")
-      when "click"
+        when "click"
         Rails.logger.info("Email clicked: #{event['email']}")
-      when "bounce"
+        when "bounce"
         Rails.logger.warn("Email bounced: #{event['email']}")
-      end
+        end
+    end
+
+    head :ok
   end
 
   private
