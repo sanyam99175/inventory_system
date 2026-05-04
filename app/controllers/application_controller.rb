@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_current_organization
   before_action :ensure_user_belongs_to_org
-  before_action :block_suspended_org
+  before_action :block_suspended_org, unless: :devise_controller?
   before_action :check_subscription
   before_action :sync_subscription_if_needed
   before_action :configure_permitted_parameters, if: :devise_controller?

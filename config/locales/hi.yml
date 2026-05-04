@@ -317,12 +317,12 @@ hi:
   ai_insight_coming_soon: "AI अंतर्दृष्टि (जल्द आ रही है)"
   ai_insight_description: "मांग पूर्वानुमान, पुनः ऑर्डर सुझाव और विसंगतियों जैसी स्मार्ट अंतर्दृष्टि यहां दिखाई देगी।"
   # Intelligence page
-  stockflow_intelligence: "स्टॉकफ्लो बुद्धिमत्ता"
+  stockflow_intelligence: "ट्रैक्लिन बुद्धिमत्ता"
   range_label: "रेंज:"
   early_stage_data_warning: "प्रारंभिक चरण डेटा चेतावनी"
-  stockflow_learning_patterns: "स्टॉकफ्लो अंतर्दृष्टि अभी भी आपके उपयोग पैटर्न से सीख रही है। पूर्वानुमान अभी पूरी तरह सटीक नहीं हो सकते।"
+  stockflow_learning_patterns: "ट्रैक्लिन अंतर्दृष्टि अभी भी आपके उपयोग पैटर्न से सीख रही है। पूर्वानुमान अभी पूरी तरह सटीक नहीं हो सकते।"
   data_reliable_after_30_days: "डेटा लगभग 30 दिनों के उपयोग के बाद अधिक विश्वसनीय हो जाता है।"
-  stockflow_health_score: "स्टॉकफ्लो स्वास्थ्य स्कोर"
+  stockflow_health_score: "ट्रैक्लिन स्वास्थ्य स्कोर"
   click_see_why_changed: "यह क्यों बदला, यह देखने के लिए क्लिक करें"
   view_breakdown: "विवरण देखें →"
   # Worker dashboard

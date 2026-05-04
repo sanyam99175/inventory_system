@@ -4,12 +4,12 @@ export default class extends Controller {
   static targets = ["container"]
 
   open() {
-    if (!this.hasContainerTarget) return
     this.containerTarget.classList.remove("hidden")
+    this.containerTarget.classList.add("flex")
   }
 
   close() {
-    if (!this.hasContainerTarget) return
     this.containerTarget.classList.add("hidden")
+    this.containerTarget.classList.remove("flex")
   }
 }

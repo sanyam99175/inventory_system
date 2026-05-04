@@ -1,4 +1,5 @@
 require "sendgrid-ruby"
+require "base64"
 
 class SendgridClient
   include SendGrid
@@ -7,25 +8,36 @@ class SendgridClient
     @client = SendGrid::API.new(api_key: ENV["SENDGRID_API_KEY"])
   end
 
-  def send_email(to:, subject:, html:, text:)
+  def send_email(to:, subject:, html:, text:, attachments: [])
     from = Email.new(email: "notifications@stockflows.in")
     to = Email.new(email: to)
-
-    content = [
-      Content.new(type: "text/plain", value: text),
-      Content.new(type: "text/html", value: html)
-    ]
 
     mail = Mail.new
     mail.from = from
     mail.subject = subject
-    mail.add_personalization(Personalization.new.tap { |p| p.add_to(to) })
-    mail.add_content(content[0])
-    mail.add_content(content[1])
+
+    personalization = Personalization.new
+    personalization.add_to(to)
+    mail.add_personalization(personalization)
+
+    mail.add_content(Content.new(type: "text/plain", value: text.to_s))
+    mail.add_content(Content.new(type: "text/html", value: html.to_s))
+
+    attachments.each do |att|
+      mail.add_attachment(
+        Attachment.new(
+          content: Base64.strict_encode64(att[:content]),  # 🔥 IMPORTANT
+          type: att[:mime_type] || "application/pdf",
+          filename: att[:filename] || "file.pdf",
+          disposition: "attachment"
+        )
+      )
+    end
 
     response = @client.client.mail._("send").post(request_body: mail.to_json)
 
     Rails.logger.info("[SendGrid] status=#{response.status_code}")
+    Rails.logger.info("[SendGrid] body=#{response.body}")
 
     response
   end

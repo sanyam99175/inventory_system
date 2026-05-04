@@ -9,6 +9,47 @@ class NotificationMailer < ApplicationMailer
         )
     end
 
+    def history_pdf_email(owner_id, request_ids, filters = {})
+        owner = User.find(owner_id)
+        filters = filters.to_h
+
+        requests = Request.where(id: request_ids)
+
+        pdf = HistoryPdf.new(requests, filters).render
+        pdf = pdf.force_encoding("BINARY")
+
+        raise "PDF generation failed" if pdf.blank?
+
+        html = ApplicationController.render(
+            template: "notification_mailer/history_pdf_email",
+            formats: [:html],
+            assigns: { owner: owner, requests: requests, filters: filters },
+            layout: false
+        )
+
+        text = ApplicationController.render(
+            template: "notification_mailer/history_pdf_email",
+            formats: [:text],
+            assigns: { owner: owner, filters: filters },
+            layout: false
+        )
+
+        {
+            to: owner.email,
+            subject: "Stock History Report",
+            html: html,
+            text: text,
+            attachments: [
+            {
+                content: Base64.strict_encode64(pdf),
+                type: "application/pdf",
+                filename: "stock-history.pdf",
+                disposition: "attachment"
+            }
+            ]
+        }
+    end
+
     def welcome(user)
         @user = user
 
@@ -27,7 +68,7 @@ class NotificationMailer < ApplicationMailer
         )
 
         {
-        subject: "Welcome to StockFlow 🚀",
+        subject: "Welcome to Traklyn 🚀",
         html: html,
         text: text
         }

@@ -1,272 +1,351 @@
-<div class="bg-gradient-to-br from-indigo-50 via-white to-indigo-100 min-h-screen">
+<div class="bg-[#0B0F19] text-white min-h-screen font-sans">
+
+  <!-- NAVBAR -->
+<header class="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
+
+  <!-- LOGO -->
+  <div class="text-xl font-bold tracking-tight">
+    Traklyn
+  </div>
+
+  <!-- NAV LINKS -->
+  <nav class="hidden md:flex gap-8 text-sm text-gray-300">
+    <a href="#features" class="hover:text-white">Features</a>
+    <a href="#pricing" class="hover:text-white">Pricing</a>
+    <a href="#contact" class="hover:text-white">Contact</a>
+  </nav>
+
+  <!-- RIGHT ACTIONS -->
+  <div class="flex items-center gap-3">
+
+    <!-- SIGN IN -->
+    <%= link_to "Sign in",
+        new_user_session_path,
+        class: "text-sm text-gray-300 hover:text-white px-3 py-2 transition" %>
+
+    <!-- GET STARTED -->
+    <%= link_to "Get Started",
+        new_organization_path(plan: "free_trial"),
+        class: "px-5 py-2 rounded-lg bg-white text-black font-semibold hover:opacity-90 transition" %>
+
+  </div>
+
+</header>
 
   <!-- HERO -->
-  <section class="text-center py-28 px-6 relative overflow-hidden">
+  <section class="max-w-7xl mx-auto px-6 pt-20 pb-24 text-center">
 
-    <!-- Glow -->
-    <div class="absolute inset-0 -z-10">
-      <div class="absolute top-24 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-indigo-500 opacity-20 blur-3xl rounded-full animate-pulse"></div>
-    </div>
-
-    <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight animate-fade-up">
-      Inventory, but
-      <span class="bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
-        beautifully simple
-      </span>
+    <h1 class="text-5xl md:text-6xl font-bold leading-tight">
+      Track inventory.
+      <br />
+      <span class="text-indigo-400">Run smarter operations.</span>
     </h1>
 
-    <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-10 animate-fade-up delay-100">
-      Manage stock, track usage, and control operations —
-      all in one elegant dashboard.
+    <p class="mt-6 text-gray-400 text-lg max-w-2xl mx-auto">
+      Real-time inventory tracking, alerts, and insights for modern businesses.
     </p>
 
-    <div class="flex justify-center gap-4 animate-fade-up delay-200">
+    <div class="mt-10 flex justify-center gap-4">
+      <%= link_to "Create Workspace",
+          new_organization_path(plan: "free_trial"),
+          class: "px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-semibold" %>
 
       <a href="#pricing"
-         class="px-8 py-3 rounded-xl border border-indigo-300 text-indigo-700 hover:bg-indigo-50 transition">
+         class="px-6 py-3 rounded-xl border border-gray-600 hover:border-gray-400">
         View Pricing
       </a>
     </div>
 
-  </section>
+      </section>
 
-  <!-- FEATURES -->
-  <section class="py-20 px-6">
-    <div class="max-w-6xl mx-auto text-center">
+      <!-- FEATURES -->
+<section id="features" class="max-w-7xl mx-auto px-6 py-24">
 
-      <h2 class="text-3xl font-bold text-gray-800 mb-14">
-        Everything you need
-      </h2>
+  <h2 class="text-3xl font-bold text-center mb-4">
+    Everything you need to run inventory like a system
+  </h2>
 
-      <div class="grid md:grid-cols-3 gap-8">
+  <p class="text-gray-400 text-center mb-16 max-w-2xl mx-auto">
+    From real-time tracking to intelligent insights — Traklyn is built to give you full control over your operations.
+  </p>
 
-        <% features = [
-          ["📦", "Product Tracking", "Real-time stock visibility"],
-          ["📊", "Analytics", "Understand trends instantly"],
-          ["🔔", "Smart Alerts", "Never run out of stock"]
-        ] %>
+  <div class="grid md:grid-cols-3 gap-8">
 
-        <% features.each_with_index do |(icon, title, desc), i| %>
-          <div class="p-6 rounded-2xl bg-white border border-indigo-100 shadow-sm
-                      hover:shadow-xl hover:-translate-y-2 hover:border-indigo-300
-                      transition duration-300 animate-fade-up"
-               style="animation-delay: <%= i * 0.1 %>s">
+    <% features = [
+      ["📦", "Real-Time Inventory", "Track stock levels instantly across all products with zero manual confusion."],
+      
+      ["🤖", "AI Insights", "Understand demand patterns, stock movement, and trends without doing manual analysis."],
+      
+      ["⚠️", "Smart Alerts", "Get notified before stock runs out or when anomalies are detected."],
 
-            <div class="text-4xl mb-4 animate-float"><%= icon %></div>
-            <h3 class="font-semibold text-lg mb-2"><%= title %></h3>
-            <p class="text-gray-600 text-sm"><%= desc %></p>
+      ["📜", "Audit Logs", "Track every action — who changed what and when — for full accountability."],
 
-          </div>
-        <% end %>
+      ["🕓", "Request History", "Maintain complete history of stock requests and operations in one place."],
+
+      ["🔐", "Permission Management", "Control who can view, edit, or manage inventory across your team."]
+    ] %>
+
+    <% features.each do |icon, title, desc| %>
+      <div class="p-6 rounded-2xl bg-[#111827] border border-gray-800 hover:border-indigo-500 hover:shadow-xl transition duration-300">
+
+        <div class="text-3xl mb-4"><%= icon %></div>
+
+        <h3 class="font-semibold text-lg mb-2"><%= title %></h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          <%= desc %>
+        </p>
+
+      </div>
+    <% end %>
+
+  </div>
+
+</section>
+
+<!-- DEMO / DASHBOARD PREVIEW -->
+<section id="demo" class="max-w-7xl mx-auto px-6 py-24 text-center">
+
+  <!-- LABEL -->
+  <div class="inline-block mb-4 px-4 py-1 bg-indigo-600/20 text-indigo-400 rounded-full text-sm">
+    Live Product Preview
+  </div>
+
+  <!-- HEADLINE -->
+  <h2 class="text-4xl md:text-5xl font-bold mb-4">
+    See your inventory
+    <span class="text-indigo-400">at a glance</span>
+  </h2>
+
+  <!-- SUBTEXT -->
+  <p class="text-gray-400 max-w-2xl mx-auto mb-12">
+    Monitor stock levels, alerts, trends, and operations from a single powerful dashboard designed for clarity and speed.
+  </p>
+
+  <!-- DASHBOARD CONTAINER -->
+  <div class="relative rounded-3xl p-[2px] bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 shadow-2xl">
+
+    <!-- INNER -->
+    <div class="bg-[#0B0F19] rounded-3xl overflow-hidden">
+
+      <!-- FAKE TOP BAR -->
+      <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-800">
+        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+
+        <span class="ml-4 text-xs text-gray-500">
+          stockflows.in
+        </span>
+      </div>
+
+      <!-- IMAGE -->
+      <%= image_tag "dashboard_preview.png",
+          class: "w-full opacity-95 hover:scale-[1.01] transition duration-500" %>
+
+    </div>
+
+    <!-- GLOW -->
+    <div class="absolute -inset-10 bg-indigo-500/10 blur-3xl -z-10"></div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="mt-10">
+    <%= link_to "Try this dashboard",
+        new_organization_path(plan: "free_trial"),
+        class: "px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold transition" %>
+  </div>
+
+</section>
+
+    <!-- FREE TRIAL CTA (LIKE YOUR IMAGE) -->
+  <section class="py-24 px-6 bg-[#0B0F19]">
+    <div class="max-w-5xl mx-auto text-center">
+
+      <div class="inline-block mb-4 px-4 py-1 bg-indigo-600 text-white rounded-full text-sm">
+        ⏱ 7-Day Free Trial
+      </div>
+
+      <div class="bg-gradient-to-br from-gray-100 to-indigo-400 text-black p-12 rounded-3xl shadow-xl">
+
+        <h2 class="text-4xl font-bold mb-4 text-indigo-700">
+          Try Traklyn Risk-Free
+        </h2>
+
+        <p class="text-gray-700 mb-8 max-w-2xl mx-auto">
+          Experience all features for 7 days. No payment required.
+          See how effortless managing your inventory can be.
+        </p>
+
+        <%= link_to "Start Free Trial",
+            new_organization_path(plan: "free_trial"),
+            class: "px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold" %>
 
       </div>
     </div>
   </section>
 
-  <!-- PRODUCT PREVIEW -->
-  <section class="py-24 px-6 text-center">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6">
-      See StockFlow in action
-    </h2>
+  <!-- PRICING -->
+<!-- PRICING -->
+<section id="pricing" class="py-28 px-6 bg-[#0B0F19] text-white border-t border-gray-800">
 
-    <div class="flex justify-center">
-      <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-indigo-200 hover:scale-105 transition duration-500">
-
-        <%= image_tag "dashboard_preview.png",
-            class: "w-[900px] max-w-full opacity-90 blur-sm" %>
-
-        <div class="absolute inset-0 bg-white/40 backdrop-blur-md"></div>
-
-        <div class="absolute inset-0 flex items-center justify-center">
-          <%= link_to "Explore Dashboard",
-              "#pricing",
-              class: "px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition" %>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- PRICING TABLE -->
-<!-- PRICING TABLE -->
-<section id="pricing" class="py-24 px-6 bg-white">
   <div class="max-w-6xl mx-auto text-center">
 
-    <h2 class="text-3xl font-bold text-gray-800 mb-4">
-      Compare Plans
+    <h2 class="text-4xl font-bold mb-4">
+      Simple, transparent pricing
     </h2>
 
-    <p class="text-gray-600 mb-12">
-      Choose the plan that fits your team and scale
+    <p class="text-gray-400 mb-16">
+      Start free. Upgrade as your business grows.
     </p>
 
-    <div class="overflow-x-auto rounded-2xl border border-indigo-100 shadow-lg">
+    <!-- PLAN CARDS -->
+    <div class="grid md:grid-cols-2 gap-8 mb-16">
+
+      <!-- STARTER -->
+      <div class="bg-[#111827] border border-gray-800 rounded-3xl p-8 text-left">
+
+        <h3 class="text-xl font-semibold mb-2">Starter</h3>
+
+        <p class="text-gray-400 mb-6">
+          Perfect for small teams getting started
+        </p>
+
+        <div class="text-4xl font-bold mb-6">
+          ₹99<span class="text-lg text-gray-400">/month</span>
+        </div>
+
+        <ul class="space-y-3 text-sm text-gray-300 mb-8">
+          <li>✔ Up to 5 users</li>
+          <li>✔ 500 products</li>
+          <li>✔ Inventory tracking</li>
+          <li>✔ Alerts & history</li>
+        </ul>
+
+        <%= link_to "Start Starter Plan",
+            new_organization_path(plan: "basic"),
+            class: "block text-center py-3 bg-white text-black rounded-xl font-semibold hover:opacity-90 transition" %>
+      </div>
+
+      <!-- GROWTH (HIGHLIGHTED) -->
+      <div class="relative bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl p-[2px]">
+
+        <div class="bg-[#0B0F19] rounded-3xl p-8 text-left">
+
+          <div class="absolute top-4 right-4 text-xs bg-indigo-500 px-3 py-1 rounded-full">
+            Most Popular
+          </div>
+
+          <h3 class="text-xl font-semibold mb-2">Growth</h3>
+
+          <p class="text-gray-400 mb-6">
+            For growing businesses that need full control
+          </p>
+
+          <div class="text-4xl font-bold mb-6">
+            ₹249<span class="text-lg text-gray-400">/month</span>
+          </div>
+
+          <ul class="space-y-3 text-sm text-gray-300 mb-8">
+            <li>✔ Unlimited users</li>
+            <li>✔ Unlimited products</li>
+            <li>✔ Inventory tracking</li>
+            <li>✔ AI insights & trends</li>
+            <li>✔ Alerts & history</li>
+            <li>✔ Audit logs & Recycle bin</li>
+            <li>✔ Role-based permissions</li>
+            <li>✔ Extended retention</li>
+          </ul>
+
+          <%= link_to "Go Growth",
+              new_organization_path(plan: "premium"),
+              class: "block text-center py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold transition" %>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FEATURE COMPARISON -->
+    <div class="bg-[#111827] border border-gray-800 rounded-2xl overflow-hidden">
 
       <table class="w-full text-sm">
 
-        <!-- HEADER -->
-        <thead class="bg-indigo-50 text-gray-800">
+        <thead class="text-gray-400 border-b border-gray-800">
           <tr>
             <th class="p-4 text-left">Features</th>
-            <th class="p-4">Basic</th>
-            <th class="p-4 bg-indigo-100">
-              Premium ⭐
-              <div class="text-xs font-normal text-indigo-600">
-                Most Popular
-              </div>
-            </th>
+            <th class="p-4">Starter</th>
+            <th class="p-4">Growth</th>
           </tr>
         </thead>
 
         <tbody>
 
           <% rows = [
-
-            ["— CORE FEATURES —",nil, nil],
-
-            ["Products", true, true],
-            ["Requests", true, true],
-            ["User Management", true, true],
-            ["Manage Subscription", true, true],
-
-            ["— ADVANCED —", nil, nil],
-
-            ["History", true, true],
-            ["Alerts", true, true],
-            ["Trends", false, true],
-            ["Audits", false, true],
-            ["Recycle Bin", false, true],
-            ["User Permissions", false, true],
-
-            ["— LIMITS —", nil, nil],
-
-            ["Max Users", "5", "Unlimited"],
-            ["Max Products", "500", "Unlimited"],
-            ["Audit Log Retention ⓘ", "30 days", "Unlimited"],
-            ["Recycle Bin Retention ⓘ", "15 days", "60 days"],
-
+            ["Products", "500", "Unlimited"],
+            ["Users", "5", "Unlimited"],
+            ["History", "✔", "✔"],
+            ["Alerts", "✔", "✔"],
+            ["AI Insights", "—", "✔"],
+            ["Audit Logs", "30 days", "Unlimited"],
+            ["Permissions", "—", "✔"],
+            ["Recycle Bin", "15 days", "60 days"]
           ] %>
 
           <% rows.each do |name, basic, premium| %>
-
-            <% if basic.nil? && premium.nil? %>
-              <!-- SECTION HEADER -->
-              <tr class="bg-indigo-100 text-indigo-800 font-semibold">
-                <td colspan="4" class="p-3 text-left tracking-wide">
-                  <%= name %>
-                </td>
-              </tr>
-
-            <% else %>
-              <tr class="border-t hover:bg-indigo-50 transition">
-
-                <!-- FEATURE NAME -->
-                <td class="p-4 text-left font-medium text-gray-800">
-                  <span title="<%= name.include?('ⓘ') ? 'Data auto-deletes after this duration' : '' %>">
-                    <%= name %>
-                  </span>
-                </td>
-
-                <!-- VALUES -->
-                <% [basic, premium].each_with_index do |val, i| %>
-                  <td class="p-4 text-center <%= 'bg-indigo-50 font-semibold' if i == 1 %>">
-
-                    <% if val == true %>
-                      <span class="text-green-600 font-bold">✔</span>
-
-                    <% elsif val == false %>
-                      <span class="text-gray-400">—</span>
-
-                    <% elsif val == "Unlimited" %>
-                      <span class="text-indigo-700 font-semibold">Unlimited</span>
-
-                    <% else %>
-                      <span class="text-gray-700"><%= val %></span>
-                    <% end %>
-
-                  </td>
-                <% end %>
-
-              </tr>
-            <% end %>
-
+            <tr class="border-t border-gray-800 hover:bg-white/5">
+              <td class="p-4 text-left text-gray-300"><%= name %></td>
+              <td class="p-4 text-center text-gray-400"><%= basic %></td>
+              <td class="p-4 text-center text-white font-medium"><%= premium %></td>
+            </tr>
           <% end %>
 
-          <!-- CTA ROW -->
-          <tr class="border-t bg-gray-50">
-
-            <td></td>
-
-            <td class="p-4">
-              <%= link_to "Basic Plan",
-                  new_organization_path(plan: "basic"),
-                  class: "block text-center py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition" %>
-            </td>
-
-            <td class="p-4 bg-indigo-50">
-              <%= link_to "Go Premium",
-                  new_organization_path(plan: "premium"),
-                  class: "block text-center py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 transition" %>
-            </td>
-
-          </tr>
-
         </tbody>
-
       </table>
 
-      <div class="p-4 bg-indigo-50">
-        <%= link_to "Start Free Trial - 7 days",
-            new_organization_path(plan: "free_trial"),
-            class: "block text-center py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 transition" %>
-      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="mt-10">
+      <%= link_to "Start Free Trial - 7 days",
+          new_organization_path(plan: "free_trial"),
+          class: "px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold transition" %>
     </div>
 
   </div>
 </section>
 
-  <!-- CTA -->
-  <section class="py-24 px-6 text-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+  <!-- CONTACT -->
+  <section id="contact" class="py-24 px-6 bg-[#0B0F19] border-t border-gray-800">
 
-    <h2 class="text-4xl font-bold mb-4">
-      Ready to get started?
-    </h2>
+    <div class="max-w-4xl mx-auto text-center">
 
-    <p class="mb-8 text-indigo-100">
-      Launch your inventory system in minutes.
-    </p>
+      <h2 class="text-3xl font-bold mb-4">
+        Contact Us
+      </h2>
 
-    <%= link_to "Create Your Workspace",
-        new_organization_path,
-        class: "px-8 py-3 bg-white text-indigo-700 font-semibold rounded-xl shadow-lg hover:scale-105 transition" %>
+      <p class="text-gray-400 mb-10">
+        Have questions or need help? We’d love to hear from you.
+      </p>
 
+      <div class="bg-[#111827] p-8 rounded-2xl border border-gray-800">
+
+        <p class="text-gray-300 mb-4">
+          📧 Email: support@traklyn.com
+        </p>
+
+        <p class="text-gray-300">
+          📍 Based in India
+        </p>
+
+      </div>
+
+    </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="text-center text-sm text-gray-500 py-6">
-    © <%= Time.current.year %> StockFlow
+  <footer class="text-center text-gray-500 py-6 text-sm">
+    © <%= Time.current.year %> Traklyn
   </footer>
 
 </div>
-
-<style>
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(25px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-up {
-  opacity: 0;
-  animation: fadeUp 0.7s ease forwards;
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0px); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-</style>

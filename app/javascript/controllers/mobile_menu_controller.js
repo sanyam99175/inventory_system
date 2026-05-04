@@ -1,23 +1,15 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  toggle() {
-    const menu = document.getElementById("mobile-menu")
-    const menuIcon = document.getElementById("menu-icon")
-    const closeIcon = document.getElementById("close-icon")
+  static targets = ["sidebar", "overlay"]
 
-    menu.classList.toggle("hidden")
-    menuIcon.classList.toggle("hidden")
-    closeIcon.classList.toggle("hidden")
+  open() {
+    this.sidebarTarget.classList.remove("-translate-x-full")
+    this.overlayTarget.classList.remove("hidden")
   }
 
-  disconnect() {
-    const menu = document.getElementById("mobile-menu")
-    const menuIcon = document.getElementById("menu-icon")
-    const closeIcon = document.getElementById("close-icon")
-
-    if (menu) menu.classList.add("hidden")
-    if (menuIcon) menuIcon.classList.remove("hidden")
-    if (closeIcon) closeIcon.classList.add("hidden")
+  close() {
+    this.sidebarTarget.classList.add("-translate-x-full")
+    this.overlayTarget.classList.add("hidden")
   }
 }

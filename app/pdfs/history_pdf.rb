@@ -17,7 +17,7 @@ class HistoryPdf < Prawn::Document
 
   # 🧾 HEADER
   def header
-    text "STOCKFLOW INVENTORY REPORT",
+    text "TRAKLYN INVENTORY REPORT",
          size: 18,
          style: :bold,
          align: :center

@@ -1,0 +1,38 @@
+Stock History Report
+====================
+
+Hello <%= @owner.email %>,
+
+Your requested stock history report has been generated successfully and is attached as a PDF.
+
+----------------------------
+
+Filters Applied
+----------------------------
+
+<% if @filters&.dig(:start_date).present? && @filters&.dig(:end_date).present? %>
+Date:
+<%= @filters[:start_date] %> → <%= @filters[:end_date] %>
+
+<% end %>
+
+<% if @filters&.dig(:status).present? %>
+Status:
+<%= @filters[:status].to_s.capitalize %>
+
+<% end %>
+
+<% if @filters&.dig(:user_id).present? %>
+User filter:
+Applied
+
+<% end %>
+
+<% if @filters.blank? || @filters.values.all?(&:blank?) %>
+No filters applied (full report)
+<% end %>
+
+----------------------------
+
+Thanks,
+Traklyn System

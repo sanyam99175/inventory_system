@@ -201,4 +201,73 @@
 
   </div>
 
+                  <!-- ================= WEEKLY SUMMARY ================= -->
+      <div class="bg-white rounded-2xl shadow border border-indigo-100 p-6 mb-6 mt-6">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-6">
+
+          <div>
+            <h2 class="text-lg font-bold text-indigo-800">
+              📅 Weekly Summary
+            </h2>
+            <p class="text-sm text-gray-500">
+              Last 7 days activity
+            </p>
+          </div>
+
+          <span class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
+            Auto-generated
+          </span>
+
+        </div>
+
+        <!-- STATS GRID -->
+        <div class="grid md:grid-cols-4 gap-4">
+
+          <!-- STOCK ADDED -->
+          <div class="bg-indigo-50 rounded-xl p-4">
+            <p class="text-xs text-gray-500">Stock Added</p>
+            <h3 class="text-xl font-bold text-indigo-700 mt-1">
+              <%= @weekly_stock_added || 0 %>
+            </h3>
+          </div>
+
+          <!-- STOCK REMOVED -->
+          <div class="bg-red-50 rounded-xl p-4">
+            <p class="text-xs text-gray-500">Stock Removed</p>
+            <h3 class="text-xl font-bold text-red-600 mt-1">
+              <%= @weekly_stock_removed || 0 %>
+            </h3>
+          </div>
+
+          <!-- REQUESTS PROCESSED -->
+          <div class="bg-green-50 rounded-xl p-4">
+            <p class="text-xs text-gray-500">Requests Processed</p>
+            <h3 class="text-xl font-bold text-green-600 mt-1">
+              <%= @weekly_requests_processed || 0 %>
+            </h3>
+          </div>
+
+          <!-- LOW STOCK EVENTS -->
+          <div class="bg-yellow-50 rounded-xl p-4">
+            <p class="text-xs text-gray-500">Low Stock Alerts</p>
+            <h3 class="text-xl font-bold text-yellow-600 mt-1">
+              <%= @weekly_low_stock || 0 %>
+            </h3>
+          </div>
+
+        </div>
+
+        <!-- OPTIONAL TREND TEXT -->
+        <div class="mt-6 text-sm text-gray-600">
+          <% if @weekly_stock_added.to_i > @weekly_stock_removed.to_i %>
+            📈 Stock levels improved this week.
+          <% else %>
+            📉 Stock consumption is higher than additions.
+          <% end %>
+        </div>
+
+      </div>
+
 </div>

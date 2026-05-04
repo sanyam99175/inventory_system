@@ -8,7 +8,8 @@ Rails.application.routes.draw do
   # AUTH (GLOBAL)
   # ===============================
   devise_for :users, controllers: {
-    sessions: "users/sessions"
+    sessions: "users/sessions",
+    registrations: "users/registrations"
   }
 
   root "home#index"

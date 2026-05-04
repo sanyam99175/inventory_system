@@ -351,12 +351,12 @@ en:
   ai_insight_coming_soon: "AI Insight (Coming Soon)"
   ai_insight_description: "Smart insights like demand prediction, reorder suggestions & anomalies will appear here."
   # Intelligence page
-  stockflow_intelligence: "Stockflow Intelligence"
+  stockflow_intelligence: "Traklyn Intelligence"
   range_label: "Range:"
   early_stage_data_warning: "Early-stage data warning"
-  stockflow_learning_patterns: "StockFlow insights are still learning from your usage patterns. Predictions may not be fully accurate yet."
+  stockflow_learning_patterns: "Traklyn insights are still learning from your usage patterns. Predictions may not be fully accurate yet."
   data_reliable_after_30_days: "Data becomes more reliable after ~30 days of usage."
-  stockflow_health_score: "StockFlow Health Score"
+  stockflow_health_score: "Traklyn Health Score"
   click_see_why_changed: "Click to see why this changed"
   view_breakdown: "View breakdown →"
   # Worker dashboard
