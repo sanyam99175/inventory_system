@@ -1,0 +1,8 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Users Template") do |sheet|
+  sheet.add_row ["ID", "Name", "Email", "Role"]
+
+  # sample row (helps users)
+  sheet.add_row ["1","John Doe", "john@example.com", "admin"]
+end

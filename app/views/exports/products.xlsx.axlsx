@@ -1,0 +1,17 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Products") do |sheet|
+  sheet.add_row ["ID", "Name", "Product Type", "Stock", "Godown", "Alert Limit", "Created At"]
+
+  @products.each do |product|
+    sheet.add_row [
+      product.id,
+      product.name,
+      product.product_type.name,
+      product.stock_count,
+      product.godown_number,
+      product.alert_limit,
+      product.created_at.strftime("%d-%m-%Y")
+    ]
+  end
+end

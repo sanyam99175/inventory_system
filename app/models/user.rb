@@ -21,6 +21,7 @@ class User < ApplicationRecord
     recycle_bin: ["view", "restore"],
     audits: ["view"],
     users: ["view", "create_update", "delete", "change_permissions"],
+    import_export: ["view"],
     manage_subscription: ["view"]
   }
 

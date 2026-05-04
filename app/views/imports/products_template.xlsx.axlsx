@@ -1,0 +1,8 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Products Template") do |sheet|
+  sheet.add_row ["Name", "Product Type", "Stock", "Godown", "Alert Limit"]
+
+  # sample row
+  sheet.add_row ["Sample Product", "Handles" ,10, 2, 2]
+end

@@ -111,6 +111,13 @@ Rails.application.routes.draw do
       get "trends", to: "owner#trends"
       get "intelligence", to: "owner#intelligence"
       resources :audits, only: [:index, :show]
+      get "imports_exports", to: "imports_exports#index"
+      post "exports/users", to: "exports#users"
+      post "exports/products", to: "exports#products"
+      post "imports/users", to: "imports#users"
+      post "imports/products", to: "imports#products"
+      get "imports/users_template", to: "imports#users_template"
+      get "imports/products_template", to: "imports#products_template"
 
       # PDF Export
       get "owner/history.pdf",

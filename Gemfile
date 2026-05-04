@@ -56,6 +56,10 @@ gem "jbuilder"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem 'sendgrid-ruby'
 
+gem "caxlsx"
+gem "caxlsx_rails"
+gem "roo"
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 gem "dotenv-rails", groups: [:development, :test]

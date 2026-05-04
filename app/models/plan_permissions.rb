@@ -18,6 +18,7 @@ class PlanPermissions
       users: ["view", "create_update", "delete", "change_permissions"],
       audits: ["view"],
       recycle_bin: ["view", "restore"],
+      import_export: ["view"],
       manage_subscription: ["view"]
     },
     "free_trial" => {

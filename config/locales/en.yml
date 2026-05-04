@@ -344,6 +344,7 @@ en:
   pending_requests_label: "Pending Requests"
   low_stock_items_label: "Low Stock Items"
   view_all_link: "View All →"
+  import_export: "Imports & Exports"
   unknown_user_dashboard: "Unknown"
   no_pending_requests_dashboard: "No pending requests"
   low_stock_alerts: "Low Stock Alerts"

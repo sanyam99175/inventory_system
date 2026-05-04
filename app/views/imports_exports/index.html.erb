@@ -1,0 +1,184 @@
+<div class="max-w-6xl mx-auto p-6">
+
+  <!-- HEADER -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-indigo-800">
+      Imports & Exports
+    </h1>
+    <p class="text-gray-500">
+      Manage data import and export operations
+    </p>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- ================= IMPORTS ================= -->
+    <div class="bg-white shadow rounded-lg p-6 border">
+
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-xl">📥</span>
+        <h2 class="text-lg font-semibold">Imports</h2>
+      </div>
+
+      <p class="text-gray-500 mb-4">
+        Upload Excel files to import data into the system.
+      </p>
+
+      <!-- TEMPLATE DOWNLOADS -->
+      <div class="flex gap-2 mb-4">
+
+        <%= link_to imports_users_template_path(format: :xlsx),
+            class: "flex-1 bg-gray-100 text-center py-2 rounded hover:bg-gray-200" do %>
+          ⬇ Users Template
+        <% end %>
+
+        <%= link_to imports_products_template_path(format: :xlsx),
+            class: "flex-1 bg-gray-100 text-center py-2 rounded hover:bg-gray-200" do %>
+          ⬇ Products Template
+        <% end %>
+
+      </div>
+
+      <!-- IMPORT USERS -->
+      <div class="border rounded p-4 mb-4">
+
+        <h4 class="font-semibold mb-2">👤 Import Users</h4>
+
+        <p class="text-sm text-gray-500 mb-3">
+          Excel: Name | Email | Role
+        </p>
+
+        <%= form_with url: imports_users_path, method: :post, local: true, multipart: true do %>
+          <input type="file" name="file" class="mb-2 w-full" />
+
+          <button class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
+            Upload Users
+          </button>
+        <% end %>
+
+      </div>
+
+      <!-- IMPORT PRODUCTS -->
+      <div class="border rounded p-4">
+
+        <h4 class="font-semibold mb-2">📦 Import Products</h4>
+
+        <p class="text-sm text-gray-500 mb-3">
+          Excel: Name | Stock | Godown | Alert Limit
+        </p>
+
+        <%= form_with url: imports_products_path, method: :post, local: true, multipart: true do %>
+          <input type="file" name="file" class="mb-2 w-full" />
+
+          <button class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
+            Upload Products
+          </button>
+        <% end %>
+
+      </div>
+
+    </div>
+
+    <!-- ================= EXPORTS ================= -->
+    <div class="bg-white shadow rounded-lg p-6 border">
+
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-xl">📤</span>
+        <h2 class="text-lg font-semibold">Exports</h2>
+      </div>
+
+      <p class="text-gray-500 mb-4">
+        Download system data in Excel format.
+      </p>
+
+      <!-- EXPORT MODULES -->
+      <div class="grid grid-cols-1 gap-4 mb-6">
+
+        <!-- USERS EXPORT -->
+        <div class="border rounded p-4">
+
+          <h4 class="font-semibold mb-2">👤 Users</h4>
+
+          <p class="text-sm text-gray-500 mb-3">
+            Export all user records
+          </p>
+
+          <%= button_to "Export Users",
+              exports_users_path(format: :xlsx),
+              method: :post,
+              class: "w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700" %>
+
+        </div>
+
+        <!-- PRODUCTS EXPORT -->
+        <div class="border rounded p-4">
+
+          <h4 class="font-semibold mb-2">📦 Products</h4>
+
+          <p class="text-sm text-gray-500 mb-3">
+            Export inventory data
+          </p>
+
+          <%= button_to "Export Products",
+              exports_products_path(format: :xlsx),
+              method: :post,
+              class: "w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700" %>
+
+        </div>
+
+      </div>
+
+      <!-- EXPORT HISTORY -->
+      <div>
+
+        <h3 class="text-lg font-semibold mb-3">Export History</h3>
+
+        <table class="w-full border text-sm">
+
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="text-left p-2">Type</th>
+              <th class="text-left p-2">Status</th>
+              <th class="text-left p-2">Created At</th>
+              <th class="text-left p-2">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <% (@export_histories || []).each do |export| %>
+              <tr class="border-t">
+                <td class="p-2"><%= export.export_type %></td>
+                <td class="p-2"><%= export.status %></td>
+                <td class="p-2"><%= export.created_at.strftime("%d %b %Y %H:%M") %></td>
+                <td class="p-2">
+                  <% if export.file_url.present? %>
+                    <a href="<%= export.file_url %>" class="text-indigo-600 underline">
+                      Download
+                    </a>
+                  <% else %>
+                    -
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+
+            <% if (@export_histories || []).empty? %>
+              <tr>
+                <td colspan="4" class="p-4 text-center text-gray-500">
+                  No export history found
+                </td>
+              </tr>
+            <% end %>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
