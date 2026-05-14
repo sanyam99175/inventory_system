@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   }
 
   root "home#index"
+  get "/manifest.json", to: "pwa#manifest"
 
   # ===============================
   # PLANS / PRICING
