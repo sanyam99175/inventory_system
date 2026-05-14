@@ -266,18 +266,30 @@
 </html>
 
 <script>
+  let loaderTimeout;
+
+  document.addEventListener("turbo:visit", () => {
+    loaderTimeout = setTimeout(() => {
+      const loader = document.getElementById("app-loader");
+
+      if (loader) {
+        loader.style.display = "flex";
+        loader.style.opacity = "1";
+      }
+    }, 1200); // show only after 1.2s
+  });
 
   document.addEventListener("turbo:load", () => {
+    clearTimeout(loaderTimeout);
+
     const loader = document.getElementById("app-loader");
 
     if (loader) {
-      setTimeout(() => {
-        loader.style.opacity = "0";
+      loader.style.opacity = "0";
 
-        setTimeout(() => {
-          loader.style.display = "none";
-        }, 300);
-      }, 500);
+      setTimeout(() => {
+        loader.style.display = "none";
+      }, 200);
     }
   });
   document.addEventListener("turbo:load", () => {
