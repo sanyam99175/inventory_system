@@ -16,8 +16,6 @@ class Product < ApplicationRecord
   after_commit :clear_cache
   after_update_commit :check_low_stock
 
-  private
-
   def set_defaults
     self.stock_count ||= 0
     self.alert_limit ||= 0

@@ -72,23 +72,23 @@
   <div class="grid md:grid-cols-3 gap-8">
 
     <% features = [
-      ["📦", "Real-Time Inventory", "Track stock levels instantly across all products with zero manual confusion."],
+      ["box", "Real-Time Inventory", "Track stock levels instantly across all products with zero manual confusion."],
       
-      ["🤖", "AI Insights", "Understand demand patterns, stock movement, and trends without doing manual analysis."],
+      ["robot", "AI Insights", "Understand demand patterns, stock movement, and trends without doing manual analysis."],
       
-      ["⚠️", "Smart Alerts", "Get notified before stock runs out or when anomalies are detected."],
+      ["exclamation-circle", "Smart Alerts", "Get notified before stock runs out or when anomalies are detected."],
 
-      ["📜", "Audit Logs", "Track every action — who changed what and when — for full accountability."],
+      ["scroll", "Audit Logs", "Track every action — who changed what and when — for full accountability."],
 
-      ["🕓", "Request History", "Maintain complete history of stock requests and operations in one place."],
+      ["clock", "Request History", "Maintain complete history of stock requests and operations in one place."],
 
-      ["🔐", "Permission Management", "Control who can view, edit, or manage inventory across your team."]
+      ["lock", "Permission Management", "Control who can view, edit, or manage inventory across your team."]
     ] %>
 
     <% features.each do |icon, title, desc| %>
       <div class="p-6 rounded-2xl bg-[#111827] border border-gray-800 hover:border-indigo-500 hover:shadow-xl transition duration-300">
 
-        <div class="text-3xl mb-4"><%= icon %></div>
+        <div class="text-3xl mb-4"><%= icon(icon, class: 'w-8 h-8 text-indigo-400') %></div>
 
         <h3 class="font-semibold text-lg mb-2"><%= title %></h3>
 

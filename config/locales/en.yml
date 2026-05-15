@@ -502,7 +502,7 @@ en:
   track_all_stock_movements: "Track all stock movements & approvals"
   all_users_label: "All Users"
   all_status: "All"
-  pdf_download: "⬇ PDF"
+  pdf_download: "PDF"
   email_pdf_button: "Email PDF"
   # Additional labels and headings
   user_label: "User"

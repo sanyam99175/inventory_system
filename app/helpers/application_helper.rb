@@ -7,6 +7,16 @@ module ApplicationHelper
         current_organization&.subscription_status == "trialing"
     end
 
+    # Render Font Awesome icon
+    # Usage: <%= icon("box", class: "w-5 h-5") %>
+    def icon(name, options = {})
+        classes = options[:class] || "w-5 h-5"
+        
+        content_tag(:i, "", {
+            class: "fas fa-#{name} #{classes}"
+        }.merge(options.except(:class)))
+    end
+
     def pagination_links(current_page, total_pages, param_name)
     return if total_pages <= 1
 

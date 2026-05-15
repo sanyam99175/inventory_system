@@ -44,3 +44,22 @@
   font-size: 13px;
   margin-top: 5px;
 }
+
+/* Font Awesome Icons Styling */
+i.fas {
+  display: inline-block;
+  vertical-align: -0.125em;
+}
+
+/* Ensure icons size properly with Tailwind classes */
+i.fas.w-3 { font-size: 0.75rem; }
+i.fas.w-4 { font-size: 1rem; }
+i.fas.w-5 { font-size: 1.25rem; }
+i.fas.w-6 { font-size: 1.5rem; }
+i.fas.w-8 { font-size: 2rem; }
+
+i.fas.h-3 { line-height: 0.75rem; }
+i.fas.h-4 { line-height: 1rem; }
+i.fas.h-5 { line-height: 1.25rem; }
+i.fas.h-6 { line-height: 1.5rem; }
+i.fas.h-8 { line-height: 2rem; }

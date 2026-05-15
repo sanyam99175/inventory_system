@@ -12,6 +12,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="manifest" href="/manifest.json">
@@ -61,18 +62,18 @@
       <%= link_to dashboard_path(current_organization),
           class: "flex items-center px-4 py-2 rounded-lg transition
           #{controller_name == 'dashboard' ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'hover:_g-indigo-50'}" do %>
-        📊 Dashboard
+        <%= icon('chart-bar', class: 'w-5 h-5 inline mr-2') %> Dashboard
       <% end %>
 
         <% plan = current_organization.plan %>
 
         <!-- MAIN NAV -->
         <% nav_items = [
-          { key: "dashboard", label: "Dashboard", path: dashboard_path(current_organization), icon: "📊" },
-          { key: "products", label: "Products", path: products_path, icon: "📦" },
-          { key: "requests", label: "Requests", path: requests_path, icon: "📝" },
-          { key: "history", label: "History", path: history_path, icon: "📜" },
-          { key: "alerts", label: "Alerts", path: alerts_path(current_organization), icon: "⚠️" }
+          { key: "dashboard", label: "Dashboard", path: dashboard_path(current_organization), icon: "chart-bar" },
+          { key: "products", label: "Products", path: products_path, icon: "box" },
+          { key: "requests", label: "Requests", path: requests_path, icon: "file" },
+          { key: "history", label: "History", path: history_path, icon: "scroll" },
+          { key: "alerts", label: "Alerts", path: alerts_path(current_organization), icon: "exclamation-circle" }
         ] %>
 
         <% nav_items.each do |item| %>
@@ -89,7 +90,7 @@
                 #{active ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'hover:bg-indigo-50 text-gray-700'}
                 #{'opacity-50' if locked}" do %>
 
-              <span><%= item[:icon] %> <%= item[:label] %></span>
+              <span><%= icon(item[:icon], class: 'w-5 h-5 inline mr-2') %> <%= item[:label] %></span>
 
               <% if item[:key] == "requests" && @pending_requests_count.to_i > 0 %>
                 <span class="text-xs bg-yellow-500 text-white px-2 py-0.5 rounded-full">
@@ -111,8 +112,8 @@
         <div class="mt-6 text-xs text-gray-400 uppercase px-3">Analytics</div>
 
         <% analytics_items = [
-          { key: "trends", label: "Trends", path: trends_path(current_organization), icon: "📈" },
-          { key: "intelligence", label: "Intelligence", path: intelligence_path(current_organization), icon: "🧠" }
+          { key: "trends", label: "Trends", path: trends_path(current_organization), icon: "chart-line" },
+          { key: "intelligence", label: "Intelligence", path: intelligence_path(current_organization), icon: "brain" }
         ] %>
 
         <% analytics_items.each do |item| %>
@@ -129,8 +130,8 @@
                 #{active ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'hover:bg-indigo-50'}
                 #{'opacity-50' if locked}" do %>
 
-              <span><%= item[:icon] %> <%= item[:label] %></span>
-              <% if locked %> 🔒 <% end %>
+              <span><%= icon(item[:icon], class: 'w-5 h-5 inline mr-2') %> <%= item[:label] %></span>
+              <% if locked %> <%= icon('lock', class: 'w-4 h-4') %> <% end %>
 
             <% end %>
           <% end %>
@@ -140,11 +141,11 @@
         <div class="mt-6 text-xs text-gray-400 uppercase px-3">Administration</div>
 
         <% admin_items = [
-          { key: "users", label: t('users'), path: staffs_path, icon: "👥" },
-          { key: "recycle_bin", label: t('recycle_bin'), path: recycle_bin_path, icon: "🗑️" },
-          { key: "audits", label: t('audits'), path: audits_path, icon: "📋" },
-          { key: "import_export", label: t('import_export'), path: imports_exports_path, icon: "📦"},
-          { key: "manage_subscription", label: t('manage_subscription'), path: create_portal_billing_path, icon: "💳" }
+          { key: "users", label: t('users'), path: staffs_path, icon: "users" },
+          { key: "recycle_bin", label: t('recycle_bin'), path: recycle_bin_path, icon: "trash" },
+          { key: "audits", label: t('audits'), path: audits_path, icon: "list" },
+          { key: "import_export", label: t('import_export'), path: imports_exports_path, icon: "box"},
+          { key: "manage_subscription", label: t('manage_subscription'), path: create_portal_billing_path, icon: "credit-card" }
         ] %>
 
         <% admin_items.each do |item| %>
@@ -161,8 +162,8 @@
                 #{active ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'hover:bg-indigo-50'}
                 #{'opacity-50' if locked}" do %>
 
-              <span><%= item[:icon] %> <%= item[:label] %></span>
-              <% if locked %> 🔒 <% end %>
+              <span><%= icon(item[:icon], class: 'w-5 h-5 inline mr-2') %> <%= item[:label] %></span>
+              <% if locked %> <%= icon('lock', class: 'w-4 h-4') %> <% end %>
 
             <% end %>
           <% end %>
@@ -176,20 +177,20 @@
       <div class="mb-2">
         <%= link_to edit_user_registration_path,
             class: "block text-gray-700 hover:text-indigo-600 px-2 py-1 rounded hover:bg-gray-100 transition" do %>
-          👤 <%= current_user.name || current_user.email %>
+          <%= icon('user', class: 'w-4 h-4 inline mr-2') %> <%= current_user.name || current_user.email %>
         <% end %>
       </div>
 
       <button data-action="click->notification-modal#open"
               class="w-full text-left px-3 py-2 rounded hover:bg-gray-100">
-        ⚙️ Settings
+        <%= icon('settings', class: 'w-4 h-4 inline mr-2') %> Settings
       </button>
 
       <%= button_to destroy_user_session_path,
           method: :delete,
           form: { data: { turbo: false } },
           class: "w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded mt-2" do %>
-        Logout
+        <%= icon('log-out', class: 'w-4 h-4 inline mr-2') %> Logout
       <% end %>
     </div>
 
