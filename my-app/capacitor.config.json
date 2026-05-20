@@ -1,0 +1,15 @@
+{
+  "appId": "com.tracklyn.app",
+  "appName": "tracklyn",
+  "webDir": "dist",
+  "plugins": {
+      "SplashScreen": {
+        "launchShowDuration": 1000,
+        "launchAutoHide": true
+      }
+    },
+  "server": {
+    "url": "http://192.168.0.2:3000",
+    "cleartext": false
+  }
+}

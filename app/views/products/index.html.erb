@@ -181,193 +181,115 @@
 
         <% if @products.present? %>
 
-          <div class="divide-y divide-indigo-50">
+          <div class="space-y-4 p-4">
 
             <% @products.each do |product| %>
 
-              <div class="p-4 hover:bg-indigo-50/30 transition">
+              <%= link_to product_path(product),
+                class: "
+                  block
+                  rounded-3xl
+                  border
+                  border-indigo-100
+                  shadow-sm
+                  overflow-hidden
+                  transition-all
+                  duration-300
+                  active:scale-[0.98]
+                  bg-gradient-to-br
+                  from-white
+                  via-white
+                  to-white
+                  hover:from-indigo-50
+                  hover:via-white
+                  hover:to-indigo-100/80
+                  hover:-translate-y-1
+                  hover:shadow-xl
+                  hover:border-indigo-200
+                " do %>
 
-                <!-- TOP -->
-                <div class="flex items-start gap-3">
+                <div class="p-5">
 
-                  <!-- ICON -->
-                  <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
+                  <!-- TOP -->
+                  <div class="flex items-start gap-4">
 
-                    <%= icon('cube', class: 'w-5 h-5 text-indigo-700') %>
+                    <!-- ICON -->
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
 
-                  </div>
-
-                  <!-- CONTENT -->
-                  <div class="flex-1 min-w-0">
-
-                    <!-- NAME -->
-                    <div class="flex items-center gap-2 flex-wrap">
-
-                      <h3 class="font-semibold text-gray-900 truncate">
-                        <%= product.name %>
-                      </h3>
-
-                      <% if product.reorder_needed? %>
-
-                        <span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-medium border border-red-200">
-                          Low Stock
-                        </span>
-
-                      <% else %>
-
-                        <span class="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-full font-medium border border-emerald-200">
-                          Healthy
-                        </span>
-
-                      <% end %>
+                      <%= icon('cube', class: 'w-5 h-5 text-indigo-700') %>
 
                     </div>
 
-                    <!-- CATEGORY -->
-                    <div class="mt-2">
+                    <!-- CONTENT -->
+                    <div class="flex-1 min-w-0">
 
-                      <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs px-2.5 py-1 rounded-full font-medium">
-                        <%= product.product_type&.name || "Uncategorized" %>
-                      </span>
+                      <!-- NAME -->
+                      <div class="flex items-start justify-between gap-3">
 
-                    </div>
+                        <div class="min-w-0">
 
-                  </div>
+                          <h3 class="font-semibold text-gray-900 text-[15px] leading-5 break-words">
+                            <%= product.name %>
+                          </h3>
 
-                </div>
+                          <div class="mt-2">
 
-                <!-- STOCK SECTION -->
-                <div class="mt-4 bg-gradient-to-br from-indigo-50 to-white rounded-2xl border border-indigo-100 p-4">
+                            <span class="inline-flex bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs px-2.5 py-1 rounded-full font-medium">
+                              <%= product.product_type&.name || "Uncategorized" %>
+                            </span>
 
-                  <!-- STOCK -->
-                  <div class="flex items-center justify-between">
+                          </div>
 
-                    <div>
+                        </div>
 
-                      <p class="text-xs text-gray-500">
-                        Current Stock
-                      </p>
+                        <!-- STATUS -->
+                        <% if product.reorder_needed? %>
 
-                      <h4 class="text-2xl font-bold text-gray-900 mt-1">
-                        <%= product.stock_count %>
-                      </h4>
+                          <span class="bg-red-100 text-red-700 text-[11px] px-2.5 py-1 rounded-full font-semibold border border-red-200 whitespace-nowrap">
+                            Low
+                          </span>
 
-                    </div>
+                        <% else %>
 
-                    <div class="text-right">
+                          <span class="bg-emerald-100 text-emerald-700 text-[11px] px-2.5 py-1 rounded-full font-semibold border border-emerald-200 whitespace-nowrap">
+                            Healthy
+                          </span>
 
-                      <% low_days = product.days_remaining.to_i <= 7 %>
-
-                      <span class="inline-flex px-3 py-1 rounded-full border text-xs font-medium
-                        <%= low_days ?
-                          'bg-red-50 border-red-200 text-red-700' :
-                          'bg-indigo-50 border-indigo-100 text-indigo-700' %>">
-
-                        <%= product.days_remaining %> days left
-
-                      </span>
-
-                    </div>
-
-                  </div>
-
-                  <!-- INFO -->
-                  <div class="mt-4 space-y-2 text-sm">
-
-                    <div class="flex items-center justify-between">
-
-                      <span class="text-gray-500">
-                        Daily Usage
-                      </span>
-
-                      <span class="font-medium text-gray-700">
-                        <%= product.daily_usage_rate.round(2) %>/day
-                      </span>
-
-                    </div>
-
-                    <div class="flex items-center justify-between">
-
-                      <span class="text-gray-500">
-                        Suggested Stock
-                      </span>
-
-                      <span class="font-medium text-gray-700">
-                        <%= product.recommended_stock %>
-                      </span>
-
-                    </div>
-
-                  </div>
-
-                  <!-- STATUS -->
-                  <div class="mt-4">
-
-                    <% if product.reorder_needed? %>
-
-                      <div class="flex items-center gap-2 text-xs font-medium text-red-600">
-
-                        <div class="w-2 h-2 rounded-full bg-red-500"></div>
-
-                        Low stock risk detected
+                        <% end %>
 
                       </div>
 
-                    <% else %>
+                      <!-- STOCK -->
+                      <div class="mt-5 flex items-end justify-between">
 
-                      <div class="flex items-center gap-2 text-xs font-medium text-emerald-600">
+                        <div>
 
-                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                          <p class="text-xs text-gray-500">
+                            Current Stock
+                          </p>
 
-                        Healthy stock level
+                          <h2 class="text-3xl font-bold text-gray-900 leading-none mt-1">
+                            <%= product.stock_count %>
+                          </h2>
+
+                        </div>
+
+                        <!-- ARROW -->
+                        <div class="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
+
+                          <%= icon('chevron-right', class: 'w-4 h-4 text-indigo-700') %>
+
+                        </div>
 
                       </div>
 
-                    <% end %>
+                    </div>
 
                   </div>
 
                 </div>
 
-                <!-- ACTIONS -->
-                <div class="grid grid-cols-3 gap-2 mt-4">
-
-                  <%= link_to product_path(product),
-                      class: "bg-white border border-indigo-100 hover:bg-indigo-50 text-gray-700 text-center py-2.5 rounded-xl text-sm font-medium transition" do %>
-
-                    View
-
-                  <% end %>
-
-                  <% if current_user.has_permission?("products", "create_update") %>
-
-                    <%= link_to edit_product_path(product),
-                        class: "bg-white border border-indigo-100 hover:bg-indigo-50 text-gray-700 text-center py-2.5 rounded-xl text-sm font-medium transition" do %>
-
-                      Edit
-
-                    <% end %>
-
-                  <% end %>
-
-                  <% if current_user.has_permission?("products", "delete") %>
-
-                    <%= link_to product_path(product),
-                        data: {
-                          turbo_method: :delete,
-                          turbo_confirm: "Are you sure?"
-                        },
-                        class: "bg-red-600 hover:bg-red-700 text-white text-center py-2.5 rounded-xl text-sm font-medium transition" do %>
-
-                      Delete
-
-                    <% end %>
-
-                  <% end %>
-
-                </div>
-
-              </div>
+              <% end %>
 
             <% end %>
 

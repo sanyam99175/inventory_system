@@ -360,113 +360,256 @@
         </div>
 
         <!-- MOBILE CARDS -->
-        <div class="lg:hidden divide-y divide-indigo-50">
+<!-- MOBILE CARDS -->
+<div class="lg:hidden divide-y divide-indigo-50">
 
-          <% @requests.each do |req| %>
+  <% @requests.each do |req| %>
 
-            <div class="p-5 hover:bg-indigo-50/30 transition">
+    <% status_class =
+      case req.status
+      when 'approved'
+        'bg-emerald-50 text-emerald-700 border border-emerald-100'
+      when 'rejected'
+        'bg-red-50 text-red-700 border border-red-100'
+      when 'cancelled'
+        'bg-gray-100 text-gray-600 border border-gray-200'
+      else
+        'bg-amber-50 text-amber-700 border border-amber-100'
+      end %>
 
-              <!-- TOP -->
-              <div class="flex items-start justify-between gap-4">
+    <!-- CARD -->
+    <button
+      onclick="openHistoryModal('<%= req.id %>')"
+      class="w-full text-left p-4 active:bg-indigo-50 transition"
+    >
 
-                <div class="flex items-start gap-3 min-w-0">
+      <div class="flex items-center justify-between gap-3">
 
-                  <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
+        <!-- LEFT -->
+        <div class="flex items-center gap-3 min-w-0">
 
-                    <%= icon('box', class: 'w-5 h-5 text-indigo-700') %>
+          <div class="
+            w-11 h-11 rounded-2xl flex items-center justify-center shrink-0
+            <%= req.quantity_change < 0 ?
+              'bg-red-50 border border-red-100' :
+              'bg-emerald-50 border border-emerald-100' %>
+          ">
 
-                  </div>
+            <%= icon(
+              req.quantity_change < 0 ? 'arrow-down' : 'arrow-up',
+              class: "w-5 h-5 #{req.quantity_change < 0 ? 'text-red-600' : 'text-emerald-600'}"
+            ) %>
 
-                  <div class="min-w-0">
+          </div>
 
-                    <h3 class="font-semibold text-gray-900 truncate">
-                      <%= req.product&.name || req.product_name || "Deleted Product" %>
-                    </h3>
+          <div class="min-w-0">
 
-                    <p class="text-sm text-gray-500 mt-1">
-                      <%= req.user_name || req.user&.name || "Unknown" %>
-                    </p>
+            <h3 class="font-semibold text-gray-900 truncate">
+              <%= req.product&.name || req.product_name || "Deleted Product" %>
+            </h3>
 
-                  </div>
+            <p class="text-sm text-gray-500 truncate mt-1">
+              <%= req.user_name || req.user&.name || "Unknown" %>
+            </p>
 
-                </div>
+          </div>
 
-                <div>
+        </div>
 
-                  <span class="font-bold text-sm px-3 py-1 rounded-full border
-                    <%= req.quantity_change < 0 ?
-                        'bg-red-50 text-red-700 border-red-100' :
-                        'bg-emerald-50 text-emerald-700 border-emerald-100' %>">
+        <!-- RIGHT -->
+        <div class="text-right shrink-0">
 
-                    <%= req.quantity_change > 0 ? '+' : '' %><%= req.quantity_change %>
+          <div class="
+            inline-flex px-3 py-1 rounded-full text-sm font-bold border
+            <%= req.quantity_change < 0 ?
+              'bg-red-50 text-red-700 border-red-100' :
+              'bg-emerald-50 text-emerald-700 border-emerald-100' %>
+          ">
 
-                  </span>
+            <%= req.quantity_change > 0 ? '+' : '' %><%= req.quantity_change %>
 
-                </div>
+          </div>
 
-              </div>
+          <p class="text-xs text-gray-400 mt-2">
+            <%= req.created_at.strftime("%d %b") %>
+          </p>
 
-              <!-- DETAILS -->
-              <div class="grid grid-cols-2 gap-3 mt-4">
+        </div>
 
-                <div>
+      </div>
 
-                  <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold">
-                    Type
-                  </p>
+    </button>
 
-                  <p class="text-sm text-gray-700 mt-1">
-                    <%= req.user&.role == "owner" ? "Direct" : "Worker" %>
-                  </p>
+    <!-- MODAL -->
+    <div
+      id="history-modal-<%= req.id %>"
+      class="fixed inset-0 z-50 hidden"
+    >
 
-                </div>
+      <!-- BACKDROP -->
+      <div
+        onclick="closeHistoryModal('<%= req.id %>')"
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+      ></div>
 
-                <div>
+      <!-- CONTENT -->
+      <div class="
+        absolute bottom-0 left-0 right-0
+        bg-white rounded-t-[32px]
+        p-6
+        animate-slide-up
+      ">
 
-                  <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold">
-                    Godown
-                  </p>
+        <!-- HANDLE -->
+        <div class="w-14 h-1.5 rounded-full bg-gray-200 mx-auto mb-6"></div>
 
-                  <p class="text-sm text-gray-700 mt-1">
-                    <%= req.product&.godown_number || "N/A" %>
-                  </p>
+        <!-- HEADER -->
+        <div class="flex items-start justify-between gap-4">
 
-                </div>
+          <div>
 
-              </div>
+            <h2 class="text-xl font-bold text-gray-900">
+              <%= req.product&.name || req.product_name || "Deleted Product" %>
+            </h2>
 
-              <!-- BOTTOM -->
-              <div class="flex items-center justify-between mt-4 pt-4 border-t border-indigo-50">
+            <p class="text-sm text-gray-500 mt-1">
+              Full stock activity details
+            </p>
 
-                <% status_class =
-                  case req.status
-                  when 'approved'
-                    'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                  when 'rejected'
-                    'bg-red-50 text-red-700 border border-red-100'
-                  when 'cancelled'
-                    'bg-gray-100 text-gray-600 border border-gray-200'
-                  else
-                    'bg-amber-50 text-amber-700 border border-amber-100'
-                  end %>
+          </div>
 
-                <span class="px-3 py-1 rounded-full text-xs font-semibold <%= status_class %>">
+          <span class="px-3 py-1 rounded-full text-xs font-semibold <%= status_class %>">
+            <%= req.status.capitalize %>
+          </span>
 
-                  <%= req.status.capitalize %>
+        </div>
 
-                </span>
+        <!-- INFO -->
+        <div class="space-y-4 mt-6">
 
-                <span class="text-xs text-gray-400">
-                  <%= req.created_at.strftime("%d %b %Y, %H:%M") %>
-                </span>
+          <div class="bg-indigo-50 rounded-2xl p-4">
 
-              </div>
+            <p class="text-xs uppercase tracking-wide text-indigo-500 font-semibold">
+              Quantity Change
+            </p>
+
+            <h3 class="
+              text-3xl font-black mt-2
+              <%= req.quantity_change < 0 ? 'text-red-600' : 'text-emerald-600' %>
+            ">
+              <%= req.quantity_change > 0 ? '+' : '' %><%= req.quantity_change %>
+            </h3>
+
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+
+            <div class="bg-gray-50 rounded-2xl p-4">
+
+              <p class="text-xs text-gray-400 uppercase font-semibold">
+                User
+              </p>
+
+              <p class="text-sm font-semibold text-gray-800 mt-2">
+                <%= req.user_name || req.user&.name || "Unknown" %>
+              </p>
 
             </div>
 
-          <% end %>
+            <div class="bg-gray-50 rounded-2xl p-4">
+
+              <p class="text-xs text-gray-400 uppercase font-semibold">
+                Type
+              </p>
+
+              <p class="text-sm font-semibold text-gray-800 mt-2">
+                <%= req.user&.role == "owner" ? "Direct" : "Worker" %>
+              </p>
+
+            </div>
+
+            <div class="bg-gray-50 rounded-2xl p-4">
+
+              <p class="text-xs text-gray-400 uppercase font-semibold">
+                Godown
+              </p>
+
+              <p class="text-sm font-semibold text-gray-800 mt-2">
+                <%= req.product&.godown_number || "N/A" %>
+              </p>
+
+            </div>
+
+            <div class="bg-gray-50 rounded-2xl p-4">
+
+              <p class="text-xs text-gray-400 uppercase font-semibold">
+                Time
+              </p>
+
+              <p class="text-sm font-semibold text-gray-800 mt-2">
+                <%= req.created_at.strftime("%d %b, %H:%M") %>
+              </p>
+
+            </div>
+
+          </div>
 
         </div>
+
+        <!-- CLOSE -->
+        <button
+          onclick="closeHistoryModal('<%= req.id %>')"
+          class="
+            w-full mt-6
+            bg-indigo-600 hover:bg-indigo-700
+            text-white font-semibold
+            py-4 rounded-2xl
+            transition
+          "
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  <% end %>
+
+</div>
+
+<style>
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.22s ease-out;
+  }
+</style>
+
+<script>
+  function openHistoryModal(id) {
+    document
+      .getElementById(`history-modal-${id}`)
+      .classList.remove("hidden");
+
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeHistoryModal(id) {
+    document
+      .getElementById(`history-modal-${id}`)
+      .classList.add("hidden");
+
+    document.body.style.overflow = "auto";
+  }
+</script>
 
         <!-- PAGINATION -->
         <% if @requests.respond_to?(:current_page) %>
