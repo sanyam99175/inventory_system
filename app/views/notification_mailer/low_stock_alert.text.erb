@@ -1,0 +1,48 @@
+```erb
+⚠️ LOW STOCK ALERT
+
+Hi <%= @user.email %>,
+
+Some products in your inventory are running low and may require restocking soon.
+
+--------------------------------------------------
+PRODUCT DETAILS
+--------------------------------------------------
+
+Product:
+<%= @product.name %>
+
+Category:
+<%= @product.product_type&.name %>
+
+Current Stock:
+<%= @product.stock_count %>
+
+Alert Limit:
+<%= @product.alert_limit %>
+
+--------------------------------------------------
+INVENTORY INSIGHTS
+--------------------------------------------------
+
+Daily Usage:
+<%= @product.daily_usage_rate.round(1) %> units/day
+
+Estimated Remaining:
+<%= @product.days_remaining %> days
+
+Recommended Stock Level:
+<%= @product.recommended_stock %>
+
+(Based on next 30 days usage + 20% safety buffer)
+
+--------------------------------------------------
+
+Review Inventory:
+<%= @dashboard_url %>
+
+--------------------------------------------------
+
+This is an automated low stock notification from Traklyn.
+Restock products soon to avoid inventory shortages.
+```

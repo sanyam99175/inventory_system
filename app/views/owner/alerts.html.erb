@@ -45,10 +45,259 @@
 
     </div>
 
-    <!-- ================= ALERT LIST ================= -->
     <% if @products.any? %>
 
-      <div class="space-y-4">
+      <!-- ================= MOBILE VIEW ================= -->
+      <div class="md:hidden space-y-3">
+
+        <% @products.each do |product| %>
+
+          <% stock = product.stock_count.to_i %>
+          <% limit = product.alert_limit.to_i %>
+
+          <% modal_id = "product_modal_#{product.id}" %>
+
+          <% status_class =
+            if stock <= limit * 0.5
+              "bg-red-100 text-red-700 border-red-200"
+            elsif stock <= limit
+              "bg-amber-100 text-amber-700 border-amber-200"
+            else
+              "bg-emerald-100 text-emerald-700 border-emerald-200"
+            end %>
+
+          <% status_text =
+            if stock <= limit * 0.5
+              "Critical"
+            elsif stock <= limit
+              "Low Stock"
+            else
+              "Healthy"
+            end %>
+
+          <!-- MOBILE CARD -->
+          <div
+            onclick="document.getElementById('<%= modal_id %>').style.display='flex'"
+            class="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm active:scale-[0.98] transition cursor-pointer">
+
+            <div class="flex items-center justify-between gap-3">
+
+              <!-- LEFT -->
+              <div class="min-w-0 flex-1">
+
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+
+                  <h2 class="font-semibold text-gray-900 truncate text-sm">
+                    <%= product.name %>
+                  </h2>
+
+                  <span class="text-[10px] px-2 py-1 rounded-full border font-medium whitespace-nowrap <%= status_class %>">
+                    <%= status_text %>
+                  </span>
+
+                </div>
+
+                <div class="flex items-center gap-4 text-xs text-gray-500">
+
+                  <span>
+                    Stock:
+                    <span class="font-semibold text-gray-800">
+                      <%= stock %>
+                    </span>
+                  </span>
+
+                  <span>
+                    <%= product.days_remaining %> days left
+                  </span>
+
+                </div>
+
+              </div>
+
+              <!-- RIGHT -->
+              <div class="text-indigo-500 text-xl font-bold">
+                ›
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- ================= BOTTOM SHEET ================= -->
+          <div
+            id="<%= modal_id %>"
+            style="display:none;"
+            class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm items-end">
+
+            <!-- BACKDROP -->
+            <div
+              class="absolute inset-0"
+              onclick="document.getElementById('<%= modal_id %>').style.display='none'">
+            </div>
+
+            <!-- SHEET -->
+            <div class="relative w-full bg-white rounded-t-[32px] p-5 max-h-[85vh] overflow-y-auto animate-slideUp">
+
+              <!-- HANDLE -->
+              <div class="w-14 h-1.5 bg-slate-300 rounded-full mx-auto mb-5"></div>
+
+              <!-- HEADER -->
+              <div class="flex items-start justify-between gap-3 mb-5">
+
+                <div>
+
+                  <h2 class="text-xl font-bold text-gray-900">
+                    <%= product.name %>
+                  </h2>
+
+                  <p class="text-sm text-gray-500 mt-1">
+                    <%= product.product_type&.name %>
+                  </p>
+
+                </div>
+
+                <button
+                  onclick="document.getElementById('<%= modal_id %>').style.display='none'"
+                  class="w-10 h-10 rounded-full bg-slate-100 text-gray-600 text-lg">
+                  ✕
+                </button>
+
+              </div>
+
+              <!-- STATUS -->
+              <div class="mb-5">
+
+                <span class="px-3 py-2 rounded-full text-sm border font-semibold <%= status_class %>">
+                  <%= status_text %>
+                </span>
+
+              </div>
+
+              <!-- STATS -->
+              <div class="grid grid-cols-2 gap-3 mb-5">
+
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+
+                  <p class="text-xs text-gray-500">
+                    Current Stock
+                  </p>
+
+                  <p class="text-2xl font-bold text-gray-900 mt-1">
+                    <%= stock %>
+                  </p>
+
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+
+                  <p class="text-xs text-gray-500">
+                    Alert Limit
+                  </p>
+
+                  <p class="text-2xl font-bold text-amber-600 mt-1">
+                    <%= limit %>
+                  </p>
+
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+
+                  <p class="text-xs text-gray-500">
+                    Daily Usage
+                  </p>
+
+                  <p class="text-xl font-bold text-gray-900 mt-1">
+                    <%= product.daily_usage_rate.round(2) %>/day
+                  </p>
+
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+
+                  <p class="text-xs text-gray-500">
+                    Days Remaining
+                  </p>
+
+                  <p class="text-xl font-bold text-gray-900 mt-1">
+                    <%= product.days_remaining %>
+                  </p>
+
+                </div>
+
+              </div>
+
+              <!-- RECOMMENDED STOCK -->
+              <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 mb-5">
+
+                <p class="text-xs uppercase tracking-wide text-indigo-500 font-semibold">
+                  Recommended Stock
+                </p>
+
+                <p class="text-3xl font-bold text-indigo-700 mt-2">
+                  <%= product.recommended_stock %>
+                </p>
+
+                <p class="text-xs text-indigo-500 mt-2 leading-relaxed">
+                  Based on estimated usage for next 30 days + 20% safety buffer
+                </p>
+
+              </div>
+
+              <!-- EXTRA DETAILS -->
+              <div class="space-y-3 text-sm">
+
+                <div class="flex justify-between">
+
+                  <span class="text-gray-500">
+                    Godown
+                  </span>
+
+                  <span class="font-medium text-gray-900">
+                    <%= product.godown_number || "N/A" %>
+                  </span>
+
+                </div>
+
+                <div class="flex justify-between">
+
+                  <span class="text-gray-500">
+                    Product Type
+                  </span>
+
+                  <span class="font-medium text-gray-900">
+                    <%= product.product_type&.name || "N/A" %>
+                  </span>
+
+                </div>
+
+              </div>
+
+              <!-- ACTION -->
+              <% if current_user.has_permission?("products", "view") %>
+
+                <div class="mt-6">
+
+                  <%= link_to product_path(product),
+                      class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-semibold text-center block transition" do %>
+
+                    View Product
+
+                  <% end %>
+
+                </div>
+
+              <% end %>
+
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+      <!-- ================= DESKTOP VIEW ================= -->
+      <div class="hidden md:block space-y-4">
 
         <% @products.each do |product| %>
 
@@ -66,21 +315,12 @@
               "bg-emerald-500"
             end %>
 
-          <% badge_class =
-            if stock <= limit * 0.5
-              "bg-red-100 text-red-700 border-red-200"
-            elsif stock <= limit
-              "bg-amber-100 text-amber-700 border-amber-200"
-            else
-              "bg-emerald-100 text-emerald-700 border-emerald-200"
-            end %>
-
           <div class="bg-white/90 backdrop-blur rounded-3xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition">
 
-            <div class="p-5 md:p-6">
+            <div class="p-6">
 
               <!-- TOP -->
-              <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-5">
+              <div class="flex items-start justify-between gap-5">
 
                 <!-- LEFT -->
                 <div class="flex items-start gap-4 min-w-0">
@@ -102,7 +342,7 @@
 
                     <div class="flex items-center gap-2 flex-wrap">
 
-                      <h2 class="font-semibold text-gray-900 text-base md:text-lg truncate">
+                      <h2 class="font-semibold text-gray-900 text-lg truncate">
                         <%= product.name %>
                       </h2>
 
@@ -149,9 +389,9 @@
                 </div>
 
                 <!-- RIGHT -->
-                <div class="flex md:flex-col md:items-end items-center justify-between gap-3">
+                <div class="flex flex-col items-end gap-3">
 
-                  <div class="text-left md:text-right">
+                  <div class="text-right">
 
                     <p class="text-xs uppercase tracking-wide text-gray-400">
                       Current Stock
@@ -216,9 +456,9 @@
               </div>
 
               <!-- FOOTER -->
-              <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="mt-5 flex items-center justify-between gap-3">
 
-                <div class="flex flex-wrap gap-2">
+                <div class="flex gap-2">
 
                   <div class="bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2">
 
@@ -247,12 +487,19 @@
 
                 </div>
 
-                <div class="text-sm text-gray-500">
+                <div class="text-right">
 
-                  Recommended Stock:
-                  <span class="font-semibold text-indigo-700">
+                  <p class="text-sm text-gray-500">
+                    Recommended Stock
+                  </p>
+
+                  <p class="font-semibold text-indigo-700 text-lg">
                     <%= product.recommended_stock %>
-                  </span>
+                  </p>
+
+                  <p class="text-xs text-gray-400 mt-1">
+                    30 days + 20% buffer
+                  </p>
 
                 </div>
 
@@ -292,3 +539,19 @@
   </div>
 
 </div>
+
+<style>
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.25s ease;
+}
+</style>

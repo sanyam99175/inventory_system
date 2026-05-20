@@ -3,10 +3,25 @@ class NotificationMailer < ApplicationMailer
         @user = user
         @product = product
 
-        mail(
-        to: @user.email,
-        subject: "⚠️ Low Stock Alert for #{@product.name}"
+        html = ApplicationController.render(
+        template: "notification_mailer/low_stock_alert",
+        formats: [:html],
+        assigns: { user: @user, product: @product },
+        layout: false
         )
+
+        text = ApplicationController.render(
+        template: "notification_mailer/low_stock_alert",
+        formats: [:text],
+        assigns: { user: @user, product: @product },
+        layout: false
+        )
+
+        {
+        subject: "Low Stock Alert",
+        html: html,
+        text: text
+        }
     end
 
     def history_pdf_email(owner_id, request_ids, filters = {})

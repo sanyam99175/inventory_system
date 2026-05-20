@@ -1,85 +1,273 @@
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background-color: #f6f9fc; padding: 40px 0;">
+```erb
+<div style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial, sans-serif; background:#f9fafb; padding:24px;">
 
-  <!-- CENTER CONTAINER -->
-  <div style="max-width: 600px; margin: auto; background: #ffffff;
-              border-radius: 12px; overflow: hidden;
-              box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+  <div style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:12px; padding:28px; border:1px solid #e5e7eb;">
 
     <!-- HEADER -->
-    <div style="background: #0a2540; padding: 24px;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 18px;">
-        ⚠️ Low Stock Alert
-      </h1>
-      <p style="color: #b0c4de; margin: 6px 0 0; font-size: 13px;">
-        Inventory system notification
-      </p>
-    </div>
+    <h1 style="margin:0; font-size:22px; color:#111827;">
+      ⚠️ Low Stock Alert
+    </h1>
+
+    <p style="margin-top:10px; font-size:14px; color:#6b7280;">
+      Hi <strong><%= @user.email %></strong>,
+    </p>
+
+    <!-- ALERT BADGE -->
+    <p style="
+      display:inline-block;
+      background:#fef3c7;
+      color:#b45309;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:600;
+    ">
+      Inventory Attention Needed
+    </p>
 
     <!-- BODY -->
-    <div style="padding: 24px;">
+    <p style="font-size:14px; color:#374151; line-height:1.6; margin-top:16px;">
+      Some products in your inventory are running low and may require restocking soon.
+    </p>
 
-      <p style="font-size: 14px; color: #425466; margin-bottom: 20px;">
-        One of your products has fallen below the configured stock threshold.
-      </p>
+    <!-- PRODUCT CARD -->
+    <div style="
+      margin-top:20px;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      overflow:hidden;
+    ">
 
-      <!-- PRODUCT CARD -->
-      <div style="border: 1px solid #e6e9ef; border-radius: 10px; padding: 16px;">
+      <!-- TOP -->
+      <div style="
+        background:#fff7ed;
+        padding:16px;
+        border-bottom:1px solid #fed7aa;
+      ">
 
-        <h2 style="margin: 0; font-size: 16px; color: #0a2540;">
+        <h2 style="
+          margin:0;
+          font-size:18px;
+          color:#9a3412;
+        ">
           <%= @product.name %>
         </h2>
 
-        <p style="margin: 6px 0 0; font-size: 13px; color: #6b7c93;">
-          Product ID: #<%= @product.id %>
+        <p style="
+          margin:6px 0 0;
+          font-size:13px;
+          color:#c2410c;
+        ">
+          <%= @product.product_type&.name %>
         </p>
 
-        <hr style="border: none; border-top: 1px solid #eee; margin: 14px 0;">
+      </div>
 
-        <!-- METRICS -->
-        <table width="100%" style="font-size: 13px; color: #425466;">
-          <tr>
-            <td style="padding: 6px 0;">Current Stock</td>
-            <td style="text-align: right; font-weight: bold; color: #d73a49;">
+      <!-- DETAILS -->
+      <div style="padding:18px;">
+
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+
+          <!-- CURRENT STOCK -->
+          <div style="
+            flex:1;
+            min-width:120px;
+            background:#f9fafb;
+            border-radius:10px;
+            padding:14px;
+          ">
+
+            <p style="
+              margin:0;
+              font-size:12px;
+              color:#6b7280;
+            ">
+              Current Stock
+            </p>
+
+            <h3 style="
+              margin:6px 0 0;
+              font-size:28px;
+              color:#dc2626;
+            ">
               <%= @product.stock_count %>
-            </td>
-          </tr>
+            </h3>
 
-          <tr>
-            <td style="padding: 6px 0;">Alert Threshold</td>
-            <td style="text-align: right;">
+          </div>
+
+          <!-- ALERT LIMIT -->
+          <div style="
+            flex:1;
+            min-width:120px;
+            background:#f9fafb;
+            border-radius:10px;
+            padding:14px;
+          ">
+
+            <p style="
+              margin:0;
+              font-size:12px;
+              color:#6b7280;
+            ">
+              Alert Limit
+            </p>
+
+            <h3 style="
+              margin:6px 0 0;
+              font-size:28px;
+              color:#111827;
+            ">
               <%= @product.alert_limit %>
-            </td>
-          </tr>
+            </h3>
 
-          <tr>
-            <td style="padding: 6px 0;">Status</td>
-            <td style="text-align: right;">
-              <span style="background: #ffe8e8; color: #d73a49;
-                           padding: 4px 8px; border-radius: 999px;
-                           font-size: 12px;">
-                Action Required
-              </span>
-            </td>
-          </tr>
-        </table>
+          </div>
+
+        </div>
+
+        <!-- AI INSIGHTS -->
+        <div style="
+          margin-top:18px;
+          background:#eef2ff;
+          border:1px solid #c7d2fe;
+          border-radius:12px;
+          padding:16px;
+        ">
+
+          <p style="
+            margin:0;
+            font-size:12px;
+            font-weight:700;
+            color:#4338ca;
+            text-transform:uppercase;
+            letter-spacing:0.4px;
+          ">
+            Inventory Insights
+          </p>
+
+          <div style="
+            margin-top:12px;
+            display:flex;
+            gap:14px;
+            flex-wrap:wrap;
+          ">
+
+            <div style="flex:1; min-width:120px;">
+
+              <p style="
+                margin:0;
+                font-size:12px;
+                color:#6b7280;
+              ">
+                Daily Usage
+              </p>
+
+              <p style="
+                margin:6px 0 0;
+                font-size:22px;
+                font-weight:700;
+                color:#1e1b4b;
+              ">
+                <%= @product.daily_usage_rate.round(1) %>/day
+              </p>
+
+            </div>
+
+            <div style="flex:1; min-width:120px;">
+
+              <p style="
+                margin:0;
+                font-size:12px;
+                color:#6b7280;
+              ">
+                Estimated Remaining
+              </p>
+
+              <p style="
+                margin:6px 0 0;
+                font-size:22px;
+                font-weight:700;
+                color:#dc2626;
+              ">
+                <%= @product.days_remaining %> days
+              </p>
+
+            </div>
+
+          </div>
+
+          <!-- RECOMMENDED -->
+          <div style="
+            margin-top:16px;
+            padding-top:16px;
+            border-top:1px solid #c7d2fe;
+          ">
+
+            <p style="
+              margin:0;
+              font-size:12px;
+              color:#6b7280;
+            ">
+              Recommended Stock Level
+            </p>
+
+            <h2 style="
+              margin:6px 0 0;
+              font-size:30px;
+              color:#312e81;
+            ">
+              <%= @product.recommended_stock %>
+            </h2>
+
+            <p style="
+              margin:6px 0 0;
+              font-size:12px;
+              color:#6366f1;
+            ">
+              Based on next 30 days usage + 20% safety buffer
+            </p>
+
+          </div>
+
+        </div>
+
       </div>
-
-      <!-- CTA -->
-      <div style="margin-top: 20px; text-align: center;">
-        <a href="http://localhost:3000"
-           style="background: #635bff; color: #fff;
-                  padding: 10px 16px; border-radius: 8px;
-                  text-decoration: none; font-size: 13px;">
-          View Dashboard
-        </a>
-      </div>
-
-      <!-- FOOTER NOTE -->
-      <p style="font-size: 11px; color: #a0aec0; margin-top: 24px; text-align: center;">
-        You are receiving this because low-stock alerts are enabled.
-      </p>
 
     </div>
+
+    <!-- CTA -->
+    <div style="margin-top:24px; text-align:center;">
+
+      <a href="<%= @dashboard_url %>"
+         style="
+           display:inline-block;
+           background:#dc2626;
+           color:#ffffff;
+           padding:12px 18px;
+           border-radius:8px;
+           text-decoration:none;
+           font-size:14px;
+           font-weight:600;
+         ">
+
+        Review Inventory
+
+      </a>
+
+    </div>
+
+    <!-- FOOTER -->
+    <p style="
+      margin-top:24px;
+      font-size:12px;
+      color:#9ca3af;
+      text-align:center;
+      line-height:1.6;
+    ">
+      This is an automated low stock notification from Traklyn.
+      Restock products soon to avoid inventory shortages.
+    </p>
+
   </div>
+
 </div>
+```
