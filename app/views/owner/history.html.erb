@@ -18,7 +18,7 @@
             <%= t('stock_history') %>
           </h1>
 
-          <p class="text-sm text-gray-500 mt-1">
+          <p class="text-base text-gray-500 mt-1">
             <%= t('track_all_stock_movements') %>
           </p>
 
@@ -30,7 +30,7 @@
       <div class="flex flex-wrap gap-3">
 
         <%= link_to dashboard_path,
-            class: "bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 px-4 py-3 rounded-2xl text-sm font-medium transition flex items-center gap-2 shadow-sm" do %>
+            class: "bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 px-4 py-3 rounded-2xl text-base font-medium transition flex items-center gap-2 shadow-sm" do %>
 
           <%= icon('home', class: 'w-4 h-4') %>
 
@@ -45,25 +45,27 @@
     <!-- ================= FILTER CARD ================= -->
     <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm p-5 mb-6">
 
-      <div class="flex items-center justify-between mb-5">
+      <!-- HEADER -->
+      <div class="mb-5">
 
-        <div>
-          <h2 class="font-semibold text-gray-900">
-            Filters
-          </h2>
+        <h2 class="font-semibold text-gray-900">
+          Filters
+        </h2>
 
-          <p class="text-sm text-gray-500 mt-1">
-            Narrow down stock history records
-          </p>
-        </div>
+        <p class="text-sm text-gray-500 mt-1">
+          Narrow down stock history records
+        </p>
 
       </div>
 
-      <%= form_with url: history_path, method: :get, local: true do %>
+      <!-- FORM -->
+      <%= form_with url: history_path,
+          method: :get,
+          local: true do %>
 
         <%= hidden_field_tag :locale, I18n.locale %>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_140px] gap-4 items-end">
 
           <!-- START DATE -->
           <div>
@@ -72,9 +74,25 @@
               Start Date
             </label>
 
-            <%= date_field_tag :start_date,
-                params[:start_date],
-                class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl px-4 py-3 text-sm outline-none transition" %>
+            <input
+              type="date"
+              name="start_date"
+              value="<%= params[:start_date] %>"
+              class="
+                w-full
+                bg-white
+                border
+                border-indigo-100
+                rounded-2xl
+                px-4
+                py-3
+                text-sm
+                outline-none
+                focus:ring-4
+                focus:ring-indigo-100
+                focus:border-indigo-400
+              "
+            >
 
           </div>
 
@@ -85,9 +103,25 @@
               End Date
             </label>
 
-            <%= date_field_tag :end_date,
-                params[:end_date],
-                class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl px-4 py-3 text-sm outline-none transition" %>
+            <input
+              type="date"
+              name="end_date"
+              value="<%= params[:end_date] %>"
+              class="
+                w-full
+                bg-white
+                border
+                border-indigo-100
+                rounded-2xl
+                px-4
+                py-3
+                text-sm
+                outline-none
+                focus:ring-4
+                focus:ring-indigo-100
+                focus:border-indigo-400
+              "
+            >
 
           </div>
 
@@ -99,14 +133,22 @@
             </label>
 
             <%= select_tag :user_id,
-                options_from_collection_for_select(
-                  @users,
-                  :id,
-                  :email,
-                  params[:user_id]
-                ),
-                include_blank: t('all_users_label'),
-                class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl px-4 py-3 text-sm outline-none transition" %>
+                options_from_collection_for_select(@users, :id, :email, params[:user_id]),
+                include_blank: "All Users",
+                class: "
+                  w-full
+                  bg-white
+                  border
+                  border-indigo-100
+                  rounded-2xl
+                  px-4
+                  py-3
+                  text-sm
+                  outline-none
+                  focus:ring-4
+                  focus:ring-indigo-100
+                  focus:border-indigo-400
+                " %>
 
           </div>
 
@@ -119,28 +161,63 @@
 
             <%= select_tag :status,
                 options_for_select([
-                  [t('all_status'), ""],
-                  [t('pending'), "pending"],
-                  [t('approved'), "approved"],
-                  [t('rejected'), "rejected"],
-                  [t('cancelled'), "cancelled"]
+                  ["Pending", "pending"],
+                  ["Approved", "approved"],
+                  ["Rejected", "rejected"],
+                  ["Cancelled", "cancelled"]
                 ], params[:status]),
-                class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl px-4 py-3 text-sm outline-none transition" %>
+                include_blank: "All",
+                class: "
+                  w-full
+                  bg-white
+                  border
+                  border-indigo-100
+                  rounded-2xl
+                  px-4
+                  py-3
+                  text-sm
+                  outline-none
+                  focus:ring-4
+                  focus:ring-indigo-100
+                  focus:border-indigo-400
+                " %>
 
           </div>
 
           <!-- BUTTONS -->
-          <div class="flex flex-col justify-end gap-2">
+          <div class="flex flex-col gap-2">
 
-            <%= submit_tag t('apply_filter'),
-                class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-2xl text-sm font-semibold transition shadow-sm cursor-pointer" %>
+            <%= submit_tag "Apply",
+                class: "
+                  w-full
+                  bg-indigo-600
+                  hover:bg-indigo-700
+                  text-white
+                  py-3
+                  rounded-2xl
+                  text-sm
+                  font-semibold
+                  transition
+                  shadow-sm
+                  cursor-pointer
+                " %>
 
-            <%= link_to history_path,
-                class: "text-center bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 py-3 rounded-2xl text-sm font-medium transition" do %>
-
-              <%= t('reset_filter') %>
-
-            <% end %>
+            <%= link_to "Reset",
+                history_path,
+                class: "
+                  w-full
+                  text-center
+                  bg-white
+                  hover:bg-gray-50
+                  border
+                  border-gray-200
+                  text-gray-700
+                  py-3
+                  rounded-2xl
+                  text-sm
+                  font-medium
+                  transition
+                " %>
 
           </div>
 
@@ -154,7 +231,7 @@
     <div class="flex flex-wrap items-center justify-end gap-3 mb-5">
 
       <%= link_to owner_history_pdf_path(request.query_parameters.merge(format: :pdf)),
-          class: "bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 px-4 py-3 rounded-2xl text-sm font-medium transition flex items-center gap-2 shadow-sm" do %>
+          class: "bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 px-4 py-3 rounded-2xl text-base font-medium transition flex items-center gap-2 shadow-sm" do %>
 
         <%= icon('download', class: 'w-4 h-4') %>
 
@@ -164,7 +241,7 @@
 
       <%= button_to history_send_email_path(request.query_parameters),
           method: :post,
-          class: "bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-sm font-semibold transition shadow-sm flex items-center gap-2" do %>
+          class: "bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-base font-semibold transition shadow-sm flex items-center gap-2" do %>
 
         <%= icon('mail', class: 'w-4 h-4') %>
 
@@ -175,7 +252,7 @@
     </div>
 
     <!-- ================= TABLE CARD ================= -->
-    <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm overflow-hidden">
+    <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm">
 
       <% if @requests.any? %>
 
@@ -188,7 +265,7 @@
               Stock Activity
             </h2>
 
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-base text-gray-500 mt-1">
               <%= @requests.count %> records found
             </p>
 
@@ -273,7 +350,7 @@
                   <!-- TYPE -->
                   <td class="px-6 py-5">
 
-                    <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm px-3 py-1 rounded-full font-medium">
+                    <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-base px-3 py-1 rounded-full font-medium">
 
                       <%= req.user&.role == "owner" ? "Direct" : "Worker" %>
 
@@ -304,7 +381,7 @@
                   <!-- CHANGE -->
                   <td class="px-6 py-5">
 
-                    <span class="font-bold text-sm px-3 py-1 rounded-full border
+                    <span class="font-bold text-base px-3 py-1 rounded-full border
                       <%= req.quantity_change < 0 ?
                           'bg-red-50 text-red-700 border-red-100' :
                           'bg-emerald-50 text-emerald-700 border-emerald-100' %>">
@@ -339,7 +416,7 @@
                   </td>
 
                   <!-- TIME -->
-                  <td class="px-6 py-5 text-sm text-gray-500">
+                  <td class="px-6 py-5 text-base text-gray-500">
 
                     <%= req.created_at.strftime("%d %b %Y") %>
 
@@ -379,6 +456,7 @@
 
     <!-- CARD -->
     <button
+      type="button"
       onclick="openHistoryModal('<%= req.id %>')"
       class="w-full text-left p-4 active:bg-indigo-50 transition"
     >
@@ -408,7 +486,7 @@
               <%= req.product&.name || req.product_name || "Deleted Product" %>
             </h3>
 
-            <p class="text-sm text-gray-500 truncate mt-1">
+            <p class="text-base text-gray-500 truncate mt-1">
               <%= req.user_name || req.user&.name || "Unknown" %>
             </p>
 
@@ -420,7 +498,7 @@
         <div class="text-right shrink-0">
 
           <div class="
-            inline-flex px-3 py-1 rounded-full text-sm font-bold border
+            inline-flex px-3 py-1 rounded-full text-base font-bold border
             <%= req.quantity_change < 0 ?
               'bg-red-50 text-red-700 border-red-100' :
               'bg-emerald-50 text-emerald-700 border-emerald-100' %>
@@ -440,25 +518,53 @@
 
     </button>
 
-    <!-- MODAL -->
+  <% end %>
+
+</div>
+
+<!-- GLOBAL MODALS OUTSIDE CARD CONTAINER -->
+<% @requests.each do |req| %>
+
+  <% status_class =
+    case req.status
+    when 'approved'
+      'bg-emerald-50 text-emerald-700 border border-emerald-100'
+    when 'rejected'
+      'bg-red-50 text-red-700 border border-red-100'
+    when 'cancelled'
+      'bg-gray-100 text-gray-600 border border-gray-200'
+    else
+      'bg-amber-50 text-amber-700 border border-amber-100'
+    end %>
+
+  <!-- MODAL -->
+  <div
+    id="history-modal-<%= req.id %>"
+    class="fixed inset-0 z-[9999] hidden"
+  >
+
+    <!-- BACKDROP -->
     <div
-      id="history-modal-<%= req.id %>"
-      class="fixed inset-0 z-50 hidden"
-    >
+      onclick="closeHistoryModal('<%= req.id %>')"
+      class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+    ></div>
 
-      <!-- BACKDROP -->
-      <div
-        onclick="closeHistoryModal('<%= req.id %>')"
-        class="absolute inset-0 bg-black/40 backdrop-blur-sm"
-      ></div>
+    <!-- SHEET -->
+    <div class="
+      fixed
+      bottom-0
+      left-0
+      right-0
+      z-[10000]
+      bg-white
+      rounded-t-[32px]
+      shadow-2xl
+      animate-slide-up
+      max-h-[88vh]
+      overflow-y-auto
+    ">
 
-      <!-- CONTENT -->
-      <div class="
-        absolute bottom-0 left-0 right-0
-        bg-white rounded-t-[32px]
-        p-6
-        animate-slide-up
-      ">
+      <div class="p-6 pb-8">
 
         <!-- HANDLE -->
         <div class="w-14 h-1.5 rounded-full bg-gray-200 mx-auto mb-6"></div>
@@ -468,17 +574,17 @@
 
           <div>
 
-            <h2 class="text-xl font-bold text-gray-900">
+            <h2 class="text-xl font-bold text-gray-900 leading-tight">
               <%= req.product&.name || req.product_name || "Deleted Product" %>
             </h2>
 
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-base text-gray-500 mt-1">
               Full stock activity details
             </p>
 
           </div>
 
-          <span class="px-3 py-1 rounded-full text-xs font-semibold <%= status_class %>">
+          <span class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap <%= status_class %>">
             <%= req.status.capitalize %>
           </span>
 
@@ -487,14 +593,15 @@
         <!-- INFO -->
         <div class="space-y-4 mt-6">
 
-          <div class="bg-indigo-50 rounded-2xl p-4">
+          <!-- QUANTITY -->
+          <div class="bg-indigo-50/70 border border-indigo-100 rounded-3xl p-5">
 
             <p class="text-xs uppercase tracking-wide text-indigo-500 font-semibold">
               Quantity Change
             </p>
 
             <h3 class="
-              text-3xl font-black mt-2
+              text-4xl font-black mt-2
               <%= req.quantity_change < 0 ? 'text-red-600' : 'text-emerald-600' %>
             ">
               <%= req.quantity_change > 0 ? '+' : '' %><%= req.quantity_change %>
@@ -502,51 +609,52 @@
 
           </div>
 
+          <!-- GRID -->
           <div class="grid grid-cols-2 gap-3">
 
-            <div class="bg-gray-50 rounded-2xl p-4">
+            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
 
               <p class="text-xs text-gray-400 uppercase font-semibold">
                 User
               </p>
 
-              <p class="text-sm font-semibold text-gray-800 mt-2">
+              <p class="text-base font-semibold text-gray-800 mt-2 break-words">
                 <%= req.user_name || req.user&.name || "Unknown" %>
               </p>
 
             </div>
 
-            <div class="bg-gray-50 rounded-2xl p-4">
+            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
 
               <p class="text-xs text-gray-400 uppercase font-semibold">
                 Type
               </p>
 
-              <p class="text-sm font-semibold text-gray-800 mt-2">
+              <p class="text-base font-semibold text-gray-800 mt-2">
                 <%= req.user&.role == "owner" ? "Direct" : "Worker" %>
               </p>
 
             </div>
 
-            <div class="bg-gray-50 rounded-2xl p-4">
+            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
 
               <p class="text-xs text-gray-400 uppercase font-semibold">
                 Godown
               </p>
 
-              <p class="text-sm font-semibold text-gray-800 mt-2">
+              <p class="text-base font-semibold text-gray-800 mt-2">
                 <%= req.product&.godown_number || "N/A" %>
               </p>
 
             </div>
 
-            <div class="bg-gray-50 rounded-2xl p-4">
+            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
 
               <p class="text-xs text-gray-400 uppercase font-semibold">
                 Time
               </p>
 
-              <p class="text-sm font-semibold text-gray-800 mt-2">
+              <p class="text-base font-semibold text-gray-800 mt-2">
                 <%= req.created_at.strftime("%d %b, %H:%M") %>
               </p>
 
@@ -558,6 +666,7 @@
 
         <!-- CLOSE -->
         <button
+          type="button"
           onclick="closeHistoryModal('<%= req.id %>')"
           class="
             w-full mt-6
@@ -565,6 +674,7 @@
             text-white font-semibold
             py-4 rounded-2xl
             transition
+            shadow-sm
           "
         >
           Close
@@ -574,40 +684,48 @@
 
     </div>
 
-  <% end %>
+  </div>
 
-</div>
+<% end %>
 
 <style>
   @keyframes slideUp {
     from {
       transform: translateY(100%);
+      opacity: 0.95;
     }
     to {
       transform: translateY(0);
+      opacity: 1;
     }
   }
 
   .animate-slide-up {
-    animation: slideUp 0.22s ease-out;
+    animation: slideUp 0.24s ease-out;
   }
 </style>
 
 <script>
   function openHistoryModal(id) {
-    document
-      .getElementById(`history-modal-${id}`)
-      .classList.remove("hidden");
+    const modal = document.getElementById(`history-modal-${id}`);
 
-    document.body.style.overflow = "hidden";
+    if (!modal) return;
+
+    modal.classList.remove("hidden");
+
+    document.body.classList.add("overflow-hidden");
+    document.documentElement.classList.add("overflow-hidden");
   }
 
   function closeHistoryModal(id) {
-    document
-      .getElementById(`history-modal-${id}`)
-      .classList.add("hidden");
+    const modal = document.getElementById(`history-modal-${id}`);
 
-    document.body.style.overflow = "auto";
+    if (!modal) return;
+
+    modal.classList.add("hidden");
+
+    document.body.classList.remove("overflow-hidden");
+    document.documentElement.classList.remove("overflow-hidden");
   }
 </script>
 
@@ -616,7 +734,7 @@
 
           <div class="flex items-center justify-between px-6 py-5 border-t border-indigo-50 bg-indigo-50/40">
 
-            <div class="text-sm text-gray-500">
+            <div class="text-base text-gray-500">
               Page <%= @requests.current_page %>
             </div>
 
@@ -625,7 +743,7 @@
               <% if @requests.prev_page %>
 
                 <%= link_to history_path(request.query_parameters.merge(page: @requests.prev_page)),
-                    class: "bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition" do %>
+                    class: "bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-base font-medium transition" do %>
 
                   ← Previous
 
@@ -636,7 +754,7 @@
               <% if @requests.next_page %>
 
                 <%= link_to history_path(request.query_parameters.merge(page: @requests.next_page)),
-                    class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition" do %>
+                    class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-base font-medium transition" do %>
 
                   Next →
 
@@ -665,14 +783,14 @@
             No history found
           </h3>
 
-          <p class="text-sm text-gray-500 mt-2">
+          <p class="text-base text-gray-500 mt-2">
             Try adjusting filters or date range
           </p>
 
           <div class="mt-5">
 
             <%= link_to history_path,
-                class: "bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-sm font-semibold transition inline-flex items-center gap-2 shadow-sm" do %>
+                class: "bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-base font-semibold transition inline-flex items-center gap-2 shadow-sm" do %>
 
               <%= icon('refresh', class: 'w-4 h-4') %>
 

@@ -7,6 +7,27 @@ class DashboardController < ApplicationController
                             .products
                             .where("stock_count <= alert_limit")
 
+            # last 7 days range
+    range = 7.days.ago..Time.current
+
+    @weekly_stock_added =
+      @requests.where(status: :approved, created_at: range)
+              .where("quantity_change > 0")
+              .sum(:quantity_change)
+
+    @weekly_stock_removed =
+      @requests.where(status: :approved, created_at: range)
+              .where("quantity_change < 0")
+              .sum("ABS(quantity_change)")
+
+    @weekly_requests_processed =
+      @requests.where(status: [:approved, :rejected], created_at: range).count
+
+    @weekly_low_stock =
+      @products.where("stock_count <= alert_limit")
+              .where(updated_at: range)
+              .count
+
     if current_user.owner?
         render "owner/dashboard"
     else

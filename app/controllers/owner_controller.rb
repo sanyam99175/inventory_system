@@ -33,26 +33,6 @@ class OwnerController < ApplicationController
     @requests = current_organization.requests.pending.order(created_at: :desc).limit(3)
     @pending_requests_count = current_organization.requests.pending.count
     @low_stock_products = current_organization.products.where("stock_count <= alert_limit")
-        # last 7 days range
-    range = 7.days.ago..Time.current
-
-    @weekly_stock_added =
-      @requests.where(status: :approved, created_at: range)
-              .where("quantity_change > 0")
-              .sum(:quantity_change)
-
-    @weekly_stock_removed =
-      @requests.where(status: :approved, created_at: range)
-              .where("quantity_change < 0")
-              .sum("ABS(quantity_change)")
-
-    @weekly_requests_processed =
-      @requests.where(status: [:approved, :rejected], created_at: range).count
-
-    @weekly_low_stock =
-      @products.where("stock_count <= alert_level")
-              .where(updated_at: range)
-              .count
   end
 
   def history
@@ -269,6 +249,7 @@ class OwnerController < ApplicationController
 
     # ================= STAFF =================
     staff = current.joins(:user)
+                  .where.not(users: { role: "owner" })
                   .group("users.id", "users.name", "users.email")
                   .sum("ABS(quantity_change)")
 

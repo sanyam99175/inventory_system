@@ -1,925 +1,598 @@
-<div style="
-  max-width: 520px;
-  margin: auto;
-  padding: 16px;
-  padding-top: calc(env(safe-area-inset-top));
-  padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
-  background: #f8fafc;
-  min-height: 100vh;
-">
+<style>
+  .product-page-wrapper {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+  }
 
-  <% stock_count = @product.stock_count || 0 %>
-  <% alert_limit = @product.alert_limit || 0 %>
-  <% low_stock = stock_count <= alert_limit %>
+  .product-mobile-container {
+    max-width: 760px;
+    margin: 0 auto;
+  }
 
-  <!-- BACK NAVIGATION -->
-<div style="
-  padding-top: 10px;
-  padding-bottom: 10px;
-">
+  @media (min-width: 1024px) {
 
-  <% if current_user.owner? %>
-
-    <%= link_to products_path,
-        style: "
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          width: 100%;
-          background: rgba(255,255,255,0.85);
-          backdrop-filter: blur(10px);
-          border: 1px solid #dbeafe;
-          border-radius: 20px;
-          padding: 16px;
-          text-decoration: none;
-          box-shadow: 0 4px 14px rgba(15,23,42,0.04);
-          transition: all 0.2s ease;
-        ",
-        onmouseover: "
-          this.style.transform='translateY(-1px)';
-          this.style.boxShadow='0 10px 24px rgba(79,70,229,0.10)';
-          this.style.borderColor='#c7d2fe';
-        ",
-        onmouseout: "
-          this.style.transform='translateY(0)';
-          this.style.boxShadow='0 4px 14px rgba(15,23,42,0.04)';
-          this.style.borderColor='#dbeafe';
-        " do %>
-
-      <!-- ICON -->
-      <div style="
-        width: 38px;
-        height: 38px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #4338ca;
-        font-size: 16px;
-        font-weight: bold;
-        flex-shrink: 0;
-      ">
-        ←
-      </div>
-
-      <!-- TEXT -->
-      <div style="
-        text-align: left;
-        flex: 1;
-      ">
-
-
-        <p style="
-          margin: 3px 0 0;
-          font-size: 15px;
-          font-weight: 700;
-          color: #312e81;
-        ">
-          <%= t('back_to_products') %>
-        </p>
-
-      </div>
-
-    <% end %>
-
-  <% else %>
-
-    <%= link_to dashboard_path,
-        style: "
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          width: 100%;
-          background: rgba(255,255,255,0.85);
-          backdrop-filter: blur(10px);
-          border: 1px solid #dbeafe;
-          border-radius: 20px;
-          padding: 16px;
-          text-decoration: none;
-          box-shadow: 0 4px 14px rgba(15,23,42,0.04);
-          transition: all 0.2s ease;
-        ",
-        onmouseover: "
-          this.style.transform='translateY(-1px)';
-          this.style.boxShadow='0 10px 24px rgba(79,70,229,0.10)';
-          this.style.borderColor='#c7d2fe';
-        ",
-        onmouseout: "
-          this.style.transform='translateY(0)';
-          this.style.boxShadow='0 4px 14px rgba(15,23,42,0.04)';
-          this.style.borderColor='#dbeafe';
-        " do %>
-
-      <!-- ICON -->
-      <div style="
-        width: 38px;
-        height: 38px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #4338ca;
-        font-size: 16px;
-        font-weight: bold;
-        flex-shrink: 0;
-      ">
-        ←
-      </div>
-
-      <!-- TEXT -->
-      <div style="
-        text-align: left;
-        flex: 1;
-      ">
-
-        <p style="
-          margin: 0;
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.4px;
-          text-transform: uppercase;
-          color: #94a3b8;
-        ">
-          Navigation
-        </p>
-
-        <p style="
-          margin: 3px 0 0;
-          font-size: 15px;
-          font-weight: 700;
-          color: #312e81;
-        ">
-          <%= t('back_to_dashboard') %>
-        </p>
-
-      </div>
-
-      <!-- ARROW -->
-      <div style="
-        color: #6366f1;
-        font-size: 18px;
-        font-weight: bold;
-      ">
-        ›
-      </div>
-
-    <% end %>
-
-  <% end %>
-
-</div>
-
-  <!-- PRODUCT CARD -->
-  <div style="
-    background: white;
-    border-radius: 24px;
-    padding: 22px;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
-    border: 1px solid #e0e7ff;
-    margin-bottom: 18px;
-  ">
-
-    <!-- HEADER -->
-<!-- HEADER -->
-<div style="
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 18px;
-">
-
-  <div style="flex: 1; min-width: 0;">
-
-    <h1 style="
-      margin: 0;
-      font-size: 24px;
-      font-weight: 700;
-      color: #1e1b4b;
-      line-height: 1.2;
-      word-break: break-word;
-    ">
-      <%= @product.name %>
-    </h1>
-
-    <p style="
-      margin-top: 6px;
-      color: #6366f1;
-      font-size: 14px;
-      font-weight: 500;
-    ">
-      <%= @product.product_type.name %>
-    </p>
-
-  </div>
-
-  <div style="
-    background: <%= low_stock ? '#fee2e2' : '#eef2ff' %>;
-    color: <%= low_stock ? '#dc2626' : '#4338ca' %>;
-    padding: 8px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    white-space: nowrap;
-  ">
-    <%= low_stock ? "LOW STOCK" : "IN STOCK" %>
-  </div>
-
-</div>
-
-<!-- ACTION BUTTONS -->
-
-  <div style="
-    display: flex;
-    gap: 10px;
-    margin-bottom: 18px;
-  ">
-
-    <% if current_user.has_permission?("products", "create_update") %>
-      <!-- EDIT -->
-      <%= link_to edit_product_path(@product),
-          style: "
-            flex: 1;
-            text-align: center;
-            text-decoration: none;
-            background: #eef2ff;
-            color: #4338ca;
-            padding: 12px;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 700;
-            border: 1px solid #c7d2fe;
-          " do %>
-
-         Edit
-
-      <% end %>
-    <% end %>
-
-    <% if current_user.has_permission?("products", "delete") %>
-      <!-- DELETE -->
-      <%= button_to product_path(@product),
-          method: :delete,
-          data: {
-            turbo_confirm: 'Are you sure you want to delete this product?'
-          },
-          form: {
-            style: "flex: 1;"
-          },
-          style: "
-            width: 100%;
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-          " do %>
-
-         Delete
-
-      <% end %>
-    <% end %>
-
-  </div>
-
-    <!-- STOCK SECTION -->
-    <div style="
-      background: #f8fafc;
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 18px;
-      border: 1px solid #e2e8f0;
-    ">
-
-      <div style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-      ">
-
-        <div>
-          <p style="
-            margin: 0;
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 500;
-          ">
-            Current Stock
-          </p>
-
-          <h2 style="
-            margin: 4px 0 0;
-            font-size: 34px;
-            color: <%= low_stock ? '#dc2626' : '#312e81' %>;
-            font-weight: 800;
-          ">
-            <%= stock_count %>
-          </h2>
-        </div>
-
-        <div style="
-          text-align: right;
-        ">
-          <p style="
-            margin: 0;
-            color: #64748b;
-            font-size: 12px;
-          ">
-            Alert Limit
-          </p>
-
-          <p style="
-            margin: 4px 0 0;
-            font-size: 18px;
-            color: #4338ca;
-            font-weight: 700;
-          ">
-            <%= alert_limit %>
-          </p>
-        </div>
-
-      </div>
-
-      <!-- AI INSIGHTS -->
-<!-- AI INSIGHTS -->
-<div style="margin-bottom: 18px;">
-
-  <div style="
-    background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
-    border: 1px solid #c7d2fe;
-    border-radius: 22px;
-    padding: 18px;
-    overflow: hidden;
-    position: relative;
-  ">
-
-    <!-- SOFT GLOW -->
-    <div style="
-      position: absolute;
-      top: -40px;
-      right: -30px;
-      width: 120px;
-      height: 120px;
-      background: rgba(99,102,241,0.08);
-      border-radius: 999px;
-      filter: blur(10px);
-    "></div>
-
-    <!-- TOP -->
-    <div style="
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      position: relative;
-      z-index: 2;
-    ">
-
-      <div>
-
-        <p style="
-          margin: 0;
-          color: #6366f1;
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 0.4px;
-          text-transform: uppercase;
-        ">
-          AI INSIGHTS
-        </p>
-
-        <h3 style="
-          margin: 5px 0 0;
-          font-size: 18px;
-          color: #1e1b4b;
-          font-weight: 800;
-        ">
-          Inventory Intelligence
-        </h3>
-
-      </div>
-
-      <!-- HEALTH -->
-      <% health_color =
-          if @product.days_remaining.to_i <= 7
-            '#dc2626'
-          elsif @product.days_remaining.to_i <= 15
-            '#d97706'
-          else
-            '#059669'
-          end
-      %>
-
-      <div style="
-        width: 12px;
-        height: 12px;
-        border-radius: 999px;
-        background: <%= health_color %>;
-        box-shadow: 0 0 0 6px <%= health_color %>15;
-      "></div>
-
-    </div>
-
-    <!-- MAIN METRICS -->
-    <div style="
+    .desktop-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
-      position: relative;
-      z-index: 2;
-    ">
+      grid-template-columns: 1fr 420px;
+      gap: 28px;
+      align-items: start;
+    }
 
-      <!-- DAYS -->
-      <div style="
-        background: rgba(255,255,255,0.85);
-        backdrop-filter: blur(6px);
-        border-radius: 18px;
-        padding: 16px;
-        border: 1px solid #e0e7ff;
-      ">
+    .desktop-sticky {
+      position: sticky;
+      top: 24px;
+    }
 
-        <p style="
-          margin: 0;
-          font-size: 11px;
-          font-weight: 700;
-          color: #64748b;
-          text-transform: uppercase;
-          letter-spacing: 0.3px;
-        ">
-          Days Left
-        </p>
+  }
+</style>
 
-        <h2 style="
-          margin: 10px 0 4px;
-          font-size: 34px;
-          line-height: 1;
-          font-weight: 800;
-          color: <%= health_color %>;
-        ">
-          <%= @product.days_remaining %>
-        </h2>
+<div style="
+  min-height:100vh;
+  background:linear-gradient(to bottom right,#f8fafc,#eef2ff,#f5f3ff);
+  padding:28px 16px 50px;
+">
 
-        <p style="
-          margin: 0;
-          font-size: 12px;
-          color: #94a3b8;
-        ">
-          estimated
-        </p>
+  <div class="product-page-wrapper">
 
-      </div>
+    <div class="product-mobile-container">
 
-      <!-- DAILY USAGE -->
-      <div style="
-        background: rgba(255,255,255,0.85);
-        backdrop-filter: blur(6px);
-        border-radius: 18px;
-        padding: 16px;
-        border: 1px solid #e0e7ff;
-      ">
+      <% stock_count = @product.stock_count || 0 %>
+      <% alert_limit = @product.alert_limit || 0 %>
+      <% low_stock = stock_count <= alert_limit %>
 
-        <p style="
-          margin: 0;
-          font-size: 11px;
-          font-weight: 700;
-          color: #64748b;
-          text-transform: uppercase;
-          letter-spacing: 0.3px;
-        ">
-          Daily Usage
-        </p>
+      <!-- ================= BACK BUTTON ================= -->
+      <div style="margin-bottom:18px;">
 
-        <h2 style="
-          margin: 10px 0 4px;
-          font-size: 34px;
-          line-height: 1;
-          font-weight: 800;
-          color: #312e81;
-        ">
-          <%= @product.daily_usage_rate.round(1) %>
-        </h2>
+        <% back_path = current_user.owner? ? products_path : dashboard_path %>
+        <% back_text = current_user.owner? ? t('back_to_products') : t('back_to_dashboard') %>
 
-        <p style="
-          margin: 0;
-          font-size: 12px;
-          color: #94a3b8;
-        ">
-          units/day
-        </p>
-
-      </div>
-
-    </div>
-
-    <!-- SUGGESTED STOCK -->
-    <div style="
-      background: rgba(255,255,255,0.9);
-      border: 1px solid #e0e7ff;
-      border-radius: 18px;
-      padding: 16px;
-      position: relative;
-      z-index: 2;
-    ">
-
-      <div style="
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      ">
-
-        <div>
-
-          <p style="
-            margin: 0;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-          ">
-            Suggested Stock
-          </p>
-
-          <h2 style="
-            margin: 8px 0 0;
-            font-size: 36px;
-            line-height: 1;
-            font-weight: 800;
-            color: #312e81;
-          ">
-            <%= @product.recommended_stock %>
-          </h2>
-
-                  <p style="
-          margin: 8px 0 0;
-          font-size: 12px;
-          line-height: 1.4;
-          color: #64748b;
-          font-weight: 500;
-        ">
-          For next 30 days + 20% safety buffer
-        </p>
-
-        </div>
-
-        <div style="
-          width: 56px;
-          height: 56px;
-          border-radius: 18px;
-          background: linear-gradient(135deg, #4f46e5, #4338ca);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-size: 24px;
-          box-shadow: 0 10px 20px rgba(79,70,229,0.18);
-        ">
-          ✨
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-      <!-- PROGRESS BAR -->
-      <% max_ref = [alert_limit * 2, 1].max %>
-      <% percent = [(stock_count.to_f / max_ref) * 100, 100].min %>
-
-      <div style="
-        height: 10px;
-        background: #e2e8f0;
-        border-radius: 999px;
-        overflow: hidden;
-      ">
-        <div style="
-          width: <%= percent %>%;
-          height: 100%;
-          background: <%= low_stock ? '#ef4444' : '#6366f1' %>;
-          border-radius: 999px;
-        "></div>
-      </div>
-
-    </div>
-
-    <!-- INFO GRID -->
-    <div style="
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    ">
-
-      <div style="
-        background: #eef2ff;
-        border-radius: 16px;
-        padding: 14px;
-      ">
-        <p style="
-          margin: 0;
-          font-size: 12px;
-          color: #64748b;
-          font-weight: 500;
-        ">
-          Type
-        </p>
-
-        <p style="
-          margin: 6px 0 0;
-          color: #312e81;
-          font-weight: 700;
-          font-size: 15px;
-        ">
-          <%= @product.product_type.name %>
-        </p>
-      </div>
-
-      <div style="
-        background: #eef2ff;
-        border-radius: 16px;
-        padding: 14px;
-      ">
-        <p style="
-          margin: 0;
-          font-size: 12px;
-          color: #64748b;
-          font-weight: 500;
-        ">
-          Godown
-        </p>
-
-        <p style="
-          margin: 6px 0 0;
-          color: #312e81;
-          font-weight: 700;
-          font-size: 15px;
-        ">
-          <%= @product.godown_number %>
-        </p>
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- OWNER ACTION -->
-  <% if current_user.owner? && current_user.has_permission?("products", "create_update") %>
-
-    <% users = current_organization.users %>
-
-    <div style="
-      background: white;
-      border-radius: 24px;
-      padding: 20px;
-      border: 1px solid #e0e7ff;
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
-      margin-bottom: 18px;
-    ">
-
-      <div style="
-        margin-bottom: 18px;
-      ">
-        <h3 style="
-          margin: 0;
-          color: #1e1b4b;
-          font-size: 18px;
-          font-weight: 700;
-        ">
-          ⚡ Direct Stock Update
-        </h3>
-
-        <p style="
-          margin-top: 6px;
-          color: #64748b;
-          font-size: 13px;
-          line-height: 1.5;
-        ">
-          Use values like <b>+5</b> or <b>-3</b> for accurate stock tracking.
-        </p>
-      </div>
-
-      <%= form_with url: update_stock_product_path(@product),
-                    method: :patch,
-                    local: true do %>
-
-        <!-- USER -->
-        <div style="margin-bottom: 14px;">
-
-          <label style="
-            display: block;
-            margin-bottom: 8px;
-            color: #4338ca;
-            font-size: 14px;
-            font-weight: 600;
-          ">
-            Performed By
-          </label>
-
-          <%= select_tag :performed_by_user_id,
-              options_from_collection_for_select(
-                users,
-                :id,
-                :name,
-                current_user.id
-              ),
-              style: "
-                width: 100%;
-                padding: 14px;
-                border-radius: 14px;
-                border: 1px solid #c7d2fe;
-                background: #f8fafc;
-                font-size: 15px;
-                outline: none;
-              " %>
-        </div>
-
-        <!-- QUANTITY -->
-        <div style="margin-bottom: 18px;">
-
-          <label style="
-            display: block;
-            margin-bottom: 8px;
-            color: #4338ca;
-            font-size: 14px;
-            font-weight: 600;
-          ">
-            Quantity Change
-          </label>
-
-          <%= text_field_tag :quantity_change, nil,
-              placeholder: "+5 or -3",
-              pattern: "^[+-][0-9]+$",
-              title: "Enter value like +5 or -3",
-              style: "
-                width: 100%;
-                padding: 14px;
-                border-radius: 14px;
-                border: 1px solid #c7d2fe;
-                background: #f8fafc;
-                font-size: 16px;
-                outline: none;
-                box-sizing: border-box;
-              " %>
-
-        </div>
-
-        <%= submit_tag t('apply_change'),
+        <%= link_to back_path,
             style: "
-              width: 100%;
-              border: none;
-              background: linear-gradient(135deg, #4f46e5, #4338ca);
-              color: white;
-              padding: 15px;
-              border-radius: 16px;
-              font-size: 15px;
-              font-weight: 700;
-              cursor: pointer;
-              box-shadow: 0 6px 18px rgba(79, 70, 229, 0.25);
-            " %>
+              display:inline-flex;
+              align-items:center;
+              gap:10px;
+              text-decoration:none;
+              color:#4338ca;
+              font-size:14px;
+              font-weight:700;
+            " do %>
 
-      <% end %>
-
-    </div>
-
-  <% end %>
-
-  <!-- WORKER REQUEST -->
-  <% existing_request = Request.find_by(
-    user: current_user,
-    product: @product,
-    status: :pending
-  ) %>
-
-  <% if current_user.worker? &&
-        current_user.has_permission?("products", "view") &&
-        !current_user.has_permission?("products", "create_update") %>
-
-    <div style="
-      background: white;
-      border-radius: 24px;
-      padding: 20px;
-      border: 1px solid #e0e7ff;
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
-      margin-bottom: 18px;
-    ">
-
-      <h3 style="
-        margin: 0 0 16px;
-        color: #1e1b4b;
-        font-size: 18px;
-        font-weight: 700;
-      ">
-        📨 Request Stock Change
-      </h3>
-
-      <% if existing_request %>
-
-        <div style="
-          background: #eef2ff;
-          border: 1px solid #c7d2fe;
-          padding: 16px;
-          border-radius: 16px;
-          margin-bottom: 14px;
-        ">
-
-          <p style="
-            margin: 0;
-            color: #4338ca;
-            font-size: 14px;
+          <div style="
+            width:38px;
+            height:38px;
+            border-radius:14px;
+            background:#eef2ff;
+            border:1px solid #c7d2fe;
+            display:flex;
+            align-items:center;
+            justify-content:center;
           ">
-            Pending Request
-          </p>
-
-          <h3 style="
-            margin: 8px 0 0;
-            color: #312e81;
-            font-size: 24px;
-          ">
-            <%= existing_request.quantity_change %>
-          </h3>
-
-        </div>
-
-        <%= button_to t('cancel_request'),
-            cancel_request_path(existing_request),
-            method: :patch,
-            style: "
-              width: 100%;
-              border: none;
-              background: #dc2626;
-              color: white;
-              padding: 14px;
-              border-radius: 16px;
-              font-size: 15px;
-              font-weight: 700;
-              cursor: pointer;
-            " %>
-
-      <% else %>
-
-        <%= form_with url: requests_path, local: true do %>
-
-          <%= hidden_field_tag "request[product_id]", @product.id %>
-
-          <div style="margin-bottom: 18px;">
-
-            <label style="
-              display: block;
-              margin-bottom: 8px;
-              color: #4338ca;
-              font-size: 14px;
-              font-weight: 600;
-            ">
-              Quantity to Remove
-            </label>
-
-            <%= number_field_tag "request[quantity_change]", nil,
-                min: 1,
-                placeholder: "Enter quantity",
-                style: "
-                  width: 100%;
-                  padding: 14px;
-                  border-radius: 14px;
-                  border: 1px solid #c7d2fe;
-                  background: #f8fafc;
-                  font-size: 16px;
-                  box-sizing: border-box;
-                  outline: none;
-                " %>
-
+            ←
           </div>
 
-          <%= submit_tag t('send_request'),
-              style: "
-                width: 100%;
-                border: none;
-                background: linear-gradient(135deg, #4f46e5, #4338ca);
-                color: white;
-                padding: 15px;
-                border-radius: 16px;
-                font-size: 15px;
-                font-weight: 700;
-                cursor: pointer;
-                box-shadow: 0 6px 18px rgba(79, 70, 229, 0.25);
-              " %>
+          <span><%= back_text %></span>
 
         <% end %>
 
-      <% end %>
+      </div>
+
+      <!-- ================= PRODUCT HEADER ================= -->
+      <div style="
+        background:rgba(255,255,255,0.92);
+        backdrop-filter:blur(12px);
+        border:1px solid #dbeafe;
+        border-radius:30px;
+        padding:26px;
+        box-shadow:0 10px 30px rgba(15,23,42,0.06);
+        margin-bottom:22px;
+      ">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          gap:16px;
+          align-items:flex-start;
+          flex-wrap:wrap;
+        ">
+
+          <div style="min-width:0; flex:1;">
+
+            <p style="
+              margin:0;
+              font-size:12px;
+              font-weight:800;
+              letter-spacing:0.5px;
+              text-transform:uppercase;
+              color:#6366f1;
+            ">
+              Inventory Product
+            </p>
+
+            <h1 style="
+              margin:8px 0 0;
+              font-size:34px;
+              line-height:1.15;
+              color:#1e1b4b;
+              font-weight:900;
+              word-break:break-word;
+            ">
+              <%= @product.name %>
+            </h1>
+
+            <p style="
+              margin:10px 0 0;
+              color:#64748b;
+              font-size:15px;
+              font-weight:500;
+            ">
+              Product inventory overview and stock intelligence
+            </p>
+
+          </div>
+
+          <div style="
+            padding:10px 16px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:800;
+            background:<%= low_stock ? '#fee2e2' : '#eef2ff' %>;
+            color:<%= low_stock ? '#dc2626' : '#4338ca' %>;
+            border:1px solid <%= low_stock ? '#fecaca' : '#c7d2fe' %>;
+            white-space:nowrap;
+          ">
+            <%= low_stock ? "LOW STOCK" : "IN STOCK" %>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= DESKTOP GRID ================= -->
+      <div class="desktop-layout">
+
+        <!-- ================= LEFT ================= -->
+        <div>
+
+          <!-- PRODUCT DETAILS -->
+          <div style="
+            background:white;
+            border-radius:28px;
+            border:1px solid #e0e7ff;
+            overflow:hidden;
+            margin-bottom:22px;
+            box-shadow:0 6px 24px rgba(15,23,42,0.05);
+          ">
+
+            <!-- HEADER -->
+            <div style="
+              padding:20px 22px;
+              border-bottom:1px solid #eef2ff;
+              background:linear-gradient(to right,#eef2ff,#ffffff);
+            ">
+
+              <h2 style="
+                margin:0;
+                font-size:18px;
+                font-weight:800;
+                color:#1e1b4b;
+              ">
+                Product Details
+              </h2>
+
+            </div>
+
+            <!-- DETAIL ROWS -->
+            <div style="padding:8px 0;">
+
+              <!-- STOCK -->
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                gap:20px;
+                padding:18px 22px;
+                border-bottom:1px solid #f1f5f9;
+              ">
+
+                <div>
+                  <p style="
+                    margin:0;
+                    color:#64748b;
+                    font-size:13px;
+                    font-weight:600;
+                  ">
+                    Current Stock
+                  </p>
+                </div>
+
+                <div style="
+                  font-size:30px;
+                  font-weight:900;
+                  color:<%= low_stock ? '#dc2626' : '#312e81' %>;
+                ">
+                  <%= stock_count %>
+                </div>
+
+              </div>
+
+              <!-- TYPE -->
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                gap:20px;
+                padding:18px 22px;
+                border-bottom:1px solid #f1f5f9;
+              ">
+
+                <p style="
+                  margin:0;
+                  color:#64748b;
+                  font-size:13px;
+                  font-weight:600;
+                ">
+                  Product Type
+                </p>
+
+                <p style="
+                  margin:0;
+                  color:#1e1b4b;
+                  font-size:15px;
+                  font-weight:800;
+                  text-align:right;
+                ">
+                  <%= @product.product_type.name %>
+                </p>
+
+              </div>
+
+              <!-- GODOWN -->
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                gap:20px;
+                padding:18px 22px;
+                border-bottom:1px solid #f1f5f9;
+              ">
+
+                <p style="
+                  margin:0;
+                  color:#64748b;
+                  font-size:13px;
+                  font-weight:600;
+                ">
+                  Godown Number
+                </p>
+
+                <p style="
+                  margin:0;
+                  color:#1e1b4b;
+                  font-size:15px;
+                  font-weight:800;
+                ">
+                  <%= @product.godown_number %>
+                </p>
+
+              </div>
+
+              <!-- ALERT -->
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                gap:20px;
+                padding:18px 22px;
+              ">
+
+                <p style="
+                  margin:0;
+                  color:#64748b;
+                  font-size:13px;
+                  font-weight:600;
+                ">
+                  Alert Limit
+                </p>
+
+                <p style="
+                  margin:0;
+                  color:#4338ca;
+                  font-size:15px;
+                  font-weight:900;
+                ">
+                  <%= alert_limit %>
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- DIRECT STOCK UPDATE -->
+          <% if current_user.owner? && current_user.has_permission?("products", "create_update") %>
+
+            <% users = current_organization.users %>
+
+            <div style="
+              background:white;
+              border-radius:28px;
+              border:1px solid #e0e7ff;
+              padding:24px;
+              box-shadow:0 6px 24px rgba(15,23,42,0.05);
+            ">
+
+              <div style="margin-bottom:20px;">
+
+                <h2 style="
+                  margin:0;
+                  color:#1e1b4b;
+                  font-size:20px;
+                  font-weight:900;
+                ">
+                  Direct Stock Update
+                </h2>
+
+                <p style="
+                  margin:8px 0 0;
+                  color:#64748b;
+                  font-size:14px;
+                  line-height:1.6;
+                ">
+                  Use values like <b>+5</b> or <b>-3</b> for proper stock tracking.
+                </p>
+
+              </div>
+
+              <%= form_with url: update_stock_product_path(@product),
+                            method: :patch,
+                            local: true do %>
+
+                <!-- USER -->
+                <div style="margin-bottom:18px;">
+
+                  <label style="
+                    display:block;
+                    margin-bottom:8px;
+                    color:#4338ca;
+                    font-size:14px;
+                    font-weight:700;
+                  ">
+                    Performed By
+                  </label>
+
+                  <%= select_tag :performed_by_user_id,
+                      options_from_collection_for_select(
+                        users,
+                        :id,
+                        :name,
+                        current_user.id
+                      ),
+                      style: "
+                        width:100%;
+                        padding:15px;
+                        border-radius:18px;
+                        border:1px solid #c7d2fe;
+                        background:#f8fafc;
+                        font-size:15px;
+                        outline:none;
+                      " %>
+
+                </div>
+
+                <!-- QUANTITY -->
+                <div>
+
+                  <label style="
+                    display:block;
+                    margin-bottom:8px;
+                    color:#4338ca;
+                    font-size:14px;
+                    font-weight:700;
+                  ">
+                    Quantity Change
+                  </label>
+
+                  <%= text_field_tag :quantity_change, nil,
+                      placeholder: "+5 or -3",
+                      pattern: "^[+-][0-9]+$",
+                      style: "
+                        width:100%;
+                        padding:16px;
+                        border-radius:18px;
+                        border:1px solid #c7d2fe;
+                        background:#f8fafc;
+                        font-size:16px;
+                        outline:none;
+                        box-sizing:border-box;
+                      " %>
+
+                </div>
+
+                <!-- BUTTON -->
+                <%= submit_tag t('apply_change'),
+                    style: "
+                      width:100%;
+                      margin-top:20px;
+                      background:linear-gradient(135deg,#4f46e5,#4338ca);
+                      border:none;
+                      color:white;
+                      padding:16px;
+                      border-radius:20px;
+                      font-size:15px;
+                      font-weight:800;
+                      cursor:pointer;
+                      box-shadow:0 10px 24px rgba(79,70,229,0.22);
+                    " %>
+
+              <% end %>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+        <!-- ================= RIGHT ================= -->
+        <div class="desktop-sticky">
+
+          <!-- AI INSIGHTS -->
+          <div style="
+            background:linear-gradient(135deg,#eef2ff,#ffffff);
+            border-radius:30px;
+            border:1px solid #c7d2fe;
+            overflow:hidden;
+            box-shadow:0 10px 28px rgba(99,102,241,0.08);
+          ">
+
+            <!-- HEADER -->
+            <div style="
+              padding:22px;
+              border-bottom:1px solid #dbeafe;
+            ">
+
+              <p style="
+                margin:0;
+                color:#6366f1;
+                font-size:12px;
+                font-weight:900;
+                text-transform:uppercase;
+                letter-spacing:0.5px;
+              ">
+                AI Insights
+              </p>
+
+              <h2 style="
+                margin:8px 0 0;
+                font-size:24px;
+                font-weight:900;
+                color:#1e1b4b;
+              ">
+                Inventory Intelligence
+              </h2>
+
+            </div>
+
+            <!-- BODY -->
+            <div style="padding:22px;">
+
+              <% health_color =
+                  if @product.days_remaining.to_i <= 7
+                    '#dc2626'
+                  elsif @product.days_remaining.to_i <= 15
+                    '#d97706'
+                  else
+                    '#059669'
+                  end
+              %>
+
+              <!-- DAYS -->
+              <div style="
+                background:white;
+                border:1px solid #dbeafe;
+                border-radius:24px;
+                padding:20px;
+                margin-bottom:16px;
+              ">
+
+                <p style="
+                  margin:0;
+                  font-size:12px;
+                  color:#64748b;
+                  font-weight:700;
+                  text-transform:uppercase;
+                ">
+                  Days Remaining
+                </p>
+
+                <h3 style="
+                  margin:10px 0 0;
+                  font-size:50px;
+                  line-height:1;
+                  color:<%= health_color %>;
+                  font-weight:900;
+                ">
+                  <%= @product.days_remaining %>
+                </h3>
+
+              </div>
+
+              <!-- DAILY -->
+              <div style="
+                background:white;
+                border:1px solid #dbeafe;
+                border-radius:24px;
+                padding:20px;
+                margin-bottom:16px;
+              ">
+
+                <p style="
+                  margin:0;
+                  font-size:12px;
+                  color:#64748b;
+                  font-weight:700;
+                  text-transform:uppercase;
+                ">
+                  Daily Usage Rate
+                </p>
+
+                <h3 style="
+                  margin:10px 0 0;
+                  font-size:44px;
+                  line-height:1;
+                  color:#312e81;
+                  font-weight:900;
+                ">
+                  <%= @product.daily_usage_rate.round(1) %>
+                </h3>
+
+              </div>
+
+              <!-- RECOMMENDED -->
+              <div style="
+                background:#4338ca;
+                border-radius:26px;
+                padding:24px;
+                color:white;
+              ">
+
+                <p style="
+                  margin:0;
+                  font-size:12px;
+                  font-weight:800;
+                  opacity:0.8;
+                  text-transform:uppercase;
+                ">
+                  Recommended Stock
+                </p>
+
+                <h3 style="
+                  margin:12px 0 0;
+                  font-size:54px;
+                  line-height:1;
+                  font-weight:900;
+                ">
+                  <%= @product.recommended_stock %>
+                </h3>
+
+                <p style="
+                  margin:12px 0 0;
+                  font-size:14px;
+                  line-height:1.6;
+                  opacity:0.9;
+                ">
+                  Recommended inventory for the next 30 days including safety buffer.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
 
-  <% end %>
+  </div>
 
 </div>

@@ -1,42 +1,100 @@
 <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-100 p-4 md:p-6">
 
   <!-- ================= HERO ================= -->
-  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-700 to-indigo-800 border border-indigo-600 shadow-xl mb-6">
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-400 border border-indigo-300 shadow-lg mb-6">
 
-    <!-- Soft Glow -->
+    <!-- SOFT GLOW -->
     <div class="absolute inset-0">
-      <div class="absolute -top-16 -right-10 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-0 left-0 w-40 h-40 bg-indigo-400/10 rounded-full blur-2xl"></div>
+      <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 w-32 h-32 bg-indigo-200/20 rounded-full blur-2xl"></div>
     </div>
 
-    <div class="relative z-10 p-6 md:p-8">
+    <div class="relative z-10 px-5 py-5 md:px-6 md:py-6">
 
-      <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
         <!-- LEFT -->
-        <div class="flex items-start gap-4">
+        <div class="flex items-start gap-4 min-w-0">
 
-          <div class="w-14 h-14 rounded-2xl bg-white/10 border border-white/10 backdrop-blur flex items-center justify-center shadow-lg shrink-0">
-            <%= icon('chart-bar', class: 'w-7 h-7 text-white') %>
+          <!-- ICON -->
+          <div class="
+            w-12 h-12
+            rounded-2xl
+            bg-white/15
+            border border-white/15
+            backdrop-blur
+            flex items-center justify-center
+            shrink-0
+          ">
+            <%= icon('chart-bar', class: 'w-6 h-6 text-white') %>
           </div>
 
-          <div>
+          <!-- TEXT -->
+          <div class="min-w-0">
 
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-wrap items-center gap-2">
 
               <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white">
                 <%= t('dashboard_overview') %>
               </h1>
 
-              <span class="bg-white/10 border border-white/10 text-indigo-100 text-xs px-3 py-1 rounded-full backdrop-blur">
+              <span class="
+                inline-flex items-center gap-1.5
+                bg-white/15
+                border border-white/10
+                text-white/90
+                text-[10px]
+                font-semibold
+                px-2.5 py-1
+                rounded-full
+              ">
+
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></div>
+
                 LIVE
+
               </span>
 
             </div>
 
-            <p class="text-indigo-100/90 mt-3 text-sm md:text-base max-w-2xl leading-relaxed">
+            <p class="text-indigo-50/90 mt-2 text-sm max-w-xl">
               <%= t('realtime_stock_intelligence') %>
             </p>
+
+            <!-- MINI STATS -->
+            <div class="flex flex-wrap items-center gap-2 mt-4">
+
+              <div class="
+                bg-white/10
+                border border-white/10
+                rounded-xl
+                px-3 py-2
+              ">
+                <p class="text-[10px] uppercase tracking-wide text-indigo-100/80">
+                  Products
+                </p>
+
+                <p class="text-sm font-bold text-white mt-0.5">
+                  <%= @products.count %>
+                </p>
+              </div>
+
+              <div class="
+                bg-white/10
+                border border-white/10
+                rounded-xl
+                px-3 py-2
+              ">
+                <p class="text-[10px] uppercase tracking-wide text-indigo-100/80">
+                  Pending
+                </p>
+
+                <p class="text-sm font-bold text-white mt-0.5">
+                  <%= @requests.where(status: :pending).count %>
+                </p>
+              </div>
+
+            </div>
 
           </div>
 
@@ -45,18 +103,43 @@
         <!-- ACTIONS -->
         <div class="flex flex-wrap gap-3">
 
+          <!-- PRODUCTS -->
           <%= link_to products_path,
-              class: "bg-white text-indigo-700 hover:bg-indigo-50 transition px-5 py-3 rounded-2xl text-sm font-semibold flex items-center gap-2 shadow-lg" do %>
+              class: "
+                bg-white
+                hover:bg-indigo-50
+                text-indigo-700
+                transition
+                px-4 py-3
+                rounded-2xl
+                text-sm font-semibold
+                flex items-center gap-2
+                shadow-sm
+              " do %>
 
-            <%= icon('box', class: 'w-5 h-5') %>
+            <%= icon('box', class: 'w-4 h-4') %>
+
             <span>Products</span>
 
           <% end %>
 
+          <!-- REQUESTS -->
           <%= link_to pending_requests_path,
-              class: "bg-indigo-600/40 hover:bg-indigo-600/60 border border-white/10 transition text-white px-5 py-3 rounded-2xl text-sm font-semibold flex items-center gap-2 backdrop-blur" do %>
+              class: "
+                bg-white/10
+                hover:bg-white/20
+                border border-white/10
+                text-white
+                transition
+                px-4 py-3
+                rounded-2xl
+                text-sm font-semibold
+                flex items-center gap-2
+                backdrop-blur
+              " do %>
 
-            <%= icon('file', class: 'w-5 h-5') %>
+            <%= icon('file', class: 'w-4 h-4') %>
+
             <span>Requests</span>
 
           <% end %>
@@ -72,14 +155,23 @@
   <!-- ================= KPI SECTION ================= -->
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
 
-    <!-- CARD -->
-    <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm hover:shadow-md transition p-5">
+    <!-- TOTAL PRODUCTS -->
+    <div class="
+      bg-gradient-to-br from-indigo-50 via-white to-indigo-100/60
+      backdrop-blur
+      rounded-3xl
+      border border-indigo-100
+      shadow-sm
+      hover:shadow-md
+      transition
+      p-5
+    ">
 
       <div class="flex items-start justify-between">
 
         <div>
 
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-indigo-700 font-medium">
             Total Products
           </p>
 
@@ -87,9 +179,18 @@
             <%= @products.count %>
           </h2>
 
+          <p class="text-xs text-gray-500 mt-3">
+            Inventory items tracked
+          </p>
+
         </div>
 
-        <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
+        <div class="
+          w-12 h-12
+          rounded-2xl
+          bg-indigo-100/80
+          flex items-center justify-center
+        ">
           <%= icon('box', class: 'w-6 h-6 text-indigo-700') %>
         </div>
 
@@ -97,14 +198,23 @@
 
     </div>
 
-    <!-- CARD -->
-    <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm hover:shadow-md transition p-5">
+    <!-- PENDING REQUESTS -->
+    <div class="
+      bg-gradient-to-br from-amber-50 via-white to-indigo-50
+      backdrop-blur
+      rounded-3xl
+      border border-amber-100/60
+      shadow-sm
+      hover:shadow-md
+      transition
+      p-5
+    ">
 
       <div class="flex items-start justify-between">
 
         <div>
 
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-amber-700 font-medium">
             Pending Requests
           </p>
 
@@ -112,24 +222,42 @@
             <%= @requests.where(status: :pending).count %>
           </h2>
 
+          <p class="text-xs text-gray-500 mt-3">
+            Awaiting approval
+          </p>
+
         </div>
 
-        <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
-          <%= icon('clock', class: 'w-6 h-6 text-indigo-700') %>
+        <div class="
+          w-12 h-12
+          rounded-2xl
+          bg-amber-100/80
+          flex items-center justify-center
+        ">
+          <%= icon('clock', class: 'w-6 h-6 text-amber-700') %>
         </div>
 
       </div>
 
     </div>
 
-    <!-- CARD -->
-    <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm hover:shadow-md transition p-5">
+    <!-- LOW STOCK -->
+    <div class="
+      bg-gradient-to-br from-red-50 via-white to-amber-50
+      backdrop-blur
+      rounded-3xl
+      border border-red-100/60
+      shadow-sm
+      hover:shadow-md
+      transition
+      p-5
+    ">
 
       <div class="flex items-start justify-between">
 
         <div>
 
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-red-700 font-medium">
             Low Stock
           </p>
 
@@ -137,24 +265,48 @@
             <%= @low_stock_products.count %>
           </h2>
 
+          <div class="flex items-center gap-2 mt-3">
+
+            <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+
+            <p class="text-xs text-gray-500">
+              Needs attention
+            </p>
+
+          </div>
+
         </div>
 
-        <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
-          <%= icon('exclamation-circle', class: 'w-6 h-6 text-indigo-700') %>
+        <div class="
+          w-12 h-12
+          rounded-2xl
+          bg-red-100/80
+          flex items-center justify-center
+        ">
+          <%= icon('exclamation-circle', class: 'w-6 h-6 text-red-600') %>
         </div>
 
       </div>
 
     </div>
 
-    <!-- CARD -->
-    <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm hover:shadow-md transition p-5">
+    <!-- WEEKLY ACTIVITY -->
+    <div class="
+      bg-gradient-to-br from-emerald-50 via-white to-indigo-50
+      backdrop-blur
+      rounded-3xl
+      border border-emerald-100/60
+      shadow-sm
+      hover:shadow-md
+      transition
+      p-5
+    ">
 
       <div class="flex items-start justify-between">
 
         <div>
 
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-emerald-700 font-medium">
             Weekly Activity
           </p>
 
@@ -162,10 +314,19 @@
             <%= @weekly_requests_processed || 0 %>
           </h2>
 
+          <p class="text-xs text-gray-500 mt-3">
+            Processed this week
+          </p>
+
         </div>
 
-        <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
-          <%= icon('chart-line', class: 'w-6 h-6 text-indigo-700') %>
+        <div class="
+          w-12 h-12
+          rounded-2xl
+          bg-emerald-100/80
+          flex items-center justify-center
+        ">
+          <%= icon('chart-line', class: 'w-6 h-6 text-emerald-700') %>
         </div>
 
       </div>
@@ -177,140 +338,162 @@
   <!-- ================= MAIN GRID ================= -->
   <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-    <!-- ================= REQUESTS ================= -->
-    <div class="xl:col-span-2 bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm overflow-hidden">
+  <!-- ================= REQUESTS ================= -->
+  <div class="
+    xl:col-span-2
+    rounded-3xl
+    overflow-hidden
+    shadow-sm
+    border border-indigo-100/70
+    bg-gradient-to-br from-indigo-50/70 via-white to-indigo-100/40
+    backdrop-blur
+  ">
 
-      <!-- HEADER -->
-      <div class="flex items-center justify-between p-6 border-b border-indigo-50">
+  <!-- HEADER -->
+  <div class="flex items-center justify-between p-6 border-b border-indigo-100/60">
 
-        <div>
+    <div>
 
-          <h2 class="text-lg font-semibold text-gray-900">
-            Pending Requests
-          </h2>
+      <h2 class="text-lg font-semibold text-gray-900">
+        Pending Requests
+      </h2>
 
-          <p class="text-sm text-gray-500 mt-1">
-            Requests waiting for approval
-          </p>
+      <p class="text-sm text-indigo-500 mt-1">
+        Requests waiting for approval
+      </p>
 
-        </div>
+    </div>
 
-        <% if @pending_requests_count > 3 %>
+    <% if @pending_requests_count > 3 %>
 
-          <%= link_to pending_requests_path,
-              class: "text-indigo-600 hover:text-indigo-800 text-sm font-medium transition" do %>
+      <%= link_to pending_requests_path,
+          class: "
+            text-indigo-600 hover:text-indigo-800
+            text-sm font-medium transition
+          " do %>
 
-            View All →
+        View All →
 
-          <% end %>
+      <% end %>
 
-        <% end %>
+    <% end %>
 
-      </div>
+  </div>
 
-      <!-- REQUEST LIST -->
-      <div class="p-6">
+  <!-- REQUEST LIST -->
+  <div class="p-6">
 
-        <% pending = @requests.where(status: :pending).limit(5) %>
+    <% pending = @requests.where(status: :pending).limit(5) %>
 
-        <% if pending.any? %>
+    <% if pending.any? %>
 
-          <div class="space-y-4">
+      <div class="space-y-4">
 
-            <% pending.each do |req| %>
+        <% pending.each do |req| %>
 
-              <div class="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-4 hover:bg-indigo-50 transition">
+          <div class="
+            rounded-2xl
+            border border-indigo-100/70
+            bg-white/70
+            backdrop-blur-sm
+            p-4
+            hover:bg-white/90
+            hover:shadow-sm
+            transition
+          ">
 
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
-                  <!-- LEFT -->
-                  <div class="flex items-start gap-4">
+              <!-- LEFT -->
+              <div class="flex items-start gap-4">
 
-                    <div class="w-11 h-11 rounded-2xl bg-white border border-indigo-100 flex items-center justify-center shadow-sm shrink-0">
-                      <%= icon('box', class: 'w-5 h-5 text-indigo-700') %>
+                <div class="
+                  w-11 h-11
+                  rounded-2xl
+                  bg-indigo-50/80
+                  border border-indigo-100
+                  flex items-center justify-center
+                  shadow-sm shrink-0
+                ">
+                  <%= icon('box', class: 'w-5 h-5 text-indigo-600') %>
+                </div>
+
+                <div>
+
+                  <h3 class="font-semibold text-gray-900">
+                    <%= req.product.name %>
+                  </h3>
+
+                  <div class="flex flex-wrap gap-4 mt-2 text-sm text-gray-500">
+
+                    <div class="flex items-center gap-1">
+                      <%= icon('user', class: 'w-4 h-4 text-indigo-400') %>
+
+                      <span>
+                        <%= req.user_name || req.user&.email || t('unknown_user_dashboard') %>
+                      </span>
                     </div>
 
-                    <div>
+                    <div class="flex items-center gap-1">
+                      <%= icon('plus', class: 'w-4 h-4 text-indigo-400') %>
 
-                      <h3 class="font-semibold text-gray-900">
-                        <%= req.product.name %>
-                      </h3>
-
-                      <div class="flex flex-wrap gap-4 mt-2 text-sm text-gray-500">
-
-                        <div class="flex items-center gap-1">
-                          <%= icon('user', class: 'w-4 h-4') %>
-
-                          <span>
-                            <%= req.user_name || req.user&.email || t('unknown_user_dashboard') %>
-                          </span>
-                        </div>
-
-                        <div class="flex items-center gap-1">
-                          <%= icon('plus', class: 'w-4 h-4') %>
-
-                          <span>
-                            Qty: <%= req.quantity_change %>
-                          </span>
-                        </div>
-
-                      </div>
-
+                      <span>
+                        Qty: <%= req.quantity_change %>
+                      </span>
                     </div>
 
                   </div>
 
-                  <!-- ACTIONS -->
-                  <% if current_user.has_permission?("requests", "update") %>
+                </div>
 
-                    <div class="flex items-center gap-2">
+              </div>
 
-                      <%= button_to approve_request_path(req),
-                          method: :patch,
-                          class: "bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition shadow-sm" do %>
+              <!-- ACTIONS -->
+              <% if current_user.has_permission?("requests", "update") %>
 
-                        <%= icon('check', class: 'w-4 h-4') %>
-                        <span>Approve</span>
+                <div class="flex items-center gap-2">
 
-                      <% end %>
+                  <%= button_to approve_request_path(req),
+                      method: :patch,
+                      class: "
+                        bg-indigo-600 hover:bg-indigo-700
+                        text-white
+                        px-4 py-2
+                        rounded-xl
+                        text-sm font-medium
+                        flex items-center gap-2
+                        transition
+                        shadow-sm
+                      " do %>
 
-                      <%= button_to reject_request_path(req),
-                          method: :patch,
-                          class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition" do %>
+                    <%= icon('check', class: 'w-4 h-4') %>
+                    <span>Approve</span>
 
-                        <%= icon('remove', class: 'w-4 h-4') %>
-                        <span>Reject</span>
+                  <% end %>
 
-                      <% end %>
+                  <%= button_to reject_request_path(req),
+                      method: :patch,
+                      class: "
+                        bg-white/80 hover:bg-white
+                        border border-indigo-100
+                        text-gray-700
+                        px-4 py-2
+                        rounded-xl
+                        text-sm font-medium
+                        flex items-center gap-2
+                        transition
+                      " do %>
 
-                    </div>
+                    <%= icon('remove', class: 'w-4 h-4 text-indigo-400') %>
+                    <span>Reject</span>
 
                   <% end %>
 
                 </div>
 
-              </div>
+              <% end %>
 
-            <% end %>
-
-          </div>
-
-        <% else %>
-
-          <!-- EMPTY -->
-          <div class="py-20 text-center">
-
-            <div class="w-20 h-20 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto mb-5">
-              <%= icon('check', class: 'w-8 h-8 text-indigo-700') %>
             </div>
-
-            <h3 class="text-lg font-semibold text-gray-900">
-              No Pending Requests
-            </h3>
-
-            <p class="text-sm text-gray-500 mt-2">
-              Everything looks good right now.
-            </p>
 
           </div>
 
@@ -318,112 +501,225 @@
 
       </div>
 
-    </div>
+    <% else %>
+
+      <!-- EMPTY -->
+      <div class="py-20 text-center">
+
+        <div class="
+          w-20 h-20
+          rounded-full
+          bg-indigo-50/80
+          border border-indigo-100
+          flex items-center justify-center
+          mx-auto mb-5
+        ">
+          <%= icon('check', class: 'w-8 h-8 text-indigo-600') %>
+        </div>
+
+        <h3 class="text-lg font-semibold text-gray-900">
+          No Pending Requests
+        </h3>
+
+        <p class="text-sm text-indigo-500 mt-2">
+          Everything looks good right now.
+        </p>
+
+      </div>
+
+    <% end %>
+
+  </div>
+
+</div>
 
     <!-- ================= SIDEBAR ================= -->
     <div class="space-y-6">
 
-      <!-- LOW STOCK -->
-      <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm p-6">
+  <!-- LOW STOCK -->
+  <div class="
+    bg-gradient-to-br from-red-50 via-white to-amber-50
+    backdrop-blur
+    rounded-3xl
+    border border-red-100
+    shadow-sm
+    p-6
+  ">
 
-        <div class="flex items-center justify-between mb-5">
+  <div class="flex items-center justify-between mb-5">
 
-          <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+    <h3 class="font-semibold text-gray-900 flex items-center gap-2">
 
-            <%= icon('exclamation-circle', class: 'w-5 h-5 text-indigo-700') %>
+      <div class="
+        w-8 h-8
+        rounded-xl
+        bg-red-100/80
+        flex items-center justify-center
+      ">
+        <%= icon('exclamation-circle', class: 'w-4 h-4 text-red-600') %>
+      </div>
 
-            Low Stock
+      <span>
+        Low Stock
+      </span>
 
-          </h3>
+    </h3>
 
-          <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full">
-            <%= @low_stock_products.count %>
-          </span>
+    <span class="
+      bg-red-100/80
+      border border-red-200
+      text-red-700
+      text-xs
+      px-3 py-1
+      rounded-full
+      font-semibold
+    ">
+      <%= @low_stock_products.count %>
+    </span>
 
-        </div>
+  </div>
 
-        <% if @low_stock_products.any? %>
+  <% if @low_stock_products.any? %>
 
-          <div class="space-y-4">
+    <div class="space-y-3">
 
-            <% @low_stock_products.limit(5).each do |p| %>
+      <% @low_stock_products.limit(5).each do |p| %>
 
-              <div class="flex items-center justify-between">
+        <div class="
+          flex items-center justify-between
+          bg-white/70
+          border border-red-100/70
+          rounded-2xl
+          px-4 py-3
+        ">
 
-                <div>
+          <div class="min-w-0">
 
-                  <p class="text-sm font-medium text-gray-900">
-                    <%= p.name %>
-                  </p>
+            <p class="text-sm font-semibold text-gray-900 truncate">
+              <%= p.name %>
+            </p>
 
-                  <p class="text-xs text-gray-500 mt-1">
-                    Reorder recommended
-                  </p>
-
-                </div>
-
-                <div class="bg-indigo-50 border border-indigo-100 text-indigo-700 px-3 py-1 rounded-xl text-sm font-semibold">
-                  <%= p.stock_count %>
-                </div>
-
-              </div>
-
-            <% end %>
-
-          </div>
-
-        <% else %>
-
-          <div class="text-center py-6">
-
-            <div class="w-14 h-14 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto mb-3">
-              <%= icon('check', class: 'w-6 h-6 text-indigo-700') %>
-            </div>
-
-            <p class="text-sm text-gray-500">
-              All stock levels are healthy.
+            <p class="text-xs text-red-500 mt-1">
+              Reorder recommended
             </p>
 
           </div>
 
-        <% end %>
-
-      </div>
-
-      <!-- AI CARD -->
-      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 to-indigo-800 border border-indigo-600 shadow-xl p-6">
-
-        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl"></div>
-
-        <div class="relative z-10">
-
-          <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center mb-4 backdrop-blur">
-            <%= icon('microchip', class: 'w-6 h-6 text-white') %>
-          </div>
-
-          <h3 class="text-lg font-semibold text-white">
-            AI Insights
-          </h3>
-
-          <p class="text-indigo-100/90 text-sm leading-relaxed mt-2">
-            Smart inventory insights, stock forecasting and supplier analytics coming soon.
-          </p>
-
-          <div class="mt-5">
-
-            <span class="inline-flex items-center gap-2 bg-white/10 border border-white/10 text-white text-xs px-3 py-2 rounded-xl backdrop-blur">
-
-              <div class="w-2 h-2 rounded-full bg-white"></div>
-
-              AI Ready
-
-            </span>
-
+          <div class="
+            bg-red-100
+            border border-red-200
+            text-red-700
+            px-3 py-1.5
+            rounded-xl
+            text-sm
+            font-bold
+            shrink-0
+          ">
+            <%= p.stock_count %>
           </div>
 
         </div>
 
+      <% end %>
+
+    </div>
+
+  <% else %>
+
+    <div class="text-center py-6">
+
+      <div class="
+        w-14 h-14
+        rounded-full
+        bg-emerald-50
+        border border-emerald-100
+        flex items-center justify-center
+        mx-auto mb-3
+      ">
+        <%= icon('check', class: 'w-6 h-6 text-emerald-600') %>
       </div>
+
+      <p class="text-sm text-gray-500">
+        All stock levels are healthy.
+      </p>
+
+    </div>
+
+  <% end %>
+
+</div>
+
+  <!-- AI CARD -->
+  <div class="
+    relative overflow-hidden
+    rounded-3xl
+    bg-gradient-to-br from-indigo-100 via-white to-indigo-50
+    border border-indigo-100
+    shadow-sm
+    p-6
+  ">
+
+  <!-- SOFT GLOW -->
+  <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-200/30 rounded-full blur-3xl"></div>
+
+  <div class="relative z-10">
+
+    <!-- ICON -->
+    <div class="
+      w-12 h-12
+      rounded-2xl
+      bg-indigo-100
+      border border-indigo-200
+      flex items-center justify-center
+      mb-4
+    ">
+      <%= icon('microchip', class: 'w-6 h-6 text-indigo-700') %>
+    </div>
+
+    <!-- COMING SOON BADGE -->
+    <div class="mb-3">
+
+      <span class="
+        inline-flex items-center gap-2
+        bg-amber-50
+        border border-amber-100
+        text-amber-700
+        text-xs
+        font-semibold
+        px-3 py-1.5
+        rounded-full
+      ">
+
+        <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+
+        Coming Soon
+
+      </span>
+
+    </div>
+
+    <!-- TITLE -->
+    <h3 class="text-xl font-bold text-gray-900">
+      AI Insights
+    </h3>
+
+    <!-- DESCRIPTION -->
+    <p class="text-gray-600 text-sm leading-relaxed mt-3">
+      Intelligent stock forecasting, smart reorder suggestions, supplier analytics and inventory predictions will be available soon.
+    </p>
+
+    <!-- FOOTER -->
+    <div class="mt-5 flex items-center gap-2 text-xs text-indigo-600 font-medium">
+
+      <%= icon('sparkles', class: 'w-4 h-4') %>
+
+      Future AI-powered inventory intelligence
+
+    </div>
+
+  </div>
+
+</div>
 
     </div>
 

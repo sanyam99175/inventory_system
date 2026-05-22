@@ -7,7 +7,7 @@
 
       <div class="flex items-start gap-4">
 
-        <div class="w-14 h-14 rounded-3xl bg-indigo-600 flex items-center justify-center shadow-sm shrink-0">
+        <div class="w-14 h-14 rounded-3xl bg-gradient-to-br from-indigo-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-indigo-200 shrink-0">
           <%= icon('chart-line', class: 'w-7 h-7 text-white') %>
         </div>
 
@@ -15,6 +15,7 @@
           <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
             <%= t('stockflow_intelligence') %>
           </h1>
+
           <p class="text-sm text-gray-500 mt-1">
             AI-driven inventory insights, activity tracking and operational health
           </p>
@@ -22,13 +23,13 @@
 
       </div>
 
-      <div class="bg-white border border-indigo-100 rounded-2xl px-5 py-3 shadow-sm">
+      <div class="bg-white/90 backdrop-blur border border-indigo-100 rounded-3xl px-5 py-4 shadow-sm">
 
-        <p class="text-xs text-gray-500 uppercase tracking-wide">
+        <p class="text-xs text-indigo-400 uppercase tracking-[0.2em] font-semibold">
           <%= t('range_label') %>
         </p>
 
-        <p class="text-sm font-semibold text-indigo-700 mt-1">
+        <p class="text-sm font-bold text-indigo-700 mt-1">
           <%= @range %>
         </p>
 
@@ -41,14 +42,14 @@
 
       <div id="early-stage-banner" class="mb-6">
 
-        <div class="bg-white border border-yellow-200 rounded-3xl p-5 shadow-sm">
+        <div class="bg-gradient-to-r from-amber-50 to-white border border-amber-200 rounded-[28px] p-5 shadow-sm">
 
           <div class="flex items-start justify-between gap-4">
 
             <div class="flex items-start gap-4">
 
-              <div class="w-11 h-11 rounded-2xl bg-yellow-50 border border-yellow-200 flex items-center justify-center shrink-0">
-                <%= icon('exclamation-circle', class: 'w-5 h-5 text-yellow-600') %>
+              <div class="w-11 h-11 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
+                <%= icon('exclamation-circle', class: 'w-5 h-5 text-amber-600') %>
               </div>
 
               <div>
@@ -57,11 +58,11 @@
                   <%= t('early_stage_data_warning') %>
                 </h3>
 
-                <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+                <p class="text-sm text-gray-600 mt-2 leading-relaxed">
                   <%= t('stockflow_learning_patterns') %>
                 </p>
 
-                <p class="text-sm text-yellow-700 font-medium mt-2">
+                <p class="text-sm text-amber-700 font-semibold mt-2">
                   <%= t('data_reliable_after_30_days') %>
                 </p>
 
@@ -69,7 +70,10 @@
 
             </div>
 
-            <button onclick="dismissEarlyBanner()" class="text-gray-400 hover:text-gray-700 transition">
+            <button
+              onclick="dismissEarlyBanner()"
+              class="text-gray-400 hover:text-gray-700 transition"
+            >
               <%= icon('x', class: 'w-5 h-5') %>
             </button>
 
@@ -83,26 +87,71 @@
 
     <!-- ================= HEALTH SCORE ================= -->
     <div
-      class="bg-white rounded-3xl border border-gray-200 shadow-sm p-6 mb-6 cursor-pointer hover:shadow-md transition"
-      onclick="document.getElementById('healthModal').classList.remove('hidden')"
+      class="
+        relative
+        overflow-hidden
+        rounded-[32px]
+        border
+        shadow-sm
+        p-6
+        mb-6
+        cursor-pointer
+        hover:shadow-xl
+        transition-all
+        duration-300
+        lg:cursor-default
+        <%= @health_score >= 75 ?
+          'bg-gradient-to-br from-emerald-50 via-white to-indigo-50 border-emerald-100 hover:border-emerald-200' :
+          @health_score >= 50 ?
+          'bg-gradient-to-br from-yellow-50 via-white to-indigo-50 border-yellow-100 hover:border-yellow-200' :
+          'bg-gradient-to-br from-red-50 via-white to-indigo-50 border-red-100 hover:border-red-200' %>
+      "
+      data-health-modal-trigger
     >
 
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <!-- GLOW -->
+      <div class="
+        absolute
+        -top-24
+        -right-24
+        w-64
+        h-64
+        rounded-full
+        blur-3xl
+        opacity-20
+        <%= @health_score >= 75 ?
+          'bg-emerald-300' :
+          @health_score >= 50 ?
+          'bg-yellow-300' :
+          'bg-red-300' %>
+      "></div>
+
+      <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 
         <div>
 
-          <p class="text-sm text-gray-500">
+          <p class="text-sm font-medium text-gray-500">
             <%= t('stockflow_health_score') %>
           </p>
 
           <div class="flex items-end gap-3 mt-3">
 
-            <h2 class="text-5xl font-bold tracking-tight
-              <%= @health_score >= 75 ? 'text-green-600' : @health_score >= 50 ? 'text-yellow-600' : 'text-red-600' %>">
+            <h2 class="
+              text-5xl
+              font-black
+              tracking-tight
+              <%= @health_score >= 75 ?
+                'text-emerald-600' :
+                @health_score >= 50 ?
+                'text-yellow-600' :
+                'text-red-600' %>
+            ">
               <%= @health_score %>
             </h2>
 
-            <span class="text-gray-400 font-medium pb-1">/100</span>
+            <span class="text-gray-400 font-medium pb-1">
+              /100
+            </span>
 
           </div>
 
@@ -114,17 +163,36 @@
 
         <div class="flex items-center gap-4">
 
-          <div class="hidden md:block w-px h-16 bg-gray-200"></div>
+          <div class="hidden md:block w-px h-16 bg-indigo-100"></div>
 
           <div>
 
-            <div class="w-20 h-20 rounded-full border-[10px]
-              <%= @health_score >= 75 ? 'border-green-100' : @health_score >= 50 ? 'border-yellow-100' : 'border-red-100' %>
-              flex items-center justify-center">
+            <div class="
+              w-24
+              h-24
+              rounded-full
+              border-[12px]
+              flex items-center justify-center
+              shadow-inner
+              <%= @health_score >= 75 ?
+                'border-emerald-100 bg-white/70' :
+                @health_score >= 50 ?
+                'border-yellow-100 bg-white/70' :
+                'border-red-100 bg-white/70' %>
+            ">
 
-              <div class="w-12 h-12 rounded-full
-                <%= @health_score >= 75 ? 'bg-green-600' : @health_score >= 50 ? 'bg-yellow-500' : 'bg-red-600' %>
-                flex items-center justify-center">
+              <div class="
+                w-14
+                h-14
+                rounded-full
+                flex items-center justify-center
+                shadow-lg
+                <%= @health_score >= 75 ?
+                  'bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-emerald-200' :
+                  @health_score >= 50 ?
+                  'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-yellow-200' :
+                  'bg-gradient-to-br from-red-500 to-red-600 shadow-red-200' %>
+              ">
 
                 <%= icon('sparkles', class: 'w-6 h-6 text-white') %>
 
@@ -144,78 +212,94 @@
     <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
 
       <!-- ACTIVITY -->
-      <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-5">
+      <div class="bg-gradient-to-br from-white via-white to-indigo-50 rounded-[28px] border border-indigo-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5">
 
         <div class="flex items-center justify-between mb-4">
 
-          <div class="w-11 h-11 rounded-2xl bg-gray-100 border border-gray-200 flex items-center justify-center">
-            <%= icon('activity', class: 'w-5 h-5 text-gray-700') %>
+          <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
+            <%= icon('line-chart', class: 'w-5 h-5 text-indigo-700') %>
           </div>
 
-          <span class="text-xs font-semibold px-2 py-1 rounded-full
-            <%= @activity_change_pct >= 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' %>">
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full
+            <%= @activity_change_pct >= 0 ?
+              'bg-emerald-50 text-emerald-700 border border-emerald-100' :
+              'bg-red-50 text-red-700 border border-red-100' %>">
+
             <%= @activity_change_pct.round(1) %>%
+
           </span>
 
         </div>
 
-        <p class="text-sm text-gray-500">Activity</p>
+        <p class="text-sm text-gray-500">
+          Activity
+        </p>
 
-        <h3 class="text-2xl font-bold text-gray-900 mt-2">
+        <h3 class="text-3xl font-black text-gray-900 mt-2">
           <%= @total_activity %>
         </h3>
 
       </div>
 
       <!-- REQUESTS -->
-      <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-5">
+      <div class="bg-gradient-to-br from-white via-white to-indigo-50 rounded-[28px] border border-indigo-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5">
 
         <div class="flex items-center justify-between mb-4">
 
-          <div class="w-11 h-11 rounded-2xl bg-gray-100 border border-gray-200 flex items-center justify-center">
-            <%= icon('file', class: 'w-5 h-5 text-gray-700') %>
+          <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
+            <%= icon('file', class: 'w-5 h-5 text-indigo-700') %>
           </div>
 
-          <span class="text-xs font-semibold px-2 py-1 rounded-full
-            <%= @request_change_pct >= 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' %>">
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full
+            <%= @request_change_pct >= 0 ?
+              'bg-emerald-50 text-emerald-700 border border-emerald-100' :
+              'bg-red-50 text-red-700 border border-red-100' %>">
+
             <%= @request_change_pct.round(1) %>%
+
           </span>
 
         </div>
 
-        <p class="text-sm text-gray-500">Requests</p>
+        <p class="text-sm text-gray-500">
+          Requests
+        </p>
 
-        <h3 class="text-2xl font-bold text-gray-900 mt-2">
+        <h3 class="text-3xl font-black text-gray-900 mt-2">
           <%= @request_count %>
         </h3>
 
       </div>
 
       <!-- STAFF -->
-      <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-5">
+      <div class="bg-gradient-to-br from-white via-white to-indigo-50 rounded-[28px] border border-indigo-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5">
 
-        <div class="w-11 h-11 rounded-2xl bg-gray-100 border border-gray-200 flex items-center justify-center mb-4">
-          <%= icon('user', class: 'w-5 h-5 text-gray-700') %>
+        <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-4">
+          <%= icon('user', class: 'w-5 h-5 text-indigo-700') %>
         </div>
 
-        <p class="text-sm text-gray-500">Top Staff</p>
+        <p class="text-sm text-gray-500">
+          Top Staff
+        </p>
 
-        <h3 class="text-base font-semibold text-gray-900 mt-2 truncate">
+        <h3 class="text-sm font-bold text-gray-900 mt-2 truncate">
           <%= @top_staff&.dig(:name) || "N/A" %>
         </h3>
 
       </div>
 
       <!-- PRODUCT -->
-      <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-5">
+      <div class="bg-gradient-to-br from-white via-white to-indigo-50 rounded-[28px] border border-indigo-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5">
 
-        <div class="w-11 h-11 rounded-2xl bg-gray-100 border border-gray-200 flex items-center justify-center mb-4">
-          <%= icon('box', class: 'w-5 h-5 text-gray-700') %>
+        <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-4">
+          <%= icon('box', class: 'w-5 h-5 text-indigo-700') %>
         </div>
 
-        <p class="text-sm text-gray-500">Top Product</p>
+        <p class="text-sm text-gray-500">
+          Top Product
+        </p>
 
-        <h3 class="text-base font-semibold text-gray-900 mt-2 truncate">
+        <h3 class="text-sm font-bold text-gray-900 mt-2 truncate">
           <%= @top_product&.first || "N/A" %>
         </h3>
 
@@ -223,59 +307,22 @@
 
     </div>
 
-    <!-- ================= INSIGHTS ================= -->
-    <% if @insights.any? %>
-
-      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
-
-        <% @insights.each do |insight| %>
-
-          <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-5">
-
-            <div class="flex items-start gap-3">
-
-              <div class="w-10 h-10 rounded-2xl bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
-
-                <% if insight[:type] == 'positive' %>
-                  <%= icon('check', class: 'w-5 h-5 text-green-600') %>
-                <% elsif insight[:type] == 'danger' %>
-                  <%= icon('alert-triangle', class: 'w-5 h-5 text-red-600') %>
-                <% else %>
-                  <%= icon('sparkles', class: 'w-5 h-5 text-yellow-600') %>
-                <% end %>
-
-              </div>
-
-              <div>
-
-                <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold">
-                  Insight
-                </p>
-
-                <p class="text-sm font-medium text-gray-800 mt-2 leading-relaxed">
-                  <%= insight[:text] %>
-                </p>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        <% end %>
-
-      </div>
-
-    <% end %>
-
     <!-- ================= CHARTS ================= -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-      <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+      <!-- STAFF CHART -->
+      <div class="bg-gradient-to-br from-white via-white to-indigo-50 rounded-[32px] border border-indigo-100 shadow-sm overflow-hidden">
 
-        <div class="px-6 py-5 border-b border-gray-100">
-          <h2 class="font-semibold text-gray-900">Staff Leaderboard</h2>
-          <p class="text-sm text-gray-500 mt-1">Most active team members</p>
+        <div class="px-6 py-5 border-b border-indigo-100 bg-white/70 backdrop-blur">
+
+          <h2 class="font-bold text-gray-900">
+            Staff Leaderboard
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Most active team members
+          </p>
+
         </div>
 
         <div class="p-6 h-[350px]">
@@ -284,11 +331,19 @@
 
       </div>
 
-      <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+      <!-- PRODUCT CHART -->
+      <div class="bg-gradient-to-br from-white via-white to-indigo-50 rounded-[32px] border border-indigo-100 shadow-sm overflow-hidden">
 
-        <div class="px-6 py-5 border-b border-gray-100">
-          <h2 class="font-semibold text-gray-900">Product Usage</h2>
-          <p class="text-sm text-gray-500 mt-1">Inventory movement distribution</p>
+        <div class="px-6 py-5 border-b border-indigo-100 bg-white/70 backdrop-blur">
+
+          <h2 class="font-bold text-gray-900">
+            Product Usage
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Inventory movement distribution
+          </p>
+
         </div>
 
         <div class="p-6 h-[350px]">
@@ -303,6 +358,228 @@
 
 </div>
 
+<!-- ================= HEALTH SCORE MODAL ================= -->
+<div
+  id="healthModal"
+  class="fixed inset-0 z-[99999] hidden"
+>
+
+  <!-- BACKDROP -->
+  <div
+    onclick="closeHealthModal()"
+    class="fixed inset-0 bg-black/40 backdrop-blur-md"
+    style="
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    "
+  ></div>
+
+  <!-- SHEET -->
+<!-- SHEET / MODAL -->
+<div class="
+  fixed
+  bottom-0
+  inset-x-0
+  bg-white
+  rounded-t-[32px]
+  shadow-2xl
+  animate-slide-up
+  z-[100000]
+  max-h-[90dvh]
+  overflow-y-auto
+  overscroll-contain
+  touch-pan-y
+
+  lg:top-1/2
+  lg:left-1/2
+  lg:right-auto
+  lg:bottom-auto
+  lg:w-full
+  lg:max-w-2xl
+  lg:max-h-[85vh]
+  lg:-translate-x-1/2
+  lg:-translate-y-1/2
+  lg:rounded-[32px]
+  lg:animate-none
+">
+
+    <div class="p-6 pb-8">
+
+      <!-- HANDLE -->
+      <div class="w-14 h-1.5 rounded-full bg-gray-200 mx-auto mb-6 lg:hidden"></div>
+
+      <!-- HEADER -->
+      <div class="mb-6">
+
+        <h2 class="text-2xl font-black text-gray-900">
+          Stock Health Score
+        </h2>
+
+        <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+          AI evaluation of your inventory health and operational activity.
+        </p>
+
+      </div>
+
+      <!-- SCORE -->
+      <div class="
+        rounded-[28px]
+        p-6
+        border
+        mb-5
+        bg-gradient-to-br
+        <%= @health_score >= 75 ?
+          'from-emerald-50 to-white border-emerald-100' :
+          @health_score >= 50 ?
+          'from-yellow-50 to-white border-yellow-100' :
+          'from-red-50 to-white border-red-100' %>
+      ">
+
+        <p class="text-sm font-medium text-gray-500">
+          Current Score
+        </p>
+
+        <div class="flex items-end gap-2 mt-3">
+
+          <h3 class="
+            text-5xl
+            font-black
+            <%= @health_score >= 75 ?
+              'text-emerald-600' :
+              @health_score >= 50 ?
+              'text-yellow-600' :
+              'text-red-600' %>
+          ">
+            <%= @health_score %>
+          </h3>
+
+          <span class="text-gray-400 text-lg pb-1">
+            /100
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- DETAILS -->
+      <div class="space-y-4">
+
+        <div class="bg-gradient-to-r from-indigo-50 to-white rounded-2xl border border-indigo-100 p-4">
+
+          <p class="text-xs uppercase tracking-wide text-indigo-400 font-bold">
+            Activity Trend
+          </p>
+
+          <p class="text-sm font-bold text-gray-900 mt-2">
+            <%= @activity_change_pct.round(1) %>% change
+          </p>
+
+        </div>
+
+        <div class="bg-gradient-to-r from-indigo-50 to-white rounded-2xl border border-indigo-100 p-4">
+
+          <p class="text-xs uppercase tracking-wide text-indigo-400 font-bold">
+            Requests Trend
+          </p>
+
+          <p class="text-sm font-bold text-gray-900 mt-2">
+            <%= @request_change_pct.round(1) %>% change
+          </p>
+
+        </div>
+
+        <div class="bg-gradient-to-r from-indigo-50 to-white rounded-2xl border border-indigo-100 p-4">
+
+          <p class="text-xs uppercase tracking-wide text-indigo-400 font-bold">
+            Top Staff
+          </p>
+
+          <p class="text-sm font-bold text-gray-900 mt-2">
+            <%= @top_staff&.dig(:name) || "N/A" %>
+          </p>
+
+        </div>
+
+        <div class="bg-gradient-to-r from-indigo-50 to-white rounded-2xl border border-indigo-100 p-4">
+
+          <p class="text-xs uppercase tracking-wide text-indigo-400 font-bold">
+            Top Product
+          </p>
+
+          <p class="text-sm font-bold text-gray-900 mt-2">
+            <%= @top_product&.first || "N/A" %>
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- CLOSE -->
+      <button
+        type="button"
+        onclick="closeHealthModal()"
+        class="
+          w-full
+          mt-6
+          bg-gradient-to-r
+          from-indigo-600
+          to-indigo-700
+          hover:from-indigo-700
+          hover:to-indigo-800
+          text-white
+          py-4
+          rounded-2xl
+          font-semibold
+          transition
+          shadow-lg
+          shadow-indigo-200
+        "
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0.96;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.24s ease-out;
+  }
+
+  @media (min-width: 1024px) {
+
+    @keyframes modalFade {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    .animate-slide-up {
+      animation: modalFade 0.18s ease-out;
+    }
+
+  }
+</style>
+
 <script>
 document.addEventListener("turbo:load", function () {
 
@@ -312,46 +589,157 @@ document.addEventListener("turbo:load", function () {
   const staffCtx = document.getElementById("staffChart");
 
   if (staffCtx) {
+
     window.staffChartInstance = new Chart(staffCtx, {
       type: "bar",
       data: {
         labels: <%= raw @staff_leaderboard.map { |s| s[:name] }.to_json %>,
         datasets: [{
           data: <%= raw @staff_leaderboard.map { |s| s[:total] }.to_json %>,
-          backgroundColor: "#374151"
+          backgroundColor: "#4f46e5",
+          borderRadius: 12,
+          borderSkipped: false
         }]
       },
-      options: { responsive: true, maintainAspectRatio: false }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: "#6b7280" }
+          },
+          y: {
+            grid: { color: "#eef2ff" },
+            ticks: { color: "#6b7280" }
+          }
+        }
+      }
     });
+
   }
 
   const productCtx = document.getElementById("productChart");
 
   if (productCtx) {
+
     window.productChartInstance = new Chart(productCtx, {
       type: "doughnut",
       data: {
         labels: <%= raw @product_usage.keys.to_json %>,
         datasets: [{
           data: <%= raw @product_usage.values.to_json %>,
-          backgroundColor: ["#16a34a", "#eab308", "#dc2626", "#6b7280", "#9ca3af"]
+          backgroundColor: [
+            "#4f46e5",
+            "#818cf8",
+            "#6366f1",
+            "#a5b4fc",
+            "#c7d2fe"
+          ],
+          borderWidth: 0
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: "70%"
+        cutout: "72%",
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              usePointStyle: true,
+              padding: 20
+            }
+          }
+        }
       }
     });
+
+  }
+
+  const trigger = document.querySelector("[data-health-modal-trigger]");
+
+  if (trigger) {
+    trigger.addEventListener("click", openHealthModal);
   }
 
 });
 
 function dismissEarlyBanner() {
+
   const banner = document.getElementById("early-stage-banner");
+
   if (!banner) return;
 
+  banner.style.transition = "all 0.25s ease";
   banner.style.opacity = "0";
-  setTimeout(() => banner.style.display = "none", 250);
+  banner.style.transform = "translateY(-8px)";
+
+  setTimeout(() => {
+    banner.style.display = "none";
+  }, 250);
+
 }
+
+function closeHealthModal() {
+
+  const modal = document.getElementById("healthModal");
+
+  if (!modal) return;
+
+  modal.classList.add("hidden");
+
+  document.body.classList.remove("overflow-hidden");
+  document.documentElement.classList.remove("overflow-hidden");
+
+  document.body.style.position = "";
+  document.body.style.width = "";
+  document.body.style.top = "";
+
+  const scrollY = document.body.dataset.scrollY;
+
+  if (scrollY) {
+    window.scrollTo(0, parseInt(scrollY || "0") * -1);
+  }
+
+}
+
+function openHealthModal() {
+
+  const modal = document.getElementById("healthModal");
+
+  if (!modal) return;
+
+  modal.classList.remove("hidden");
+
+  // MOBILE ONLY scroll lock
+  if (window.innerWidth < 1024) {
+
+    const scrollY = window.scrollY;
+
+    document.body.dataset.scrollY = -scrollY;
+
+    document.body.classList.add("overflow-hidden");
+    document.documentElement.classList.add("overflow-hidden");
+
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    document.body.style.top = `-${scrollY}px`;
+
+  }
+
+}
+
+document.addEventListener("turbo:load", () => {
+
+  const trigger = document.querySelector("[data-health-modal-trigger]");
+
+  if (trigger) {
+    trigger.addEventListener("click", openHealthModal);
+  }
+
+});
 </script>

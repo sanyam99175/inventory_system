@@ -27,6 +27,12 @@ class UsersController < ApplicationController
     @user = current_organization.users.new
   end
 
+  def edit
+    @user = current_organization.users.find(params[:id])
+
+    render partial: "edit_form", locals: { user: @user }
+  end
+
   def create
     @user = current_organization.users.build(user_params)
 
@@ -44,6 +50,31 @@ class UsersController < ApplicationController
     end
   end
 
+  def update
+    @user = current_organization.users.find(params[:id])
+
+    filtered_params = user_params
+
+    if filtered_params[:password].blank?
+      filtered_params = filtered_params.except(:password)
+    end
+
+    if @user.update(filtered_params)
+
+      redirect_to staffs_path(
+        organization_id: current_organization.id
+      ),
+      notice: "User updated successfully"
+
+    else
+
+      Rails.logger.debug @user.errors.full_messages
+
+      render partial: "edit_form",
+            locals: { user: @user },
+            status: :unprocessable_entity
+    end
+  end
   # ========================
   # PERMISSIONS
   # ========================

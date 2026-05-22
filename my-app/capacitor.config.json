@@ -9,7 +9,7 @@
       }
     },
   "server": {
-    "url": "https://www.stockflows.in",
+    "url": "http://192.168.0.5:3000",
     "cleartext": false
   }
 }

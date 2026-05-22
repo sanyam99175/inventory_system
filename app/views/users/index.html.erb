@@ -12,6 +12,7 @@
 <% update_create_access = has_permission_update_create && update_create_allowed_by_plan %>
 <% change_permissions_access = has_permission_change_permissions && change_permissions_allowed_by_plan %>
 <% delete_access = has_permission_delete && delete_allowed_by_plan %>
+
 <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-100">
 
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
@@ -24,7 +25,7 @@
         <!-- LEFT -->
         <div class="flex items-center gap-4">
 
-          <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-sm shrink-0">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 flex items-center justify-center shadow-sm shrink-0">
             <%= icon('users', class: 'w-6 h-6 text-white') %>
           </div>
 
@@ -34,7 +35,7 @@
               <%= t('all_users') %>
             </h1>
 
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-base text-gray-500 mt-1">
               <% if params[:search].present? %>
                 <%= @users.count %> <%= t('users_found') %> "<%= params[:search] %>"
               <% else %>
@@ -51,8 +52,22 @@
 
           <% if update_create_access %>
 
+            <!-- MOBILE BUTTON -->
+            <button
+              type="button"
+              onclick="openAddUserModal()"
+              class="lg:hidden bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-base font-semibold transition flex items-center gap-2 shadow-sm"
+            >
+
+              <%= icon('plus', class: 'w-4 h-4') %>
+
+              <span><%= t('add_user') %></span>
+
+            </button>
+
+            <!-- DESKTOP BUTTON -->
             <%= link_to new_staff_path,
-                class: "bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-sm font-semibold transition flex items-center gap-2 shadow-sm" do %>
+                class: "hidden lg:flex bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-base font-semibold transition items-center gap-2 shadow-sm" do %>
 
               <%= icon('plus', class: 'w-4 h-4') %>
 
@@ -63,7 +78,7 @@
           <% end %>
 
           <%= link_to dashboard_path,
-              class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-indigo-700 px-5 py-3 rounded-2xl text-sm font-semibold transition flex items-center gap-2 shadow-sm" do %>
+              class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-indigo-700 px-5 py-3 rounded-2xl text-base font-semibold transition flex items-center gap-2 shadow-sm" do %>
 
             <%= icon('arrow-left', class: 'w-4 h-4') %>
 
@@ -74,6 +89,209 @@
         </div>
 
       </div>
+
+      <!-- ================= MOBILE ADD USER MODAL ================= -->
+      <% if update_create_access %>
+
+        <div
+          id="add-user-modal"
+          class="fixed inset-0 z-[99999] hidden lg:hidden"
+        >
+
+          <!-- BACKDROP -->
+          <div
+            onclick="closeAddUserModal()"
+            class="fixed inset-0 bg-black/40 backdrop-blur-md"
+            style="
+              -webkit-backdrop-filter: blur(10px);
+              backdrop-filter: blur(10px);
+            "
+          ></div>
+
+          <!-- SHEET -->
+          <div class="
+            fixed
+            bottom-0
+            inset-x-0
+            bg-white
+            rounded-t-[32px]
+            shadow-2xl
+            animate-slide-up
+            z-[100000]
+            max-h-[92dvh]
+            overflow-y-auto
+            overscroll-contain
+            touch-pan-y
+          ">
+
+            <div class="p-6 pb-8">
+
+              <!-- HANDLE -->
+              <div class="w-14 h-1.5 rounded-full bg-gray-200 mx-auto mb-6"></div>
+
+              <!-- HEADER -->
+              <div class="mb-6">
+
+                <h2 class="text-2xl font-bold text-gray-900">
+                  <%= t('add_user') %>
+                </h2>
+
+                <p class="text-base text-gray-500 mt-2">
+                  Create a new team member account
+                </p>
+
+              </div>
+
+              <!-- FORM -->
+              <%= form_with model: User.new,
+                  url: staffs_path,
+                  local: true do |f| %>
+
+                <div class="space-y-5">
+
+                  <!-- NAME -->
+                  <div>
+
+                    <%= f.label :name,
+                        class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+                    <%= f.text_field :name,
+                        placeholder: "e.g. John Doe",
+                        class: "
+                          w-full
+                          bg-white
+                          border border-indigo-100
+                          focus:border-indigo-400
+                          focus:ring-4 focus:ring-indigo-100
+                          rounded-2xl
+                          px-4 py-4
+                          text-base
+                          outline-none
+                          transition
+                        " %>
+
+                  </div>
+
+                  <!-- EMAIL -->
+                  <div>
+
+                    <%= f.label :email,
+                        class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+                    <%= f.email_field :email,
+                        placeholder: "e.g. john@example.com",
+                        class: "
+                          w-full
+                          bg-white
+                          border border-indigo-100
+                          focus:border-indigo-400
+                          focus:ring-4 focus:ring-indigo-100
+                          rounded-2xl
+                          px-4 py-4
+                          text-base
+                          outline-none
+                          transition
+                        " %>
+
+                  </div>
+
+                  <!-- PASSWORD -->
+                  <div>
+
+                    <%= f.label :password,
+                        class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+                    <%= f.password_field :password,
+                        placeholder: "Enter password",
+                        class: "
+                          w-full
+                          bg-white
+                          border border-indigo-100
+                          focus:border-indigo-400
+                          focus:ring-4 focus:ring-indigo-100
+                          rounded-2xl
+                          px-4 py-4
+                          text-base
+                          outline-none
+                          transition
+                        " %>
+
+                  </div>
+
+                  <!-- ROLE -->
+                  <div>
+
+                    <%= f.label :role,
+                        class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+                    <%= f.select :role,
+                        User.roles.keys.map { |r| [r.titleize, r] },
+                        {},
+                        {
+                          class: "
+                            w-full
+                            bg-white
+                            border border-indigo-100
+                            focus:border-indigo-400
+                            focus:ring-4 focus:ring-indigo-100
+                            rounded-2xl
+                            px-4 py-4
+                            text-base
+                            outline-none
+                            transition
+                          "
+                        } %>
+
+                  </div>
+
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="flex items-center gap-3 mt-7">
+
+                  <button
+                    type="button"
+                    onclick="closeAddUserModal()"
+                    class="
+                      flex-1
+                      bg-white
+                      border border-gray-200
+                      hover:bg-gray-50
+                      text-gray-700
+                      py-4
+                      rounded-2xl
+                      font-semibold
+                      transition
+                    "
+                  >
+                    Cancel
+                  </button>
+
+                  <%= f.submit t('add_user'),
+                      class: "
+                        flex-1
+                        bg-indigo-600
+                        hover:bg-indigo-700
+                        text-white
+                        py-4
+                        rounded-2xl
+                        font-semibold
+                        transition
+                        shadow-sm
+                        cursor-pointer
+                      " %>
+
+                </div>
+
+              <% end %>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      <% end %>
 
       <!-- ================= SEARCH ================= -->
       <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm p-5 mb-6">
@@ -94,7 +312,7 @@
               <%= text_field_tag :search,
                   params[:search],
                   placeholder: t('search_users'),
-                  class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl pl-12 pr-4 py-3 text-sm outline-none transition" %>
+                  class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl pl-12 pr-4 py-3 text-base outline-none transition" %>
 
             </div>
 
@@ -102,12 +320,12 @@
             <div class="flex gap-3">
 
               <%= submit_tag t('search'),
-                  class: "bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl text-sm font-semibold transition shadow-sm cursor-pointer" %>
+                  class: "bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl text-base font-semibold transition shadow-sm cursor-pointer" %>
 
               <% if params[:search].present? %>
 
                 <%= link_to staffs_path,
-                    class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-indigo-700 px-6 py-3 rounded-2xl text-sm font-semibold transition text-center" do %>
+                    class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-indigo-700 px-6 py-3 rounded-2xl text-base font-semibold transition text-center" do %>
 
                   <%= t('clear') %>
 
@@ -127,7 +345,7 @@
       <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm overflow-hidden">
 
         <!-- TOP BAR -->
-        <div class="px-6 py-5 border-b border-indigo-50 flex items-center justify-between">
+        <div class="px-6 py-5 border-b border-indigo-50 flex items-center justify-between bg-gradient-to-r from-indigo-50/80 to-white">
 
           <div>
 
@@ -135,7 +353,7 @@
               Team Members
             </h2>
 
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-base text-gray-500 mt-1">
               <%= @users.count %> users available
             </p>
 
@@ -178,16 +396,19 @@
 
                 <% @users.each do |user| %>
 
-                  <tr class="hover:bg-indigo-50/40 transition">
+                    <tr
+                      class="hover:bg-gradient-to-r hover:from-indigo-50/60 hover:to-white transition cursor-pointer"
+                      onclick="handleUserEdit('<%= edit_staff_path(user, organization_id: current_user.organization.id) %>', event)"
+                    >
 
                     <!-- USER -->
                     <td class="px-6 py-5">
 
                       <div class="flex items-center gap-4">
 
-                        <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
+                        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-100 flex items-center justify-center shrink-0">
 
-                          <span class="font-semibold text-indigo-700 text-sm">
+                          <span class="font-semibold text-indigo-700 text-base">
                             <%= (user.name.presence || user.email).first(2).upcase %>
                           </span>
 
@@ -199,7 +420,7 @@
                             <%= user.name.presence || "—" %>
                           </h3>
 
-                          <p class="text-sm text-gray-500 mt-1">
+                          <p class="text-base text-gray-500 mt-1">
                             <%= user.email %>
                           </p>
 
@@ -212,14 +433,14 @@
                     <!-- ROLE -->
                     <td class="px-6 py-5">
 
-                      <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm px-3 py-1 rounded-full font-medium">
+                      <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-base px-3 py-1 rounded-full font-medium">
                         <%= user.role.capitalize %>
                       </span>
 
                     </td>
 
                     <!-- JOINED -->
-                    <td class="px-6 py-5 text-sm text-gray-500">
+                    <td class="px-6 py-5 text-base text-gray-500">
                       <%= user.created_at.strftime("%d %b %Y") %>
                     </td>
 
@@ -231,7 +452,7 @@
                         <% if change_permissions_access %>
 
                           <%= link_to permissions_staff_path(user),
-                              class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition" do %>
+                              class: "stop-user-edit bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-4 py-2 rounded-xl text-base font-medium transition" do %>
 
                             <%= t('permissions') %>
 
@@ -246,7 +467,7 @@
                               data: {
                                 turbo_confirm: t('are_you_sure_cannot_undo')
                               },
-                              class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition" do %>
+                              class: "stop-user-edit bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-base font-medium transition" do %>
 
                             <%= t('delete') %>
 
@@ -269,97 +490,132 @@
           </div>
 
           <!-- ================= MOBILE CARDS ================= -->
-          <div class="lg:hidden divide-y divide-indigo-50">
+<!-- ================= MOBILE CARDS ================= -->
+<div class="lg:hidden divide-y divide-indigo-50">
 
-            <% @users.each do |user| %>
+  <% @users.each do |user| %>
 
-              <div class="p-5">
+    <div
+      onclick="handleUserEdit('<%= edit_staff_path(user, organization_id: current_user.organization.id) %>', event)"
+      class="
+        p-5
+        bg-gradient-to-r from-white to-indigo-50/30
+        active:scale-[0.99]
+        transition
+        cursor-pointer
+      "
+    >
 
-                <!-- TOP -->
-                <div class="flex items-start gap-4">
+      <!-- TOP -->
+      <div class="flex items-start gap-4">
 
-                  <div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-100 flex items-center justify-center shrink-0">
 
-                    <span class="font-semibold text-indigo-700 text-sm">
-                      <%= (user.name.presence || user.email).first(2).upcase %>
-                    </span>
+          <span class="font-semibold text-indigo-700 text-base">
+            <%= (user.name.presence || user.email).first(2).upcase %>
+          </span>
 
-                  </div>
+        </div>
 
-                  <div class="min-w-0 flex-1">
+        <div class="min-w-0 flex-1">
 
-                    <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center justify-between gap-3">
 
-                      <div class="min-w-0">
+            <div class="min-w-0">
 
-                        <h3 class="font-semibold text-gray-900 truncate">
-                          <%= user.name.presence || "—" %>
-                        </h3>
+              <h3 class="font-semibold text-gray-900 truncate">
+                <%= user.name.presence || "—" %>
+              </h3>
 
-                        <p class="text-sm text-gray-500 break-all mt-1">
-                          <%= user.email %>
-                        </p>
+              <p class="text-base text-gray-500 break-all mt-1">
+                <%= user.email %>
+              </p>
 
-                      </div>
+            </div>
 
-                      <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full font-medium shrink-0">
-                        <%= user.role.capitalize %>
-                      </span>
+            <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full font-medium shrink-0">
+              <%= user.role.capitalize %>
+            </span>
 
-                    </div>
+          </div>
 
-                    <!-- META -->
-                    <div class="flex items-center gap-2 mt-3 text-xs text-gray-500">
+          <!-- META -->
+          <div class="flex items-center gap-2 mt-3 text-xs text-gray-500">
 
-                      <%= icon('calendar', class: 'w-4 h-4') %>
+            <%= icon('calendar', class: 'w-4 h-4') %>
 
-                      <span>
-                        Joined <%= user.created_at.strftime("%d %b %Y") %>
-                      </span>
+            <span>
+              Joined <%= user.created_at.strftime("%d %b %Y") %>
+            </span>
 
-                    </div>
+          </div>
 
-                    <!-- ACTIONS -->
-                    <div class="flex flex-wrap gap-2 mt-4">
+          <!-- ACTIONS -->
+          <div class="flex flex-wrap gap-2 mt-4">
 
-                      <% if change_permissions_access %>
+            <% if change_permissions_access %>
 
-                        <%= link_to permissions_staff_path(user),
-                            class: "flex-1 min-w-[120px] bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-medium transition text-center" do %>
+              <%= link_to permissions_staff_path(user),
+                  class: "
+                    stop-user-edit
+                    flex-1
+                    min-w-[120px]
+                    bg-white
+                    hover:bg-indigo-50
+                    border border-indigo-100
+                    text-gray-700
+                    px-4 py-2.5
+                    rounded-xl
+                    text-sm
+                    font-medium
+                    transition
+                    text-center
+                  " do %>
 
-                          <%= t('permissions') %>
+                <%= t('permissions') %>
 
-                        <% end %>
+              <% end %>
 
-                      <% end %>
+            <% end %>
 
-                      <% if delete_access && user != current_user %>
+            <% if delete_access && user != current_user %>
 
-                        <%= button_to staff_path(user),
-                            method: :delete,
-                            data: {
-                              turbo_confirm: t('are_you_sure_cannot_undo')
-                            },
-                            class: "flex-1 min-w-[120px] bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition" do %>
+              <%= button_to staff_path(user),
+                  method: :delete,
+                  data: {
+                    turbo_confirm: t('are_you_sure_cannot_undo')
+                  },
+                  class: "
+                    stop-user-edit
+                    flex-1
+                    min-w-[120px]
+                    bg-indigo-600
+                    hover:bg-indigo-700
+                    text-white
+                    px-4 py-2.5
+                    rounded-xl
+                    text-sm
+                    font-medium
+                    transition
+                  " do %>
 
-                          <%= t('delete') %>
+                <%= t('delete') %>
 
-                        <% end %>
-
-                      <% end %>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
+              <% end %>
 
             <% end %>
 
           </div>
 
+        </div>
+
+      </div>
+
+    </div>
+
+  <% end %>
+
+</div>
         <% else %>
 
           <!-- ================= EMPTY STATE ================= -->
@@ -379,13 +635,66 @@
               <% end %>
             </h3>
 
-            <p class="text-sm text-gray-500 mt-2">
+            <p class="text-base text-gray-500 mt-2">
               Try searching with a different keyword.
             </p>
 
           </div>
 
         <% end %>
+
+      </div>
+
+      <!-- ================= DESKTOP EDIT PANEL ================= -->
+      <div
+        id="desktopUserEdit"
+        class="hidden lg:block mt-6"
+      ></div>
+
+      <!-- ================= MOBILE EDIT MODAL ================= -->
+      <div
+        id="mobileUserModal"
+        class="fixed inset-0 z-[99999] hidden lg:hidden"
+      >
+
+        <!-- BACKDROP -->
+        <div
+          class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          onclick="closeMobileUserModal()"
+        ></div>
+
+        <!-- SHEET -->
+        <div class="
+          absolute
+          bottom-0
+          inset-x-0
+          bg-white
+          rounded-t-[32px]
+          shadow-2xl
+          max-h-[92vh]
+          overflow-y-auto
+          animate-user-sheet
+        ">
+
+          <div class="p-6">
+
+            <!-- HANDLE -->
+            <div class="w-14 h-1.5 rounded-full bg-gray-200 mx-auto mb-6"></div>
+
+            <!-- CONTENT -->
+            <div id="mobileUserEditContent">
+
+              <div class="py-20 flex justify-center">
+
+                <div class="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
 
@@ -404,7 +713,7 @@
           Access Restricted
         </h2>
 
-        <p class="text-sm text-gray-500 mt-2">
+        <p class="text-base text-gray-500 mt-2">
           You do not have permission to view users.
         </p>
 
@@ -415,3 +724,251 @@
   </div>
 
 </div>
+
+<style>
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0.96;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.24s ease-out;
+  }
+
+  @keyframes userSheetUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0.96;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-user-sheet {
+    animation: userSheetUp 0.25s ease-out;
+  }
+</style>
+
+<script>
+  // =========================================
+  // ADD USER MODAL
+  // =========================================
+
+  function openAddUserModal() {
+
+    const modal = document.getElementById("add-user-modal");
+
+    if (!modal) return;
+
+    modal.classList.remove("hidden");
+
+    document.body.classList.add("overflow-hidden");
+    document.documentElement.classList.add("overflow-hidden");
+  }
+
+  function closeAddUserModal() {
+
+    const modal = document.getElementById("add-user-modal");
+
+    if (!modal) return;
+
+    modal.classList.add("hidden");
+
+    document.body.classList.remove("overflow-hidden");
+    document.documentElement.classList.remove("overflow-hidden");
+  }
+
+  // =========================================
+  // EDIT USER MODAL (OLD)
+  // =========================================
+
+  function openEditUserModal(event, user) {
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const modal = document.getElementById("edit-user-modal");
+
+    if (!modal) return;
+
+    const nameField = document.getElementById("edit_user_name");
+    const emailField = document.getElementById("edit_user_email");
+    const roleField = document.getElementById("edit_user_role");
+    const form = document.getElementById("edit-user-form");
+
+    if (nameField) nameField.value = user.name || "";
+    if (emailField) emailField.value = user.email || "";
+    if (roleField) roleField.value = user.role || "";
+
+    if (form) {
+      form.action = `/app/organizations/${user.organization_id}/staffs/${user.id}`;
+    }
+
+    modal.classList.remove("hidden");
+
+    document.body.classList.add("overflow-hidden");
+    document.documentElement.classList.add("overflow-hidden");
+  }
+
+  function closeEditUserModal() {
+
+    const modal = document.getElementById("edit-user-modal");
+
+    if (!modal) return;
+
+    modal.classList.add("hidden");
+
+    document.body.classList.remove("overflow-hidden");
+    document.documentElement.classList.remove("overflow-hidden");
+  }
+
+  // =========================================
+  // AJAX USER EDIT
+  // =========================================
+
+  function handleUserEdit(url, event) {
+
+    if (event.target.closest(".stop-user-edit")) return;
+
+    // =====================================
+    // MOBILE
+    // =====================================
+
+    if (window.innerWidth < 1024) {
+
+      openMobileUserModal();
+
+      const mobileContent = document.getElementById("mobileUserEditContent");
+
+      if (mobileContent) {
+        mobileContent.innerHTML = `
+          <div class="py-20 flex justify-center">
+            <div class="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+          </div>
+        `;
+      }
+
+      fetch(url, {
+        method: "GET",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest"
+        }
+      })
+      .then(response => response.text())
+      .then(html => {
+
+        if (mobileContent) {
+          mobileContent.innerHTML = html;
+        }
+
+      })
+      .catch(error => {
+
+        console.error(error);
+
+        if (mobileContent) {
+          mobileContent.innerHTML = `
+            <div class="p-6 text-center text-red-500 font-medium">
+              Failed to load user form
+            </div>
+          `;
+        }
+
+      });
+
+      return;
+    }
+
+    // =====================================
+    // DESKTOP
+    // =====================================
+
+    const desktopContainer = document.getElementById("desktopUserEdit");
+
+    if (!desktopContainer) return;
+
+    desktopContainer.classList.remove("hidden");
+
+    desktopContainer.innerHTML = `
+      <div class="bg-white rounded-3xl border border-indigo-100 shadow-sm p-12 flex justify-center">
+        <div class="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+      </div>
+    `;
+
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest"
+      }
+    })
+    .then(response => response.text())
+    .then(html => {
+
+      desktopContainer.innerHTML = html;
+
+      desktopContainer.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    })
+    .catch(error => {
+
+      console.error(error);
+
+      desktopContainer.innerHTML = `
+        <div class="bg-white rounded-3xl border border-red-100 p-8 text-center text-red-500 font-medium">
+          Failed to load user form
+        </div>
+      `;
+    });
+  }
+
+  // =========================================
+  // MOBILE USER MODAL
+  // =========================================
+
+  function openMobileUserModal() {
+
+    const modal = document.getElementById("mobileUserModal");
+
+    if (!modal) return;
+
+    modal.classList.remove("hidden");
+
+    document.body.classList.add("overflow-hidden");
+    document.documentElement.classList.add("overflow-hidden");
+  }
+
+  function closeMobileUserModal() {
+
+    const modal = document.getElementById("mobileUserModal");
+
+    if (!modal) return;
+
+    modal.classList.add("hidden");
+
+    document.body.classList.remove("overflow-hidden");
+    document.documentElement.classList.remove("overflow-hidden");
+  }
+
+  // =========================================
+  // TURBO CACHE FIX
+  // =========================================
+
+  document.addEventListener("turbo:before-cache", () => {
+
+    closeAddUserModal();
+    closeMobileUserModal();
+    closeEditUserModal();
+
+  });
+</script>

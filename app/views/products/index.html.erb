@@ -20,7 +20,7 @@
               <%= t('products', default: 'Products') %>
             </h1>
 
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-base text-gray-500 mt-1">
               Manage inventory, stock intelligence and product insights
             </p>
 
@@ -35,25 +35,406 @@
 
         <% if current_user.has_permission?("products", "create_update") %>
 
-          <%= link_to new_product_type_path,
-              class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-3 rounded-2xl text-sm font-medium transition flex items-center gap-2 shadow-sm" do %>
+          <!-- ================= DESKTOP BUTTONS ================= -->
+          <div class="hidden lg:flex items-center gap-3">
 
-            <%= icon('layers', class: 'w-4 h-4') %>
+            <%= link_to new_product_type_path,
+                class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-3 rounded-2xl text-base font-medium transition flex items-center gap-2 shadow-sm" do %>
 
-            <span>Category</span>
+              <%= icon('plus', class: 'w-4 h-4') %>
 
-          <% end %>
+              <span>Category</span>
 
-          <%= link_to new_product_path,
-              class: "bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-sm font-semibold transition flex items-center gap-2 shadow-sm" do %>
+            <% end %>
 
-            <%= icon('plus', class: 'w-4 h-4') %>
+            <%= link_to new_product_path,
+                class: "bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-base font-semibold transition flex items-center gap-2 shadow-sm" do %>
 
-            <span>Add Product</span>
+              <%= icon('plus', class: 'w-4 h-4') %>
 
-          <% end %>
+              <span>Add Product</span>
+
+            <% end %>
+
+          </div>
+
+          <!-- ================= MOBILE BUTTONS ================= -->
+          <div class="flex lg:hidden items-center gap-3">
+
+            <!-- CATEGORY -->
+            <button
+              type="button"
+              onclick="openCategoryModal()"
+              class="bg-white hover:bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-3 rounded-2xl text-base font-medium transition flex items-center gap-2 shadow-sm"
+            >
+
+              <%= icon('plus', class: 'w-4 h-4') %>
+
+              <span>Category</span>
+
+            </button>
+
+            <!-- PRODUCT -->
+            <button
+              type="button"
+              onclick="openProductModal()"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl text-base font-semibold transition flex items-center gap-2 shadow-sm"
+            >
+
+              <%= icon('plus', class: 'w-4 h-4') %>
+
+              <span>Add Product</span>
+
+            </button>
+
+          </div>
 
         <% end %>
+
+      </div>
+
+    </div>
+
+    <!-- ================= MOBILE CATEGORY MODAL ================= -->
+    <div
+      id="category-modal"
+      class="fixed inset-0 z-[99999] hidden lg:hidden"
+    >
+
+      <!-- BACKDROP -->
+      <div
+        onclick="closeCategoryModal()"
+        class="fixed inset-0 bg-black/50 backdrop-blur-md"
+        style="
+          -webkit-backdrop-filter: blur(12px);
+          backdrop-filter: blur(12px);
+        "
+      ></div>
+
+      <!-- SHEET -->
+      <div class="
+        fixed
+        bottom-0
+        inset-x-0
+        bg-white
+        rounded-t-[32px]
+        shadow-2xl
+        animate-slide-up
+        z-[100000]
+        max-h-[92dvh]
+        overflow-y-auto
+      ">
+
+        <div class="p-6 pb-8">
+
+          <!-- HANDLE -->
+          <div class="w-14 h-1.5 rounded-full bg-gray-200 mx-auto mb-6"></div>
+
+          <!-- HEADER -->
+          <div class="mb-6">
+
+            <h2 class="text-xl font-bold text-gray-900">
+              Create Category
+            </h2>
+
+            <p class="text-base text-gray-500 mt-1">
+              Add a new product category
+            </p>
+
+          </div>
+
+          <!-- FORM -->
+          <%= form_with model: ProductType.new,
+              url: product_types_path,
+              local: true do |f| %>
+
+            <div>
+
+              <%= f.label :name,
+                  class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+              <%= f.text_field :name,
+                  placeholder: "e.g. Electronics",
+                  class: "
+                    w-full
+                    bg-white
+                    border border-indigo-100
+                    focus:border-indigo-400
+                    focus:ring-4 focus:ring-indigo-100
+                    rounded-2xl
+                    px-4 py-4
+                    text-base
+                    outline-none
+                    transition
+                  " %>
+
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="flex items-center gap-3 mt-6">
+
+              <button
+                type="button"
+                onclick="closeCategoryModal()"
+                class="
+                  flex-1
+                  bg-white
+                  border border-gray-200
+                  hover:bg-gray-50
+                  text-gray-700
+                  py-4
+                  rounded-2xl
+                  font-semibold
+                  transition
+                "
+              >
+                Cancel
+              </button>
+
+              <%= f.submit "Save Category",
+                  class: "
+                    flex-1
+                    bg-indigo-600
+                    hover:bg-indigo-700
+                    text-white
+                    py-4
+                    rounded-2xl
+                    font-semibold
+                    transition
+                    shadow-sm
+                    cursor-pointer
+                  " %>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= MOBILE PRODUCT MODAL ================= -->
+    <div
+      id="product-modal"
+      class="fixed inset-0 z-[99999] hidden lg:hidden"
+    >
+
+      <!-- BACKDROP -->
+      <div
+        onclick="closeProductModal()"
+        class="fixed inset-0 bg-black/50 backdrop-blur-md"
+        style="
+          -webkit-backdrop-filter: blur(12px);
+          backdrop-filter: blur(12px);
+        "
+      ></div>
+
+      <!-- SHEET -->
+      <div class="
+        fixed
+        bottom-0
+        inset-x-0
+        bg-white
+        rounded-t-[32px]
+        shadow-2xl
+        animate-slide-up
+        z-[100000]
+        max-h-[92dvh]
+        overflow-y-auto
+      ">
+
+        <div class="p-6 pb-[max(2rem,env(safe-area-inset-bottom))]">
+
+          <!-- HANDLE -->
+          <div class="w-14 h-1.5 rounded-full bg-gray-200 mx-auto mb-6"></div>
+
+          <!-- HEADER -->
+          <div class="mb-6">
+
+            <h2 class="text-xl font-bold text-gray-900">
+              Add Product
+            </h2>
+
+            <p class="text-base text-gray-500 mt-1">
+              Create a new inventory product
+            </p>
+
+          </div>
+
+          <!-- FORM -->
+          <%= form_with model: Product.new,
+              url: products_path,
+              local: true do |f| %>
+
+            <div class="space-y-5">
+
+              <!-- NAME -->
+              <div>
+
+                <%= f.label :name,
+                    class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+                <%= f.text_field :name,
+                    placeholder: "e.g. Rice Bag",
+                    class: "
+                      w-full
+                      bg-white
+                      border border-indigo-100
+                      focus:border-indigo-400
+                      focus:ring-4 focus:ring-indigo-100
+                      rounded-2xl
+                      px-4 py-4
+                      text-base
+                      outline-none
+                      transition
+                    " %>
+
+              </div>
+
+              <!-- CATEGORY -->
+              <div>
+
+                <%= f.label :product_type_id, "Category",
+                    class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+                <%= f.collection_select :product_type_id,
+                    current_organization.product_types,
+                    :id,
+                    :name,
+                    { prompt: "Select Category" },
+                    {
+                      class: "
+                        w-full
+                        bg-white
+                        border border-indigo-100
+                        focus:border-indigo-400
+                        focus:ring-4 focus:ring-indigo-100
+                        rounded-2xl
+                        px-4 py-4
+                        text-base
+                        outline-none
+                        transition
+                      "
+                    } %>
+
+              </div>
+
+              <!-- STOCK -->
+              <div class="grid grid-cols-2 gap-4">
+
+                <div>
+
+                  <%= f.label :stock_count,
+                      class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+                  <%= f.number_field :stock_count,
+                      placeholder: "0",
+                      class: "
+                        w-full
+                        bg-white
+                        border border-indigo-100
+                        focus:border-indigo-400
+                        focus:ring-4 focus:ring-indigo-100
+                        rounded-2xl
+                        px-4 py-4
+                        text-base
+                        outline-none
+                        transition
+                      " %>
+
+                </div>
+
+                <div>
+
+                  <%= f.label :alert_limit,
+                      class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+                  <%= f.number_field :alert_limit,
+                      placeholder: "10",
+                      class: "
+                        w-full
+                        bg-white
+                        border border-indigo-100
+                        focus:border-indigo-400
+                        focus:ring-4 focus:ring-indigo-100
+                        rounded-2xl
+                        px-4 py-4
+                        text-base
+                        outline-none
+                        transition
+                      " %>
+
+                </div>
+
+              </div>
+
+              <!-- GODOWN -->
+              <div>
+
+                <%= f.label :godown_number,
+                    class: "text-base font-semibold text-gray-700 mb-2 block" %>
+
+                <%= f.text_field :godown_number,
+                    placeholder: "e.g. A-12",
+                    class: "
+                      w-full
+                      bg-white
+                      border border-indigo-100
+                      focus:border-indigo-400
+                      focus:ring-4 focus:ring-indigo-100
+                      rounded-2xl
+                      px-4 py-4
+                      text-base
+                      outline-none
+                      transition
+                    " %>
+
+              </div>
+
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="flex items-center gap-3 mt-7">
+
+              <button
+                type="button"
+                onclick="closeProductModal()"
+                class="
+                  flex-1
+                  bg-white
+                  border border-gray-200
+                  hover:bg-gray-50
+                  text-gray-700
+                  py-4
+                  rounded-2xl
+                  font-semibold
+                  transition
+                "
+              >
+                Cancel
+              </button>
+
+              <%= f.submit "Create Product",
+                  class: "
+                    flex-1
+                    bg-indigo-600
+                    hover:bg-indigo-700
+                    text-white
+                    py-4
+                    rounded-2xl
+                    font-semibold
+                    transition
+                    shadow-sm
+                    cursor-pointer
+                  " %>
+
+            </div>
+
+          <% end %>
+
+        </div>
 
       </div>
 
@@ -76,7 +457,7 @@
             <%= text_field_tag :search,
                 params[:search],
                 placeholder: "Search products...",
-                class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl pl-12 pr-4 py-3 text-sm outline-none transition" %>
+                class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl pl-12 pr-4 py-3 text-base outline-none transition" %>
 
           </div>
 
@@ -91,7 +472,7 @@
                   params[:product_type_id]
                 ),
                 include_blank: "All Categories",
-                class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl px-4 py-3 text-sm outline-none transition" %>
+                class: "w-full bg-white border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 rounded-2xl px-4 py-3 text-base outline-none transition" %>
 
           </div>
 
@@ -99,7 +480,7 @@
           <div class="lg:col-span-2">
 
             <%= submit_tag "Search",
-                class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-2xl text-sm font-semibold transition shadow-sm cursor-pointer" %>
+                class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-2xl text-base font-semibold transition shadow-sm cursor-pointer" %>
 
           </div>
 
@@ -108,53 +489,6 @@
       <% end %>
 
     </div>
-
-    <!-- ================= EARLY WARNING ================= -->
-    <% if @show_early_stage_warning %>
-
-      <div id="early-stage-banner" class="mb-6">
-
-        <div class="bg-amber-50 border border-amber-200 rounded-3xl p-5 shadow-sm">
-
-          <div class="flex items-start justify-between gap-4">
-
-            <!-- LEFT -->
-            <div class="flex items-start gap-4">
-
-              <div class="w-11 h-11 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
-                <%= icon('exclamation-triangle', class: 'w-5 h-5 text-amber-700') %>
-              </div>
-
-              <div>
-
-                <h3 class="font-semibold text-amber-900">
-                  Early-stage data warning
-                </h3>
-
-                <p class="text-sm text-amber-700 mt-2 leading-relaxed">
-                  Traklyn insights are still learning from your inventory usage patterns.
-                  Predictions become more accurate after around 30 days of activity.
-                </p>
-
-              </div>
-
-            </div>
-
-            <!-- CLOSE -->
-            <button
-              onclick="dismissEarlyBanner()"
-              class="text-amber-400 hover:text-amber-700 transition"
-            >
-              <%= icon('x', class: 'w-5 h-5') %>
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    <% end %>
 
     <!-- ================= PRODUCT TABLE ================= -->
     <div class="bg-white/90 backdrop-blur rounded-3xl border border-indigo-100 shadow-sm overflow-hidden">
@@ -168,7 +502,7 @@
             Product Inventory
           </h2>
 
-          <p class="text-sm text-gray-500 mt-1">
+          <p class="text-base text-gray-500 mt-1">
             <%= @products.count %> products available
           </p>
 
@@ -176,7 +510,7 @@
 
       </div>
 
-      <!-- ================= MOBILE CARDS ================= -->
+      <!-- MOBILE -->
       <div class="block lg:hidden">
 
         <% if @products.present? %>
@@ -210,20 +544,16 @@
 
                 <div class="p-5">
 
-                  <!-- TOP -->
                   <div class="flex items-start gap-4">
 
-                    <!-- ICON -->
                     <div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
 
                       <%= icon('cube', class: 'w-5 h-5 text-indigo-700') %>
 
                     </div>
 
-                    <!-- CONTENT -->
                     <div class="flex-1 min-w-0">
 
-                      <!-- NAME -->
                       <div class="flex items-start justify-between gap-3">
 
                         <div class="min-w-0">
@@ -242,7 +572,6 @@
 
                         </div>
 
-                        <!-- STATUS -->
                         <% if product.reorder_needed? %>
 
                           <span class="bg-red-100 text-red-700 text-[11px] px-2.5 py-1 rounded-full font-semibold border border-red-200 whitespace-nowrap">
@@ -259,7 +588,6 @@
 
                       </div>
 
-                      <!-- STOCK -->
                       <div class="mt-5 flex items-end justify-between">
 
                         <div>
@@ -274,7 +602,6 @@
 
                         </div>
 
-                        <!-- ARROW -->
                         <div class="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
 
                           <%= icon('chevron-right', class: 'w-4 h-4 text-indigo-700') %>
@@ -295,37 +622,15 @@
 
           </div>
 
-        <% else %>
-
-          <!-- EMPTY -->
-          <div class="py-20 px-6 text-center">
-
-            <div class="w-20 h-20 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto mb-5">
-
-              <%= icon('cube-transparent', class: 'w-8 h-8 text-indigo-700') %>
-
-            </div>
-
-            <h3 class="text-lg font-semibold text-gray-900">
-              No products found
-            </h3>
-
-            <p class="text-sm text-gray-500 mt-2">
-              Start by creating your first inventory product.
-            </p>
-
-          </div>
-
         <% end %>
 
       </div>
 
-      <!-- ================= DESKTOP TABLE ================= -->
+      <!-- DESKTOP -->
       <div class="hidden lg:block overflow-x-auto">
 
         <table class="min-w-full">
 
-          <!-- HEAD -->
           <thead class="bg-indigo-50/70 border-b border-indigo-100">
 
             <tr>
@@ -350,187 +655,63 @@
 
           </thead>
 
-          <!-- BODY -->
           <tbody class="divide-y divide-indigo-50">
 
-            <% if @products.present? %>
+            <% @products.each do |product| %>
 
-              <% @products.each do |product| %>
+              <tr class="hover:bg-indigo-50/40 transition">
 
-                <tr class="hover:bg-indigo-50/40 transition">
+                <td class="px-6 py-5">
 
-                  <!-- PRODUCT -->
-                  <td class="px-6 py-5">
+                  <div class="flex items-start gap-4">
 
-                    <div class="flex items-start gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
 
-                      <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
+                      <%= icon('cube', class: 'w-5 h-5 text-indigo-700') %>
 
-                        <%= icon('cube', class: 'w-5 h-5 text-indigo-700') %>
+                    </div>
 
-                      </div>
+                    <div>
 
-                      <div>
+                      <div class="flex items-center gap-2 flex-wrap">
 
-                        <div class="flex items-center gap-2 flex-wrap">
-
-                          <h3 class="font-semibold text-gray-900">
-                            <%= product.name %>
-                          </h3>
-
-                          <% if product.reorder_needed? %>
-
-                            <span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-medium border border-red-200">
-                              Reorder
-                            </span>
-
-                          <% else %>
-
-                            <span class="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-full font-medium border border-emerald-200">
-                              Healthy
-                            </span>
-
-                          <% end %>
-
-                        </div>
-
-                        <p class="text-sm text-gray-500 mt-1">
-                          Usage:
-                          <span class="font-medium text-gray-700">
-                            <%= product.daily_usage_rate.round(2) %>/day
-                          </span>
-                        </p>
+                        <h3 class="font-semibold text-gray-900">
+                          <%= product.name %>
+                        </h3>
 
                       </div>
 
                     </div>
-
-                  </td>
-
-                  <!-- STOCK -->
-                  <td class="px-6 py-5">
-
-                    <div class="space-y-2">
-
-                      <div class="flex items-center gap-2">
-
-                        <span class="text-lg font-bold text-gray-900">
-                          <%= product.stock_count %>
-                        </span>
-
-                        <% low_days = product.days_remaining.to_i <= 7 %>
-
-                        <span class="text-xs px-2 py-1 rounded-full border font-medium
-                          <%= low_days ?
-                            'bg-red-50 text-red-700 border-red-200' :
-                            'bg-indigo-50 text-indigo-700 border-indigo-100' %>">
-
-                          <%= product.days_remaining %> days left
-
-                        </span>
-
-                      </div>
-
-                      <div class="text-sm text-gray-500">
-
-                        Suggested Stock:
-                        <span class="font-medium text-gray-700">
-                          <%= product.recommended_stock %>
-                        </span>
-
-                      </div>
-
-                      <% if product.reorder_needed? %>
-
-                        <div class="flex items-center gap-2 text-xs font-medium text-red-600">
-
-                          <div class="w-2 h-2 rounded-full bg-red-500"></div>
-
-                          Low stock risk detected
-
-                        </div>
-
-                      <% else %>
-
-                        <div class="flex items-center gap-2 text-xs font-medium text-emerald-600">
-
-                          <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-
-                          Healthy stock level
-
-                        </div>
-
-                      <% end %>
-
-                    </div>
-
-                  </td>
-
-                  <!-- CATEGORY -->
-                  <td class="px-6 py-5">
-
-                    <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm px-3 py-1 rounded-full font-medium">
-                      <%= product.product_type&.name || "Uncategorized" %>
-                    </span>
-
-                  </td>
-
-                  <!-- ACTIONS -->
-                  <td class="px-6 py-5">
-
-                    <div class="flex items-center justify-end gap-2">
-
-                      <%= link_to "View",
-                          product_path(product),
-                          class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-3 py-2 rounded-xl text-sm font-medium transition" %>
-
-                      <% if current_user.has_permission?("products", "create_update") %>
-
-                        <%= link_to "Edit",
-                            edit_product_path(product),
-                            class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-3 py-2 rounded-xl text-sm font-medium transition" %>
-
-                      <% end %>
-
-                      <% if current_user.has_permission?("products", "delete") %>
-
-                        <%= link_to "Delete",
-                            product_path(product),
-                            data: {
-                              turbo_method: :delete,
-                              turbo_confirm: "Are you sure?"
-                            },
-                            class: "bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-sm font-medium transition" %>
-
-                      <% end %>
-
-                    </div>
-
-                  </td>
-
-                </tr>
-
-              <% end %>
-
-            <% else %>
-
-              <tr>
-
-                <td colspan="4" class="py-20 px-6 text-center">
-
-                  <div class="w-20 h-20 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto mb-5">
-
-                    <%= icon('cube-transparent', class: 'w-8 h-8 text-indigo-700') %>
 
                   </div>
 
-                  <h3 class="text-lg font-semibold text-gray-900">
-                    No products found
-                  </h3>
+                </td>
 
-                  <p class="text-sm text-gray-500 mt-2">
-                    Start by creating your first inventory product.
-                  </p>
+                <td class="px-6 py-5">
+                  <%= product.stock_count %>
+                </td>
+
+                <td class="px-6 py-5">
+
+                  <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-base px-3 py-1 rounded-full font-medium">
+                    <%= product.product_type&.name || "Uncategorized" %>
+                  </span>
+
+                </td>
+
+                <td class="px-6 py-5">
+
+                  <div class="flex items-center justify-end gap-2">
+
+                    <%= link_to "View",
+                        product_path(product),
+                        class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-3 py-2 rounded-xl text-base font-medium transition" %>
+
+                    <%= link_to "Edit",
+                        edit_product_path(product),
+                        class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-3 py-2 rounded-xl text-base font-medium transition" %>
+
+                  </div>
 
                 </td>
 
@@ -550,18 +731,73 @@
 
 </div>
 
+<style>
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0.96;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.24s ease-out;
+  }
+</style>
+
 <script>
-  function dismissEarlyBanner() {
-    const banner = document.getElementById("early-stage-banner");
+  function lockScroll() {
+    document.body.style.overflow = "hidden";
+    document.body.style.touchAction = "none";
+    document.documentElement.style.overflow = "hidden";
+  }
 
-    if (!banner) return;
+  function unlockScroll() {
+    document.body.style.overflow = "";
+    document.body.style.touchAction = "";
+    document.documentElement.style.overflow = "";
+  }
 
-    banner.style.transition = "all 0.25s ease";
-    banner.style.opacity = "0";
-    banner.style.transform = "translateY(-8px)";
+  function openCategoryModal() {
+    const modal = document.getElementById("category-modal");
 
-    setTimeout(() => {
-      banner.style.display = "none";
-    }, 250);
+    if (!modal) return;
+
+    modal.classList.remove("hidden");
+
+    lockScroll();
+  }
+
+  function closeCategoryModal() {
+    const modal = document.getElementById("category-modal");
+
+    if (!modal) return;
+
+    modal.classList.add("hidden");
+
+    unlockScroll();
+  }
+
+  function openProductModal() {
+    const modal = document.getElementById("product-modal");
+
+    if (!modal) return;
+
+    modal.classList.remove("hidden");
+
+    lockScroll();
+  }
+
+  function closeProductModal() {
+    const modal = document.getElementById("product-modal");
+
+    if (!modal) return;
+
+    modal.classList.add("hidden");
+
+    unlockScroll();
   }
 </script>

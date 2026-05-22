@@ -72,8 +72,9 @@ Rails.application.routes.draw do
       # Dashboard
       get "dashboard", to: "dashboard#index", as: :dashboard
 
-      # Staff / Users
-      resources :staffs, controller: "users", only: [:index, :new, :create, :destroy] do
+      resources :staffs,
+                controller: "users",
+                only: [:index, :new, :create, :show, :edit, :update, :destroy] do
         member do
           get :permissions
           patch :permissions, action: :update_permissions
