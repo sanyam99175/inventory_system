@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  organization: one
+  supplier: one
+  status: 1
+  demand_date: 2026-05-23
+  notes: MyText
+
+two:
+  organization: two
+  supplier: two
+  status: 1
+  demand_date: 2026-05-23
+  notes: MyText

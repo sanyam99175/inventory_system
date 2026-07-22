@@ -2,7 +2,7 @@ class ExportsController < ApplicationController
   before_action :authenticate_user!
 
   def users
-    @users = User.where.not(role: :superadmin)
+    @users = current_organization.users.where.not(role: :superadmin)
 
     respond_to do |format|
       format.xlsx {
@@ -14,13 +14,25 @@ class ExportsController < ApplicationController
   end
 
   def products
-    @products = Product.all
+    @products = current_organization.products
 
     respond_to do |format|
       format.xlsx {
         response.headers[
           "Content-Disposition"
         ] = "attachment; filename=products_export.xlsx"
+      }
+    end
+  end
+
+  def suppliers
+    @suppliers = current_organization.suppliers
+
+    respond_to do |format|
+      format.xlsx {
+        response.headers[
+          "Content-Disposition"
+        ] = "attachment; filename=suppliers_export.xlsx"
       }
     end
   end

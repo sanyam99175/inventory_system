@@ -127,54 +127,21 @@
 
         </div>
 
-      </div>
+        <! -- SUPPLIERS EXPORT -->
+        <div class="border rounded p-4">
 
-      <!-- EXPORT HISTORY -->
-      <div>
+          <h4 class="font-semibold mb-2"><%= icon('truck', class: 'w-4 h-4 inline mr-2') %> Suppliers</h4>
 
-        <h3 class="text-lg font-semibold mb-3">Export History</h3>
+          <p class="text-sm text-gray-500 mb-3">
+            Export supplier information
+          </p>
 
-        <table class="w-full border text-sm">
+          <%= button_to "Export Suppliers",
+              exports_suppliers_path(format: :xlsx),
+              method: :post,
+              class: "w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700" %>
 
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="text-left p-2">Type</th>
-              <th class="text-left p-2">Status</th>
-              <th class="text-left p-2">Created At</th>
-              <th class="text-left p-2">Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            <% (@export_histories || []).each do |export| %>
-              <tr class="border-t">
-                <td class="p-2"><%= export.export_type %></td>
-                <td class="p-2"><%= export.status %></td>
-                <td class="p-2"><%= export.created_at.strftime("%d %b %Y %H:%M") %></td>
-                <td class="p-2">
-                  <% if export.file_url.present? %>
-                    <a href="<%= export.file_url %>" class="text-indigo-600 underline">
-                      Download
-                    </a>
-                  <% else %>
-                    -
-                  <% end %>
-                </td>
-              </tr>
-            <% end %>
-
-            <% if (@export_histories || []).empty? %>
-              <tr>
-                <td colspan="4" class="p-4 text-center text-gray-500">
-                  No export history found
-                </td>
-              </tr>
-            <% end %>
-
-          </tbody>
-
-        </table>
+        </div>
 
       </div>
 

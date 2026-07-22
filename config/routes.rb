@@ -107,6 +107,20 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :suppliers
+      resources :purchases do
+        member do
+          get :mark_paid
+          get :partially_pay
+        end
+      end
+      resources :demands do
+        member do
+          get :pdf
+          patch :execute
+        end
+      end
+
       # Reports / Insights
       get "history", to: "owner#history"
       get "alerts", to: "owner#alerts"
@@ -116,6 +130,7 @@ Rails.application.routes.draw do
       get "imports_exports", to: "imports_exports#index"
       post "exports/users", to: "exports#users"
       post "exports/products", to: "exports#products"
+      post "exports/suppliers", to: "exports#suppliers"
       post "imports/users", to: "imports#users"
       post "imports/products", to: "imports#products"
       get "imports/users_template", to: "imports#users_template"

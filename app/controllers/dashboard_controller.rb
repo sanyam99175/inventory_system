@@ -28,6 +28,15 @@ class DashboardController < ApplicationController
               .where(updated_at: range)
               .count
 
+    @pending_purchases = current_organization.purchases
+      .includes(:supplier)
+      .where("COALESCE(paid_amount, 0) < total_amount")
+      .order(created_at: :desc)
+
+    @total_due_amount = @pending_purchases.sum do |p|
+      p.total_amount.to_f - p.paid_amount.to_f
+    end
+
     if current_user.owner?
         render "owner/dashboard"
     else

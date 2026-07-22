@@ -113,7 +113,9 @@ module AuditHelper
         "Request Cancelled"
 
     when "update_stock"
-        if source == "request_approval"
+        if source == "demand_executed"
+        "Stock Updated via Demand Execution"
+        elsif source == "request_approval"
         "Stock Updated via Request Approval"
         else
         "Stock Updated"

@@ -6,8 +6,11 @@ class Product < ApplicationRecord
 
   has_many :requests
   has_many :histories
+  has_many :purchase_items
 
+  belongs_to :supplier
   validates :name, :godown_number, :product_type_id, presence: true
+  validates :supplier_id, presence: true
   validates :name , uniqueness: { scope: :organization_id }
   validates :stock_count, presence: true,
                         numericality: { greater_than_or_equal_to: 0 }
@@ -37,6 +40,38 @@ class Product < ApplicationRecord
     (daily_usage_rate * 30 * 1.2).round
   end
 
+  # =========================
+  # LAST PURCHASE ITEM
+  # =========================
+  def last_purchase_item
+    purchase_items
+      .includes(:purchase)
+      .order("purchases.purchase_date DESC")
+      .references(:purchase)
+      .first
+  end
+
+  # =========================
+  # SUGGESTED SUPPLIER
+  # =========================
+  def suggested_supplier
+    last_purchase_item&.purchase&.supplier
+  end
+
+  # =========================
+  # LAST PURCHASE PRICE
+  # =========================
+  def last_purchase_price
+    last_purchase_item&.unit_price
+  end
+
+  # =========================
+  # LAST PURCHASE DATE
+  # =========================
+  def last_purchase_date
+    last_purchase_item&.purchase&.purchase_date
+  end
+
   def reorder_needed?
     stock_count <= alert_limit || days_remaining < 7
   end
@@ -47,6 +82,7 @@ class Product < ApplicationRecord
     if stock_count < alert_limit &&
       stock_count_before_last_save >= alert_limit
 
+      WhatsappNotifier.send_low_stock_alert(self)
       LowStockAlertJob.perform_later(id)
     end
   end

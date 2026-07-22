@@ -19,7 +19,7 @@
     <% end %>
 
     <!-- FORM -->
-    <%= form_with(model: @product_type, local: true) do |f| %>
+    <%= form_with(model: @product_type, local: true, data: { turbo: false }) do |f| %>
 
       <!-- NAME -->
       <div class="mb-4">

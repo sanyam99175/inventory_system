@@ -1,0 +1,17 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Suppliers") do |sheet|
+  sheet.add_row ["ID", "Name", "Phone", "Email", "GST Number", "Address", "Created At"]
+
+  @suppliers.each do |supplier|
+    sheet.add_row [
+      supplier.id,
+      supplier.name,
+      supplier.phone,
+      supplier.email,
+      supplier.gst_number,
+      supplier.address,
+      supplier.created_at.strftime("%d-%m-%Y")
+    ]
+  end
+end

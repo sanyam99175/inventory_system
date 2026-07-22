@@ -6,17 +6,18 @@
   }
 
   .product-mobile-container {
-    max-width: 760px;
+    width: 100%;
+    max-width: 1250px;
     margin: 0 auto;
+    padding: 0 16px;
   }
 
   @media (min-width: 1024px) {
 
     .desktop-layout {
-      display: grid;
-      grid-template-columns: 1fr 420px;
-      gap: 28px;
-      align-items: start;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
     }
 
     .desktop-sticky {
@@ -298,6 +299,33 @@
                   font-weight:900;
                 ">
                   <%= alert_limit %>
+                </p>
+
+              </div>
+
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                gap:20px;
+                padding:18px 22px;
+              ">
+
+                <p style="
+                  margin:0;
+                  color:#64748b;
+                  font-size:13px;
+                  font-weight:600;
+                ">
+                  Supplier
+                </p>
+
+                <p style="
+                  margin:0;
+                  color:#4338ca;
+                  font-size:15px;
+                  font-weight:900;
+                ">
+                  <%= @product.supplier.name %>
                 </p>
 
               </div>

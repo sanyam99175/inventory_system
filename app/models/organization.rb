@@ -7,8 +7,10 @@ class Organization < ApplicationRecord
   has_many :histories, dependent: :delete_all
   has_many :stock_requests, dependent: :delete_all
   has_many :audit_logs, dependent: :delete_all
-
-  validates :name, presence: true
+  has_many :suppliers, dependent: :destroy
+  has_many :purchases, dependent: :destroy
+  has_many :supplier_payments, dependent: :destroy
+  has_many :demands, dependent: :destroy
 
   def can_use?(feature)
     case plan

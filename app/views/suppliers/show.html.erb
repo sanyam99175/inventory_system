@@ -1,0 +1,542 @@
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-100">
+
+  <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
+
+    <!-- ================= HEADER ================= -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-6">
+
+      <div class="flex items-center gap-4">
+
+        <div class="
+          w-14 h-14 rounded-2xl
+          bg-gradient-to-br from-indigo-600 to-indigo-500
+          flex items-center justify-center
+          shadow-sm
+        ">
+
+          <%= icon('truck', class: 'w-7 h-7 text-white') %>
+
+        </div>
+
+        <div>
+
+          <h1 class="text-3xl font-bold text-gray-900">
+            <%= @supplier.name %>
+          </h1>
+
+          <p class="text-gray-500 mt-1">
+            Supplier overview & purchase analytics
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+
+        <%= link_to suppliers_path,
+            class: "
+              bg-white hover:bg-gray-50
+              border border-gray-200
+              text-gray-700
+              px-5 py-3
+              rounded-2xl
+              font-medium
+              shadow-sm
+              transition
+              flex items-center gap-2
+            " do %>
+
+          <%= icon('arrow-left', class: 'w-4 h-4') %>
+
+          Back
+
+        <% end %>
+
+        <%= link_to edit_supplier_path(@supplier),
+            class: "
+              bg-indigo-600 hover:bg-indigo-700
+              text-white
+              px-5 py-3
+              rounded-2xl
+              font-semibold
+              shadow-sm
+              transition
+              flex items-center gap-2
+            " do %>
+
+          <%= icon('pencil', class: 'w-4 h-4') %>
+
+          Edit Supplier
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+    <!-- ================= SUPPLIER INFO ================= -->
+    <div class="
+      bg-white/90 backdrop-blur
+      rounded-3xl
+      border border-indigo-100
+      shadow-sm
+      p-6
+      mb-6
+    ">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+
+        <!-- PHONE -->
+        <div class="
+          bg-indigo-50/70
+          border border-indigo-100
+          rounded-2xl
+          p-5
+        ">
+
+          <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+            Phone
+          </p>
+
+          <h3 class="text-lg font-bold text-indigo-900 mt-2 break-words">
+            <%= @supplier.phone.presence || "N/A" %>
+          </h3>
+
+        </div>
+
+        <!-- EMAIL -->
+        <div class="
+          bg-indigo-50/70
+          border border-indigo-100
+          rounded-2xl
+          p-5
+        ">
+
+          <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+            Email
+          </p>
+
+          <h3 class="text-lg font-bold text-indigo-900 mt-2 break-words">
+            <%= @supplier.email.presence || "N/A" %>
+          </h3>
+
+        </div>
+
+        <!-- GST -->
+        <div class="
+          bg-indigo-50/70
+          border border-indigo-100
+          rounded-2xl
+          p-5
+        ">
+
+          <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+            GST Number
+          </p>
+
+          <h3 class="text-lg font-bold text-indigo-900 mt-2 break-words">
+            <%= @supplier.gst_number.presence || "N/A" %>
+          </h3>
+
+        </div>
+
+        <!-- ADDRESS -->
+        <div class="
+          bg-indigo-50/70
+          border border-indigo-100
+          rounded-2xl
+          p-5
+        ">
+
+          <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+            Address
+          </p>
+
+          <h3 class="text-lg font-bold text-indigo-900 mt-2 break-words">
+            <%= @supplier.address.presence || "N/A" %>
+          </h3>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= KPI CARDS ================= -->
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+
+      <!-- TOTAL PURCHASE -->
+      <div class="
+        bg-white/90 backdrop-blur
+        rounded-3xl
+        border border-indigo-100
+        shadow-sm
+        p-5
+      ">
+
+        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+          Total Purchases
+        </p>
+
+        <h2 class="text-3xl font-black text-indigo-900 mt-3">
+          ₹<%= @total_purchase_amount.to_i %>
+        </h2>
+
+      </div>
+
+      <!-- TOTAL PAID -->
+      <div class="
+        bg-white/90 backdrop-blur
+        rounded-3xl
+        border border-emerald-100
+        shadow-sm
+        p-5
+      ">
+
+        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+          Total Paid
+        </p>
+
+        <h2 class="text-3xl font-black text-emerald-700 mt-3">
+          ₹<%= @total_paid_amount.to_i %>
+        </h2>
+
+      </div>
+
+      <!-- DUE -->
+      <div class="
+        bg-white/90 backdrop-blur
+        rounded-3xl
+        border border-red-100
+        shadow-sm
+        p-5
+      ">
+
+        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+          Pending Due
+        </p>
+
+        <h2 class="text-3xl font-black text-red-600 mt-3">
+          ₹<%= @total_due_amount.to_i %>
+        </h2>
+
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="
+        bg-white/90 backdrop-blur
+        rounded-3xl
+        border border-indigo-100
+        shadow-sm
+        p-5
+      ">
+
+        <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+          Products Bought
+        </p>
+
+        <h2 class="text-3xl font-black text-indigo-900 mt-3">
+          <%= @products_bought.count %>
+        </h2>
+
+      </div>
+
+    </div>
+
+    <!-- ================= MAIN GRID ================= -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+      <!-- ================= RECENT PURCHASES ================= -->
+      <div class="xl:col-span-3">
+
+        <div class="
+          bg-white/90 backdrop-blur
+          rounded-3xl
+          border border-indigo-100
+          shadow-sm
+          overflow-hidden
+        ">
+
+          <!-- HEADER -->
+          <div class="px-6 py-5 border-b border-indigo-50">
+
+            <h2 class="text-lg font-bold text-gray-900">
+              Recent Purchases
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+              Latest supplier purchase records
+            </p>
+
+          </div>
+
+          <% if @recent_purchases.any? %>
+
+            <div class="overflow-x-auto">
+
+              <table class="min-w-full">
+
+                <thead class="bg-indigo-50/60 border-b border-indigo-100">
+
+                  <tr>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700">
+                      Invoice
+                    </th>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700">
+                      Total
+                    </th>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700">
+                      Due
+                    </th>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700">
+                      Status
+                    </th>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700">
+                      Date
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody class="divide-y divide-indigo-50">
+
+                  <% @recent_purchases.limit(3).each do |purchase| %>
+
+                    <% due_amount = purchase.due_amount.to_f %>
+
+                    <tr class="hover:bg-indigo-50/40 transition">
+
+                      <!-- INVOICE -->
+                      <td class="px-6 py-5">
+
+                        <%= link_to purchase.invoice_number.presence || "N/A",
+                            purchase_path(purchase),
+                            class: "font-semibold text-indigo-700 hover:underline" %>
+
+                      </td>
+
+                      <!-- TOTAL -->
+                      <td class="px-6 py-5 font-bold text-gray-900">
+                        ₹<%= purchase.total_amount.to_i %>
+                      </td>
+
+                      <!-- DUE -->
+                      <td class="px-6 py-5">
+
+                        <span class="
+                          font-bold
+                          <%= due_amount > 0 ?
+                            'text-red-600' :
+                            'text-emerald-600'
+                          %>
+                        ">
+
+                          ₹<%= due_amount.to_i %>
+
+                        </span>
+
+                      </td>
+
+                      <!-- STATUS -->
+                      <td class="px-6 py-5">
+
+                        <% paid_full = due_amount <= 0 %>
+
+                        <span class="
+                          px-3 py-1 rounded-full text-xs font-bold border
+                          <%= paid_full ?
+                            'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                            'bg-amber-50 text-amber-700 border-amber-100'
+                          %>
+                        ">
+
+                          <%= paid_full ? "Paid" : "Pending" %>
+
+                        </span>
+
+                      </td>
+
+                      <!-- DATE -->
+                      <td class="px-6 py-5 text-sm text-gray-500">
+
+                        <%= purchase.purchase_date.strftime("%d %b %Y") %>
+
+                      </td>
+
+                    </tr>
+
+                  <% end %>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          <% else %>
+
+            <div class="p-10 text-center text-gray-500">
+              No purchases found
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= PRODUCTS BOUGHT ================= -->
+    <div class="
+      bg-white/90 backdrop-blur
+      rounded-3xl
+      border border-indigo-100
+      shadow-sm
+      overflow-hidden
+      mt-6
+    ">
+
+      <!-- HEADER -->
+      <div class="px-6 py-5 border-b border-indigo-50">
+
+        <h2 class="text-lg font-bold text-gray-900">
+          Products Purchased
+        </h2>
+
+        <p class="text-sm text-gray-500 mt-1">
+          Products sourced from this supplier
+        </p>
+
+      </div>
+
+      <% if @products_bought.any? %>
+
+        <div class="overflow-x-auto">
+
+<table class="min-w-full">
+
+  <thead class="bg-indigo-50/70 border-b border-indigo-100">
+
+    <tr>
+
+      <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700">
+        Product
+      </th>
+
+      <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700">
+        Total Quantity
+      </th>
+
+      <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700">
+        Last Purchase
+      </th>
+
+    </tr>
+
+  </thead>
+
+  <tbody class="divide-y divide-indigo-50 bg-white">
+
+    <% @products_bought.each do |id, name, quantity, last_date| %>
+
+      <tr class="hover:bg-indigo-50/40 transition">
+
+        <!-- PRODUCT -->
+        <td class="px-6 py-5">
+
+          <div class="flex items-center gap-3">
+
+            <div class="
+              w-11 h-11
+              rounded-2xl
+              bg-indigo-50
+              border border-indigo-100
+              flex items-center justify-center
+              shrink-0
+            ">
+
+              <%= icon('package', class: 'w-5 h-5 text-indigo-700') %>
+
+            </div>
+
+            <div>
+
+              <p class="font-semibold text-gray-900">
+                <%= name %>
+              </p>
+
+              <p class="text-xs text-gray-500 mt-1">
+                Product ID: #<%= id %>
+              </p>
+
+            </div>
+
+          </div>
+
+        </td>
+
+        <!-- TOTAL QUANTITY -->
+        <td class="px-6 py-5">
+
+          <span class="
+            inline-flex
+            items-center
+            px-4 py-2
+            rounded-full
+            bg-indigo-50
+            border border-indigo-100
+            text-indigo-700
+            font-bold
+            text-sm
+          ">
+
+            <%= quantity.to_i %> units
+
+          </span>
+
+        </td>
+
+        <!-- LAST PURCHASE -->
+        <td class="px-6 py-5">
+
+          <div>
+
+            <p class="font-medium text-gray-800">
+              <%= last_date.strftime("%d %b %Y") if last_date %>
+            </p>
+
+          </div>
+
+        </td>
+
+      </tr>
+
+    <% end %>
+
+  </tbody>
+
+</table>
+
+        </div>
+
+      <% else %>
+
+        <div class="p-10 text-center text-gray-500">
+          No products purchased yet
+        </div>
+
+      <% end %>
+
+    </div>
+
+  </div>
+
+</div>

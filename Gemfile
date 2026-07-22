@@ -60,6 +60,11 @@ gem "caxlsx"
 gem "caxlsx_rails"
 gem "roo"
 
+gem "grover"
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
+gem "httparty"
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 gem "dotenv-rails", groups: [:development, :test]

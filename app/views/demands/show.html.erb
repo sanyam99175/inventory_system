@@ -1,0 +1,91 @@
+<div class="max-w-5xl mx-auto p-6">
+
+  <!-- HEADER -->
+  <div class="flex justify-between items-start mb-6">
+
+    <div>
+      <h1 class="text-2xl font-bold text-indigo-800">
+        Demand #<%= @demand.id %>
+      </h1>
+
+      <p class="text-sm text-gray-500">
+        Supplier: <%= @demand.supplier.name %> •
+        Date: <%= @demand.demand_date %>
+      </p>
+    </div>
+
+    <div class="flex gap-2">
+
+      <%= link_to pdf_demand_path(@demand, format: :pdf),
+          class: "bg-gray-100 px-4 py-2 rounded-xl text-sm font-semibold" do %>
+        Download PDF
+      <% end %>
+
+      <% unless @demand.executed? %>
+        <%= button_to execute_demand_path(@demand),
+            method: :patch,
+            class: "bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold" do %>
+          Convert to Purchase
+        <% end %>
+      <% end %>
+
+    </div>
+
+  </div>
+
+  <!-- STATUS STEPPER -->
+  <div class="flex items-center gap-4 mb-6">
+
+    <div class="flex items-center gap-2">
+      <div class="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-xs">
+        ✓
+      </div>
+      <span class="text-sm">Generated</span>
+    </div>
+
+    <div class="h-px w-10 bg-gray-300"></div>
+
+    <div class="flex items-center gap-2">
+      <div class="w-6 h-6 rounded-full <%= @demand.executed? ? 'bg-green-500' : 'bg-gray-300' %> text-white flex items-center justify-center text-xs">
+        <%= @demand.executed? ? "✓" : "○" %>
+      </div>
+      <span class="text-sm">Executed</span>
+    </div>
+
+  </div>
+
+  <!-- NOTES -->
+  <% if @demand.notes.present? %>
+    <div class="bg-gray-50 p-4 rounded-xl mb-6">
+      <p class="text-sm text-gray-700">
+        <%= @demand.notes %>
+      </p>
+    </div>
+  <% end %>
+
+  <!-- ITEMS -->
+  <div class="bg-white border rounded-2xl p-4">
+
+    <h2 class="font-semibold mb-4">Products</h2>
+
+    <table class="w-full text-sm">
+      <thead class="text-left text-gray-500 border-b">
+        <tr>
+          <th class="py-2">Product</th>
+          <th class="py-2">Quantity</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @demand.demand_items.each do |item| %>
+          <tr class="border-b">
+            <td class="py-2"><%= item.product.name %></td>
+            <td class="py-2"><%= item.quantity %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>

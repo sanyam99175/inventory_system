@@ -1,0 +1,523 @@
+<div class="max-w-6xl mx-auto p-6">
+
+  <!-- HEADER -->
+  <div class="mb-6">
+
+    <h1 class="text-3xl font-bold text-indigo-900">
+      <%= @purchase.new_record? ? "New Purchase" : "Edit Purchase" %>
+    </h1>
+
+    <p class="text-gray-500 mt-1">
+      Manage supplier inventory purchases
+    </p>
+
+  </div>
+
+  <!-- CARD -->
+  <div class="bg-white rounded-3xl border border-indigo-100 shadow-sm p-6">
+
+    <%= form_with model: @purchase, local: true,  data: { turbo: false } do |f| %>
+
+      <!-- ERRORS -->
+      <% if @purchase.errors.any? %>
+
+        <div class="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-2xl p-4">
+
+          <h3 class="font-semibold mb-2">
+            Please fix the following:
+          </h3>
+
+          <ul class="list-disc pl-5 space-y-1 text-sm">
+
+            <% @purchase.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+
+          </ul>
+
+        </div>
+
+      <% end %>
+
+      <!-- TOP GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+
+        <!-- SUPPLIER -->
+        <div>
+
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Supplier
+          </label>
+
+          <%= f.collection_select :supplier_id,
+              @suppliers,
+              :id,
+              :name,
+              { prompt: "Select Supplier" },
+              {
+                class: "
+                  w-full
+                  border
+                  border-indigo-100
+                  rounded-2xl
+                  px-4
+                  py-3
+                  bg-white
+                "
+              } %>
+
+        </div>
+
+        <!-- PURCHASE DATE -->
+        <div>
+
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Purchase Date
+          </label>
+
+          <%= f.date_field :purchase_date,
+              class: "
+                w-full
+                border
+                border-indigo-100
+                rounded-2xl
+                px-4
+                py-3
+              " %>
+
+        </div>
+
+        <%= f.hidden_field :demand_id %>
+
+        <!-- INVOICE -->
+        <div>
+
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Invoice Number
+          </label>
+
+          <%= f.text_field :invoice_number,
+              placeholder: "INV-1001",
+              class: "
+                w-full
+                border
+                border-indigo-100
+                rounded-2xl
+                px-4
+                py-3
+              " %>
+
+        </div>
+
+                <!-- TOTAl -->
+        <div>
+
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Total Amount
+          </label>
+
+          <%= f.number_field :total_amount,
+              step: 0.01,
+              placeholder: "0",
+              class: "
+                w-full
+                border
+                border-indigo-100
+                rounded-2xl
+                px-4
+                py-3
+              " %>
+
+        </div>
+
+        <!-- PAID -->
+        <div>
+
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Paid Amount
+          </label>
+
+          <%= f.number_field :paid_amount,
+              step: 0.01,
+              placeholder: "0",
+              class: "
+                w-full
+                border
+                border-indigo-100
+                rounded-2xl
+                px-4
+                py-3
+              " %>
+
+        </div>
+
+      </div>
+
+      <!-- PURCHASE ITEMS -->
+      <div class="mb-8">
+
+        <div class="flex items-center justify-between mb-4">
+
+          <div>
+
+            <h2 class="text-xl font-bold text-indigo-900">
+              Purchase Items
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+              Add multiple products to this purchase
+            </p>
+
+          </div>
+
+          <%= f.hidden_field :_destroy %>
+
+          <!-- ADD BUTTON -->
+          <button
+            type="button"
+            id="add-item-btn"
+            class="
+              bg-indigo-600
+              hover:bg-indigo-700
+              text-white
+              px-4 py-2
+              rounded-2xl
+              text-sm
+              font-semibold
+              transition
+            "
+          >
+            + Add Item
+          </button>
+
+        </div>
+
+        <!-- ITEMS CONTAINER -->
+        <div id="purchase-items-container" class="space-y-4">
+
+          <%= f.fields_for :purchase_items do |item_form| %>
+
+            <div class="purchase-item bg-indigo-50/60 border border-indigo-100 rounded-3xl p-5 relative">
+
+              <!-- REMOVE -->
+              <button
+                type="button"
+                class="
+                  remove-item
+                  absolute
+                  top-4
+                  right-4
+                  w-8 h-8
+                  rounded-full
+                  bg-red-50
+                  hover:bg-red-100
+                  text-red-600
+                  text-sm
+                  font-bold
+                  border
+                  border-red-100
+                "
+              >
+                ✕
+              </button>
+
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                <!-- PRODUCT -->
+                <div class="md:col-span-2">
+
+                  <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+                    Product
+                  </label>
+
+                  <%= item_form.collection_select :product_id,
+                      @products,
+                      :id,
+                      :name,
+                      { prompt: "Select Product" },
+                      {
+                        class: "
+                          w-full
+                          border
+                          border-indigo-100
+                          rounded-2xl
+                          px-4
+                          py-3
+                          bg-white
+                        "
+                      } %>
+
+                </div>
+
+                <!-- QTY -->
+                <div>
+
+                  <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+                    Quantity
+                  </label>
+
+                  <%= item_form.number_field :quantity,
+                      placeholder: "0",
+                      class: "
+                        w-full
+                        border
+                        border-indigo-100
+                        rounded-2xl
+                        px-4
+                        py-3
+                        bg-white
+                      " %>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </div>
+
+      <div class="mb-8">
+
+        <label class="block text-sm font-semibold text-gray-700 mb-2">
+          Invoice (PDF or Image)
+        </label>
+
+        <%= f.file_field :invoice, accept: "application/pdf,image/*" %>
+      
+        </div>
+
+      <!-- NOTES -->
+      <div class="mb-8">
+
+        <label class="block text-sm font-semibold text-gray-700 mb-2">
+          Notes
+        </label>
+
+        <%= f.text_area :notes,
+            rows: 4,
+            placeholder: "Optional notes...",
+            class: "
+              w-full
+              border
+              border-indigo-100
+              rounded-2xl
+              px-4
+              py-3
+            " %>
+
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="flex items-center justify-between pt-2">
+
+        <%= link_to purchases_path,
+            class: "
+              bg-gray-100
+              hover:bg-gray-200
+              text-gray-700
+              px-5 py-3
+              rounded-2xl
+              font-medium
+              transition
+            " do %>
+
+          Cancel
+
+        <% end %>
+
+        <%= f.submit @purchase.new_record? ? "Create Purchase" : "Update Purchase",
+            class: "
+              bg-indigo-600
+              hover:bg-indigo-700
+              text-white
+              px-6 py-3
+              rounded-2xl
+              font-semibold
+              shadow-sm
+              cursor-pointer
+              transition
+            " %>
+
+      </div>
+
+    <% end %>
+
+  </div>
+
+</div>
+
+<!-- TEMPLATE -->
+<template id="purchase-item-template">
+
+  <div class="purchase-item bg-indigo-50/60 border border-indigo-100 rounded-3xl p-5 relative">
+
+    <!-- REMOVE -->
+    <button
+      type="button"
+      class="
+        remove-item
+        absolute
+        top-4
+        right-4
+        w-8 h-8
+        rounded-full
+        bg-red-50
+        hover:bg-red-100
+        text-red-600
+        text-sm
+        font-bold
+        border
+        border-red-100
+      "
+    >
+      ✕
+    </button>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+      <!-- PRODUCT -->
+      <div class="md:col-span-2">
+
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+          Product
+        </label>
+
+        <select
+          name="purchase[purchase_items_attributes][NEW_RECORD][product_id]"
+          class="
+            w-full
+            border
+            border-indigo-100
+            rounded-2xl
+            px-4
+            py-3
+            bg-white
+          "
+        >
+
+          <option value="">Select Product</option>
+
+          <% @products.each do |product| %>
+
+            <option value="<%= product.id %>">
+              <%= product.name %>
+            </option>
+
+          <% end %>
+
+        </select>
+
+      </div>
+
+      <!-- QTY -->
+      <div>
+
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+          Quantity
+        </label>
+
+        <input
+          type="number"
+          name="purchase[purchase_items_attributes][NEW_RECORD][quantity]"
+          placeholder="0"
+          class="
+            w-full
+            border
+            border-indigo-100
+            rounded-2xl
+            px-4
+            py-3
+            bg-white
+          "
+        >
+
+      </div>
+
+      <!-- PRICE -->
+      <div>
+
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+          Unit Price
+        </label>
+
+        <input
+          type="number"
+          step="0.01"
+          name="purchase[purchase_items_attributes][NEW_RECORD][unit_price]"
+          placeholder="0.00"
+          class="
+            w-full
+            border
+            border-indigo-100
+            rounded-2xl
+            px-4
+            py-3
+            bg-white
+          "
+        >
+
+      </div>
+
+    </div>
+
+  </div>
+
+</template>
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const addButton = document.getElementById("add-item-btn");
+    const container = document.getElementById("purchase-items-container");
+    const template = document.getElementById("purchase-item-template");
+
+    // ADD ITEM
+    addButton.addEventListener("click", () => {
+
+      const uniqueId = new Date().getTime();
+
+      let content = template.innerHTML.replaceAll(
+        "NEW_RECORD",
+        uniqueId
+      );
+
+      container.insertAdjacentHTML("beforeend", content);
+
+    });
+
+    // REMOVE ITEM
+  document.addEventListener("click", (e) => {
+
+    if (e.target.classList.contains("remove-item")) {
+
+      const item = e.target.closest(".purchase-item");
+
+      const destroyInput = item.querySelector(
+        'input[name*="_destroy"]'
+      );
+
+      // EXISTING RECORD
+      if (destroyInput) {
+
+        destroyInput.value = "1";
+
+        item.style.display = "none";
+
+      } else {
+
+        item.remove();
+
+      }
+
+    }
+
+  });
+
+  });
+
+</script>

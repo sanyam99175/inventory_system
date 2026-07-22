@@ -1,0 +1,20 @@
+<h2>Demand #<%= @demand.id %></h2>
+
+<p>Supplier: <%= @demand.supplier.name %></p>
+<p>Date: <%= @demand.demand_date %></p>
+
+<hr>
+
+<table width="100%">
+  <tr>
+    <th align="left">Product</th>
+    <th align="left">Quantity</th>
+  </tr>
+
+  <% @demand.demand_items.each do |item| %>
+    <tr>
+      <td><%= item.product.name %></td>
+      <td><%= item.quantity %></td>
+    </tr>
+  <% end %>
+</table>

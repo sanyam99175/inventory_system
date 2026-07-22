@@ -3,6 +3,9 @@ class PlanPermissions
     "basic" => {
       products: ["view", "create_update"],
       requests: ["view", "update"],
+      suppliers: ["view", "update"],
+      purchase: ["view", "update"],
+      demands: ["view", "update"],
       alerts: ["view"],
       history: ["view"],
       users: ["view", "create_update"],
@@ -11,6 +14,9 @@ class PlanPermissions
     "premium" => {
       products: ["view", "create_update", "delete"],
       requests: ["view", "update"],
+      suppliers: ["view", "update"],
+      purchase: ["view", "update"],
+      demands: ["view", "update"],
       alerts: ["view"],
       history: ["view"],
       trends: ["view"],
@@ -24,6 +30,9 @@ class PlanPermissions
     "free_trial" => {
       products: ["view", "create_update", "delete"],
       requests: ["view", "update"],
+      suppliers: ["view", "update"],
+      purchase: ["view", "update"],
+      demands: ["view", "update"],
       alerts: ["view"],
       history: ["view"],
       trends: ["view"],

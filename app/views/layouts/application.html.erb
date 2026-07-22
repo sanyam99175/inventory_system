@@ -73,6 +73,9 @@
           { key: "dashboard", label: "Dashboard", path: dashboard_path(current_organization), icon: "chart-bar" },
           { key: "products", label: "Products", path: products_path, icon: "box" },
           { key: "requests", label: "Requests", path: requests_path, icon: "file" },
+          { key: "suppliers", label: "Suppliers", path: suppliers_path, icon: "user"},
+          { key: "purchase", label: "Purchase", path: purchases_path, icon: "user"},
+          { key: "demands", label: "Demands", path: demands_path, icon: "user"},
           { key: "history", label: "History", path: history_path, icon: "scroll" },
           { key: "alerts", label: "Alerts", path: alerts_path(current_organization), icon: "exclamation-circle" }
         ] %>
@@ -270,29 +273,19 @@
 <script>
   let loaderTimeout;
 
-  document.addEventListener("turbo:visit", () => {
-    loaderTimeout = setTimeout(() => {
-      const loader = document.getElementById("app-loader");
+  document.addEventListener("turbo:submit-start", () => {
+    const loader = document.getElementById("app-loader");
+    if (loader) loader.style.display = "flex";
+  });
 
-      if (loader) {
-        loader.style.display = "flex";
-        loader.style.opacity = "1";
-      }
-    }, 1200); // show only after 1.2s
+  document.addEventListener("turbo:submit-end", () => {
+    const loader = document.getElementById("app-loader");
+    if (loader) loader.style.display = "none";
   });
 
   document.addEventListener("turbo:load", () => {
-    clearTimeout(loaderTimeout);
-
     const loader = document.getElementById("app-loader");
-
-    if (loader) {
-      loader.style.opacity = "0";
-
-      setTimeout(() => {
-        loader.style.display = "none";
-      }, 200);
-    }
+    if (loader) loader.style.display = "none";
   });
   document.addEventListener("turbo:load", () => {
     document.querySelectorAll(".flash-message").forEach((el) => {

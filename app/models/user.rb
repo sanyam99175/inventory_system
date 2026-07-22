@@ -8,12 +8,16 @@ class User < ApplicationRecord
 
   belongs_to :organization, optional: true
   validates :organization, presence: true, unless: :superadmin_user?
+  validates :name, presence: true
 
   enum role: { worker: 0, owner: 1, superadmin: 2 }
 
   PERMISSION_MODULES = {
     products: ["view", "create_update", "delete"],
     requests: ["view", "update"],
+    suppliers: ["view", "update"],
+    purchase: ["view", "update"],
+    demands: ["view", "update"],
     alerts: ["view"],
     history: ["view"],
     trends: ["view"],

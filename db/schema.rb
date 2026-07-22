@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_05_02_191437) do
+ActiveRecord::Schema[7.1].define(version: 2026_06_05_191339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "audit_logs", force: :cascade do |t|
     t.string "record_type"
@@ -24,6 +52,32 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_02_191437) do
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
     t.index ["organization_id"], name: "index_audit_logs_on_organization_id"
+  end
+
+  create_table "demand_items", force: :cascade do |t|
+    t.bigint "demand_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["demand_id"], name: "index_demand_items_on_demand_id"
+    t.index ["product_id"], name: "index_demand_items_on_product_id"
+  end
+
+  create_table "demands", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_id", null: false
+    t.integer "status", default: 0
+    t.date "demand_date"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "purchase_id"
+    t.datetime "converted_at"
+    t.index ["organization_id"], name: "index_demands_on_organization_id"
+    t.index ["purchase_id"], name: "index_demands_on_purchase_id"
+    t.index ["supplier_id"], name: "index_demands_on_supplier_id"
   end
 
   create_table "histories", force: :cascade do |t|
@@ -105,9 +159,46 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_02_191437) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.bigint "organization_id", null: false
+    t.bigint "supplier_id"
     t.index ["deleted_at"], name: "index_products_on_deleted_at"
     t.index ["organization_id"], name: "index_products_on_organization_id"
     t.index ["product_type_id"], name: "index_products_on_product_type_id"
+    t.index ["supplier_id"], name: "index_products_on_supplier_id"
+  end
+
+  create_table "purchase_items", force: :cascade do |t|
+    t.bigint "purchase_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity"
+    t.decimal "unit_price"
+    t.decimal "total_price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_purchase_items_on_product_id"
+    t.index ["purchase_id"], name: "index_purchase_items_on_purchase_id"
+  end
+
+  create_table "purchases", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "user_id", null: false
+    t.string "invoice_number"
+    t.date "purchase_date"
+    t.decimal "subtotal"
+    t.decimal "discount"
+    t.decimal "tax"
+    t.decimal "total_amount"
+    t.decimal "paid_amount"
+    t.decimal "due_amount"
+    t.string "status"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "demand_id"
+    t.index ["demand_id"], name: "index_purchases_on_demand_id"
+    t.index ["organization_id"], name: "index_purchases_on_organization_id"
+    t.index ["supplier_id"], name: "index_purchases_on_supplier_id"
+    t.index ["user_id"], name: "index_purchases_on_user_id"
   end
 
   create_table "requests", force: :cascade do |t|
@@ -139,6 +230,38 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_02_191437) do
     t.index ["user_id"], name: "index_stock_requests_on_user_id"
   end
 
+  create_table "supplier_payments", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "purchase_id", null: false
+    t.bigint "user_id", null: false
+    t.decimal "amount"
+    t.string "payment_method"
+    t.string "reference_number"
+    t.date "paid_on"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_supplier_payments_on_organization_id"
+    t.index ["purchase_id"], name: "index_supplier_payments_on_purchase_id"
+    t.index ["supplier_id"], name: "index_supplier_payments_on_supplier_id"
+    t.index ["user_id"], name: "index_supplier_payments_on_user_id"
+  end
+
+  create_table "suppliers", force: :cascade do |t|
+    t.string "name"
+    t.string "phone"
+    t.string "email"
+    t.string "gst_number"
+    t.text "address"
+    t.text "notes"
+    t.boolean "active"
+    t.bigint "organization_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_suppliers_on_organization_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -167,7 +290,13 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_02_191437) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "organizations"
+  add_foreign_key "demand_items", "demands"
+  add_foreign_key "demand_items", "products"
+  add_foreign_key "demands", "organizations"
+  add_foreign_key "demands", "suppliers"
   add_foreign_key "histories", "organizations"
   add_foreign_key "histories", "products"
   add_foreign_key "histories", "users"
@@ -181,11 +310,23 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_02_191437) do
   add_foreign_key "product_types", "organizations"
   add_foreign_key "products", "organizations"
   add_foreign_key "products", "product_types"
+  add_foreign_key "products", "suppliers"
+  add_foreign_key "purchase_items", "products"
+  add_foreign_key "purchase_items", "purchases"
+  add_foreign_key "purchases", "demands"
+  add_foreign_key "purchases", "organizations"
+  add_foreign_key "purchases", "suppliers"
+  add_foreign_key "purchases", "users"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "products"
   add_foreign_key "requests", "users"
   add_foreign_key "stock_requests", "organizations"
   add_foreign_key "stock_requests", "products"
   add_foreign_key "stock_requests", "users"
+  add_foreign_key "supplier_payments", "organizations"
+  add_foreign_key "supplier_payments", "purchases"
+  add_foreign_key "supplier_payments", "suppliers"
+  add_foreign_key "supplier_payments", "users"
+  add_foreign_key "suppliers", "organizations"
   add_foreign_key "users", "organizations"
 end

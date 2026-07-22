@@ -711,7 +711,13 @@
                         edit_product_path(product),
                         class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-3 py-2 rounded-xl text-base font-medium transition" %>
 
-                  </div>
+                    <%= link_to "Delete",
+                        product_path(product),
+                        data: {
+                          turbo_method: :delete,
+                          turbo_confirm: "Are you sure?"
+                        },
+                        class: "bg-white hover:bg-indigo-50 border border-indigo-100 text-gray-700 px-3 py-2 rounded-xl text-base font-medium transition" %>
 
                 </td>
 
